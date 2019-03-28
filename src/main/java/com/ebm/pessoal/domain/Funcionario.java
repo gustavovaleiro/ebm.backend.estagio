@@ -33,7 +33,9 @@ public class Funcionario implements Serializable  {
 	
 	private BigDecimal adicionalPessoal;
 	
-	public Funcionario(Integer id, Pessoa pessoa, Cargo cargo, LocalDate dataDeAdmissao, BigDecimal comissao,
+	private String matricula;
+	
+	public Funcionario(Integer id, Pessoa pessoa, String matricula, Cargo cargo, LocalDate dataDeAdmissao, BigDecimal comissao,
 			BigDecimal adicionalPessoal) {
 		this.id = id;
 		this.pessoa = pessoa;
@@ -41,6 +43,7 @@ public class Funcionario implements Serializable  {
 		this.dataDeAdmissao = dataDeAdmissao;
 		this.comissao = comissao;
 		this.adicionalPessoal = adicionalPessoal;
+		this.matricula = matricula;
 	}
 	
 
@@ -61,6 +64,17 @@ public class Funcionario implements Serializable  {
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
 	}
+	
+	
+	public String getMatricula() {
+		return matricula;
+	}
+
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
+
 
 	public Cargo getCargo() {
 		return cargo;

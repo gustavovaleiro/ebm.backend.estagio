@@ -1,38 +1,27 @@
-package com.ebm.auth;
+package com.ebm.estoque.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
-public class Grupo implements Serializable{
+public class CategoriaItem implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(nullable = false, length = 60)
+	@Column(nullable = false, length = 140)
 	private String nome;
 	
-	@OneToMany(mappedBy="grupo")
-	private List<Usuario>  usuarios = new ArrayList<Usuario>();
-	
-	@OneToMany(mappedBy="id.pedido")
-	private List<GrupoPermissao> permissoes = new ArrayList<GrupoPermissao>();
-	
-	public Grupo() {}
+	public CategoriaItem() {}
 
-	public Grupo(Integer id, String nome) {
-		super();
+	public CategoriaItem(Integer id, String nome) {
 		this.id = id;
 		this.nome = nome;
 	}
@@ -52,23 +41,7 @@ public class Grupo implements Serializable{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-	public List<Usuario> getUsuarios() {
-		return Collections.unmodifiableList(usuarios);
-	}
-
-	public void addUsuario(Usuario usuario) {
-		this.usuarios.add(usuario);
-	}
-
-	public List<GrupoPermissao> getPermissoes() {
-		return Collections.unmodifiableList(permissoes);
-	}
-
-	public void addPermissao(GrupoPermissao permissao) {
-		permissoes.add(permissao);
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -85,7 +58,7 @@ public class Grupo implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Grupo other = (Grupo) obj;
+		CategoriaItem other = (CategoriaItem) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -93,7 +66,6 @@ public class Grupo implements Serializable{
 			return false;
 		return true;
 	}
-	
 	
 	
 }
