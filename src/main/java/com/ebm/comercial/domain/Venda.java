@@ -24,13 +24,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.ebm.auth.Usuario;
-import com.ebm.estoque.domain.OrigemSaida;
+import com.ebm.estoque.domain.OrigemMovimentacao;
 import com.ebm.estoque.domain.Produto;
+import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.pessoal.domain.Cliente;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Venda implements Serializable, OrigemSaida{
+public class Venda implements Serializable, OrigemMovimentacao{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -57,6 +58,7 @@ public class Venda implements Serializable, OrigemSaida{
 	private Usuario ultimaModificacao;
 	private boolean jaDeuBaixa;
 	private boolean jaDevolveu;
+	private boolean aprovada;
 	
 	public Venda() {}
 
@@ -77,6 +79,15 @@ public class Venda implements Serializable, OrigemSaida{
 	public Integer getId() {
 		return id;
 	}
+	
+	public boolean isAprovada() {
+		return aprovada;
+	}
+
+	public void setAprovada(boolean aprovada) {
+		
+		this.aprovada = aprovada;
+	}
 
 	public void setId(Integer id) {
 		this.id = id;
@@ -85,7 +96,7 @@ public class Venda implements Serializable, OrigemSaida{
 	public boolean isJaDeuBaixa() {
 		return jaDeuBaixa;
 	}
-
+	
 	public void setJaDeuBaixa(boolean jaDeuBaixa) {
 		this.jaDeuBaixa = jaDeuBaixa;
 	}
@@ -197,7 +208,23 @@ public class Venda implements Serializable, OrigemSaida{
 	public String getDescricao() {
 		return this.observacao;
 	}
+	@Override
+	public String getDocumento() {
+		return "Venda fechada, id = " + this.getId();
+	}
 
+	@Override
+	public LocalDate getDataMovimentacao() {
+	
+		return this.getDataAbertura();
+	}
+
+	@Override
+	public List<ProdutoMovimentacao> getProdutosMovimentacao() {
+		return produtosVenda.stream().map(x -> new ProdutoMovimentacao(x.getProduto(), x.getQuantidade(), 
+				BigDecimal.valueOf(x.getValorVendaSemDesconto()).subtract(BigDecimal.valueOf(x.getDescontoUnitario()))))
+				  .collect(Collectors.toList());
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -223,6 +250,5 @@ public class Venda implements Serializable, OrigemSaida{
 		return true;
 	}
 
-	
-	
+
 }

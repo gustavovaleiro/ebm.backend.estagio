@@ -40,7 +40,7 @@ public class ProdutoVenda {
 	public void setQuantidade(double quantidade) {
 		this.quantidade = quantidade;
 	}
-	public double getValorVenda() {
+	public double getValorVendaSemDesconto() {
 		return valorVenda.doubleValue();
 	}
 	public void setValorVenda(BigDecimal valorVenda) {

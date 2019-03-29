@@ -10,6 +10,7 @@ public class OSAberta implements OSEstadoOperations{
 
 	@Override
 	public OSEstado aprovar(OrdemServico os) {
+		os.setAprovada(true);
 		return OSEstado.APROVADA;
 		
 	}

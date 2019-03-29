@@ -2,6 +2,7 @@ package com.ebm.comercial.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class OrdemServico extends Venda {
 	private Integer estadoC;
 	
 	@OneToMany
-	private Set<ServicoOrdem> servicos;
+	private Set<ServicoOrdem> servicos = new HashSet<ServicoOrdem>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<FuncionarioFuncao> funcionario;

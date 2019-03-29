@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 public class Saida extends Movimentacao {
 	private static final long serialVersionUID = 1L;
 
-	private OrigemSaida origemSaida;
+	private OrigemMovimentacao origemSaida;
 
 	@OneToMany(mappedBy = "id.saida")
 	private Set<ProdutoSaida> produtos = new HashSet<ProdutoSaida>();
@@ -18,7 +18,7 @@ public class Saida extends Movimentacao {
 		super();
 	}
 
-	public Saida(Integer id, String documento, String descricao, LocalDate dataMovimentacao, OrigemSaida saida) {
+	public Saida(Integer id, String documento, String descricao, LocalDate dataMovimentacao, OrigemMovimentacao saida) {
 		super(id, documento, descricao, dataMovimentacao);
 		this.origemSaida = saida;
 	}
@@ -31,11 +31,11 @@ public class Saida extends Movimentacao {
 		return produtos.stream().mapToDouble(x -> x.getLucroTotalEstimado()).sum();
 	}
 
-	public OrigemSaida getOrigemSaida() {
+	public OrigemMovimentacao getOrigemSaida() {
 		return origemSaida;
 	}
 
-	public void setOrigemSaida(OrigemSaida saidaInterna) {
+	public void setOrigemSaida(OrigemMovimentacao saidaInterna) {
 		this.origemSaida = saidaInterna;
 	}
 

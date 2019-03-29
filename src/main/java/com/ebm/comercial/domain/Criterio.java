@@ -2,9 +2,6 @@ package com.ebm.comercial.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.OptionalDouble;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,25 +9,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 import com.ebm.auth.Usuario;
+
 @Entity
-public class AvaliacaoServico  implements Serializable{
+public class Criterio implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	@ManyToOne
-	private Usuario entrada;
-	@OneToOne(mappedBy="avaliacao")
-	@Column(nullable = false)
-	private OrdemServico servico;
-	@Column(length = 400)
-	private String comentario;
-	@OneToMany
-	private Set<CriterioAvaliado> avaliacoes = new HashSet<CriterioAvaliado>();
+	@Column(nullable = false, length = 60)
+	private String nome;
+	@Column(nullable = false, length = 240)
+	private String descricao;
+	private boolean ativo;
 	
 	private LocalDateTime  dataCadastro = LocalDateTime.now();
 	@ManyToOne
@@ -38,15 +30,13 @@ public class AvaliacaoServico  implements Serializable{
 	private LocalDateTime dataUltimaModificacao;
 	@ManyToOne
 	private Usuario ultimaModificacao;
-	
-
-	public AvaliacaoServico() {}
-	public AvaliacaoServico(Integer id, Usuario entrada, OrdemServico servico, String comentario) {
+	public Criterio() {}
+	public Criterio(Integer id, String nome, String descricao, boolean ativo) {
 		super();
 		this.id = id;
-		this.entrada = entrada;
-		this.servico = servico;
-		this.comentario = comentario;
+		this.nome = nome;
+		this.descricao = descricao;
+		this.ativo = ativo;
 	}
 	public Integer getId() {
 		return id;
@@ -54,36 +44,24 @@ public class AvaliacaoServico  implements Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Usuario getEntrada() {
-		return entrada;
+	public String getNome() {
+		return nome;
 	}
-	public void setEntrada(Usuario entrada) {
-		this.entrada = entrada;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
-	public OrdemServico getServico() {
-		return servico;
+	public String getDescricao() {
+		return descricao;
 	}
-	public void setServico(OrdemServico servico) {
-		this.servico = servico;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
-	public String getComentario() {
-		return comentario;
+	public boolean isAtivo() {
+		return ativo;
 	}
-	public void setComentario(String comentario) {
-		this.comentario = comentario;
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
-	public Set<CriterioAvaliado> getAvaliacoes() {
-		return avaliacoes;
-	}
-	public void setAvaliacoes(Set<CriterioAvaliado> avaliacoes) {
-		this.avaliacoes = avaliacoes;
-	}
-	public double getMedia() {
-		
-		OptionalDouble average = avaliacoes.stream().mapToDouble(x -> x.getNota()).average();
-		return average.orElse(0d);
-	}
-	
 	public LocalDateTime getDataCadastro() {
 		return dataCadastro;
 	}
@@ -108,6 +86,7 @@ public class AvaliacaoServico  implements Serializable{
 	public void setUltimaModificacao(Usuario ultimaModificacao) {
 		this.ultimaModificacao = ultimaModificacao;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -115,6 +94,8 @@ public class AvaliacaoServico  implements Serializable{
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -123,7 +104,7 @@ public class AvaliacaoServico  implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AvaliacaoServico other = (AvaliacaoServico) obj;
+		Criterio other = (Criterio) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -132,5 +113,6 @@ public class AvaliacaoServico  implements Serializable{
 		return true;
 	}
 	
-
+	
+	
 }
