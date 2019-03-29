@@ -2,17 +2,21 @@ package com.ebm.estoque.domain;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+@Entity
 public class ProdutoEntrada {
-	
+	@EmbeddedId
 	private ProdutoEntradaPK id = new ProdutoEntradaPK();
-	
+	@Column(nullable = false)
 	private BigDecimal valorUnitario;
-	
-	private int quantidade;
+	@Column(nullable = false)
+	private double quantidade;
 	
 	public ProdutoEntrada() {}
 
-	public ProdutoEntrada(Produto produto, Entrada entrada,BigDecimal valorUnitario, int quantidade) {
+	public ProdutoEntrada(Produto produto, Entrada entrada,BigDecimal valorUnitario, double quantidade) {
 		this.id.setProduto(produto);
 		this.id.setEntrada(entrada);
 		this.valorUnitario = valorUnitario;
@@ -42,15 +46,15 @@ public class ProdutoEntrada {
 		this.valorUnitario = valorUnitario;
 	}
 
-	public int getQuantidade() {
+	public double getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(int quantidade) {
+	public void setQuantidade(double quantidade) {
 		this.quantidade = quantidade;
 	}
-	public BigDecimal getSubTotal() {
-		return valorUnitario.multiply(BigDecimal.valueOf(quantidade));
+	public double getSubTotal() {
+		return valorUnitario.multiply(BigDecimal.valueOf(quantidade)).doubleValue();
 		
 	}
 

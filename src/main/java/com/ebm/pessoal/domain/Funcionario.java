@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.ebm.auth.Usuario;
+
 @Entity
 public class Funcionario implements Serializable  {
 	private static final long serialVersionUID = 1L;
@@ -28,6 +30,8 @@ public class Funcionario implements Serializable  {
 	
 	@Column( name = "funcionario_data_admissao")
 	private LocalDate dataDeAdmissao;
+	@OneToOne
+	private Usuario usuario;
 
 	private BigDecimal comissao;
 	
@@ -107,7 +111,16 @@ public class Funcionario implements Serializable  {
 	public void setAdicionalPessoal(BigDecimal adicionalPessoal) {
 		this.adicionalPessoal = adicionalPessoal;
 	}
+	
 
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

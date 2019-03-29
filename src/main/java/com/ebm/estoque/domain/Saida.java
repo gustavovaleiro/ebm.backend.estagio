@@ -1,9 +1,7 @@
 package com.ebm.estoque.domain;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.OneToMany;
@@ -11,7 +9,7 @@ import javax.persistence.OneToMany;
 public class Saida extends Movimentacao {
 	private static final long serialVersionUID = 1L;
 
-	private Optional<OrigemSaida> origemSaida = Optional.empty();
+	private OrigemSaida origemSaida;
 
 	@OneToMany(mappedBy = "id.saida")
 	private Set<ProdutoSaida> produtos = new HashSet<ProdutoSaida>();
@@ -22,23 +20,23 @@ public class Saida extends Movimentacao {
 
 	public Saida(Integer id, String documento, String descricao, LocalDate dataMovimentacao, OrigemSaida saida) {
 		super(id, documento, descricao, dataMovimentacao);
-		this.origemSaida = Optional.of(saida);
+		this.origemSaida = saida;
 	}
 
-	public BigDecimal getValorTotal() {
-		return BigDecimal.valueOf(produtos.stream().mapToDouble(x -> x.getSubTotal().doubleValue()).sum());
+	public double getValorTotal() {
+		return produtos.stream().mapToDouble(x -> x.getSubTotal()).sum();
 	}
 
-	public BigDecimal getLucroTotalEstimado() {
-		return BigDecimal.valueOf(produtos.stream().mapToDouble(x -> x.getLucroTotalEstimado().doubleValue()).sum());
+	public double getLucroTotalEstimado() {
+		return produtos.stream().mapToDouble(x -> x.getLucroTotalEstimado()).sum();
 	}
 
-	public Optional<OrigemSaida> getOrigemSaida() {
+	public OrigemSaida getOrigemSaida() {
 		return origemSaida;
 	}
 
 	public void setOrigemSaida(OrigemSaida saidaInterna) {
-		this.origemSaida = Optional.of(saidaInterna);
+		this.origemSaida = saidaInterna;
 	}
 
 	public Set<ProdutoSaida> getProdutos() {

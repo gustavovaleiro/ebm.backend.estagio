@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+import com.ebm.pessoal.domain.Funcionario;
 
 @Entity
 public class Usuario {
@@ -26,6 +29,8 @@ public class Usuario {
 	@ManyToOne
 	@Column(nullable = false)
 	private Grupo grupo;
+	@OneToOne(mappedBy = "usuario")
+	private Funcionario funcionario;
 
 	public Usuario() {}
 	
@@ -75,6 +80,14 @@ public class Usuario {
 
 	public void setGrupo(Grupo grupo) {
 		this.grupo = grupo;
+	}
+	
+	public Funcionario getFuncionario() {
+		return funcionario;
+	}
+
+	public void setFuncionario(Funcionario funcionario) {
+		this.funcionario = funcionario;
 	}
 
 	@Override

@@ -6,11 +6,12 @@ import java.util.Set;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
 import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+@Entity
 public class GrupoPermissao {
 
 	@JsonIgnore

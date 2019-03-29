@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 
 import com.ebm.auth.Usuario;
 
@@ -49,8 +50,10 @@ public abstract class Item implements Serializable {
 	private double margemLucro;
 	private double comissaoVenda;
 	private LocalDateTime  dataCadastro;
+	@ManyToOne
 	private Usuario usuarioCadastro;
 	private LocalDateTime dataUltimaModificacao;
+	@ManyToOne
 	private Usuario ultimaModificacao;
 	
 	public Item() {}

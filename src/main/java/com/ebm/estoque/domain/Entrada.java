@@ -1,6 +1,5 @@
 package com.ebm.estoque.domain;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,8 +39,8 @@ public class Entrada extends Movimentacao{
 		this.produtos = produtos;
 	}
 	
-	public BigDecimal getValorTotal() {
-		 return BigDecimal.valueOf(produtos.stream().mapToDouble(x -> x.getSubTotal().doubleValue()).sum());
+	public double getValorTotal() {
+		 return produtos.stream().mapToDouble(x -> x.getSubTotal()).sum();
 	}
 	
 }

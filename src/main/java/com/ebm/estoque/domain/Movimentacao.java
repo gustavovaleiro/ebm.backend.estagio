@@ -47,7 +47,6 @@ public abstract class Movimentacao implements Serializable{
 	public Integer getId() {
 		return id;
 	}
-
 	public LocalDateTime getDataUltimaModificacao() {
 		return dataUltimaModificacao;
 	}

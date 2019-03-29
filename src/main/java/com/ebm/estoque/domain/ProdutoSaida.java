@@ -2,17 +2,22 @@ package com.ebm.estoque.domain;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+@Entity
 public class ProdutoSaida {
-	
+	@EmbeddedId
 	private ProdutoSaidaPK id = new ProdutoSaidaPK();
 	
+	@Column(nullable = false)
 	private BigDecimal valor_venda;
-	
-	private int quantidade;
+	@Column(nullable = false)
+	private double quantidade;
 	
 	public ProdutoSaida() {}
 
-	public ProdutoSaida(Produto produto, Saida saida,BigDecimal valor_venda, int quantidade) {
+	public ProdutoSaida(Produto produto, Saida saida,BigDecimal valor_venda, double quantidade) {
 		this.id.setProduto(produto);
 		this.id.setSaida(saida);
 		this.valor_venda = valor_venda;
@@ -34,31 +39,31 @@ public class ProdutoSaida {
 	public void setSaida(Saida saida) {
 		this.id.setSaida(saida);
 	}
-	public BigDecimal getValorUnitario() {
-		return valor_venda;
+	public double getValorUnitario() {
+		return valor_venda.doubleValue();
 	}
 
 	public void setValorUnitario(BigDecimal valor_venda) {
 		this.valor_venda = valor_venda;
 	}
 	
-	public int getQuantidade() {
+	public double getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(int quantidade) {
+	public void setQuantidade(double quantidade) {
 		this.quantidade = quantidade;
 	}
 	
-	public BigDecimal getLucroUnitarioEstimado() {
-		return this.valor_venda.subtract(getProduto().getCustoTotal());
+	public double getLucroUnitarioEstimado() {
+		return this.valor_venda.subtract(getProduto().getCustoTotal()).doubleValue();
 	}
-	public BigDecimal getLucroTotalEstimado() {
-		return this.getLucroUnitarioEstimado().multiply(BigDecimal.valueOf(quantidade));
+	public double getLucroTotalEstimado() {
+		return BigDecimal.valueOf(this.getLucroUnitarioEstimado()).multiply(BigDecimal.valueOf(quantidade)).doubleValue();
 	}
 
-	public BigDecimal getSubTotal() {
-		return valor_venda.multiply(BigDecimal.valueOf(quantidade));
+	public double getSubTotal() {
+		return valor_venda.multiply(BigDecimal.valueOf(quantidade)).doubleValue();
 	}
 	
 	
