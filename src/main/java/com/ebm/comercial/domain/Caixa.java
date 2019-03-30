@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -33,6 +34,10 @@ public class Caixa implements Serializable{
 	private LocalDateTime fechamento;
 	@Column(length = 60)
 	private String planoContas;
+	@OneToMany
+	private List<OperacoesCaixa> operacoes;
+	@ManyToOne
+	private Usuario usuario_fechou;
 	
 	@OneToMany
 	private Set<VendaAberta> vendas = new HashSet<VendaAberta>();
@@ -40,10 +45,9 @@ public class Caixa implements Serializable{
 	private LocalDateTime  abertura = LocalDateTime.now();
 	@ManyToOne
 	private Usuario usuarioCadastro;
-	private LocalDateTime dataUltimaModificacao;
-	@ManyToOne
-	private Usuario ultimaModificacao;
-	
+
+
+	private boolean fechado;
 	public Caixa() {}
 
 	public Caixa(Integer id, String codigoCaixa, BigDecimal valorAbertura, LocalDateTime abertura,
@@ -61,7 +65,23 @@ public class Caixa implements Serializable{
 	public Integer getId() {
 		return id;
 	}
-
+	public void sangria(Usuario user, BigDecimal quantia) {
+		operacoes.add(new OperacoesCaixa( TipoOperacao.SANGRIA, user, quantia));
+	}
+	public void reforco(Usuario user, BigDecimal quantia) {
+		operacoes.add(new OperacoesCaixa( TipoOperacao.REFORCO, user, quantia));
+	}
+	public void fechaCaixa(Usuario user) {
+		fechado = true;
+		fechamento = LocalDateTime.now();
+		this.usuario_fechou = user;
+		double valorOperacoes = operacoes.stream().mapToDouble( x-> x.getTipo() == TipoOperacao.REFORCO ?  
+				x.getQuantia().doubleValue() : x.getQuantia().multiply(BigDecimal.valueOf(-1)).doubleValue()).sum();
+		double totalVendas = vendas.stream().mapToDouble( x-> x.getValorTotal()).sum();
+	
+		
+		this.valorFechamento = valorAbertura.add( BigDecimal.valueOf(valorOperacoes )).add(BigDecimal.valueOf(totalVendas));
+	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -130,22 +150,11 @@ public class Caixa implements Serializable{
 		this.usuarioCadastro = usuarioCadastro;
 	}
 
-	public LocalDateTime getDataUltimaModificacao() {
-		return dataUltimaModificacao;
-	}
+	
 
-	public void setDataUltimaModificacao(LocalDateTime dataUltimaModificacao) {
-		this.dataUltimaModificacao = dataUltimaModificacao;
+	public void setFechado(boolean fechado) {
+		this.fechado = fechado;
 	}
-
-	public Usuario getUltimaModificacao() {
-		return ultimaModificacao;
-	}
-
-	public void setUltimaModificacao(Usuario ultimaModificacao) {
-		this.ultimaModificacao = ultimaModificacao;
-	}
-
 
 	@Override
 	public int hashCode() {

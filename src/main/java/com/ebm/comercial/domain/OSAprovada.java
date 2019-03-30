@@ -8,9 +8,6 @@ import com.ebm.estoque.domain.service.MovimentacaoService;
 import com.ebm.exceptions.IlegalStateTransitionException;
 
 public class OSAprovada implements OSEstadoOperations {
-	@Autowired
-	private MovimentacaoService movimentacaoService;
-	
 	@Override
 	public OSEstado aprovar(OrdemServico os) {
 		throw new IlegalStateTransitionException("Você não pode aprovar uma ordem que ja está aprovada, únicas transiçoes permitidas são: produzir, cancelar.");		
@@ -20,7 +17,6 @@ public class OSAprovada implements OSEstadoOperations {
 	@Override
 	public OSEstado cancelar(OrdemServico os) {
 		os.setAprovada(false);
-		movimentacaoService.cancelarBaixaEstoque(os);
 		 return OSEstado.CANCELADA;
 	}
 
@@ -31,7 +27,6 @@ public class OSAprovada implements OSEstadoOperations {
 
 	@Override
 	public OSEstado produzir(OrdemServico os) {
-		movimentacaoService.baixaEstoque(os);
 		return OSEstado.PRODUCAO;
 	}
 

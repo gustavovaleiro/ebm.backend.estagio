@@ -123,7 +123,7 @@ public class OrdemServico extends Venda {
 		return this.servicos.stream().mapToDouble(x -> x.getSubTotal()).sum();
 	}
 	public double getValorTotal() {
-		return super.getValorTotalProdutos() + this.getValorTotalServicos();
+		return super.getValorTotal() + this.getValorTotalServicos();
 	}
 	public double getLucroServico() {
 		return this.servicos.stream().mapToDouble(x -> x.getLucro()).sum();

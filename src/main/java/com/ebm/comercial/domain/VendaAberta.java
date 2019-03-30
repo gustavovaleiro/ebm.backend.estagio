@@ -121,7 +121,7 @@ public class VendaAberta implements OrigemMovimentacao{
 		this.produtos = produtos;
 	}
 	public double getValorTotal() {
-		return produtos.stream().mapToDouble(ProdutoVendaAberta::getSubTotal).sum();
+		return produtos.stream().mapToDouble(ProdutoVendaAberta::getSubTotal).sum() - descontoGeral.doubleValue();
 	}
 	public double getLucroTotal() {
 		return produtos.stream().mapToDouble(ProdutoVendaAberta::getLucroUnitario).sum();

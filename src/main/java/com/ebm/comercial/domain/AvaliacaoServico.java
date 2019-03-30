@@ -78,7 +78,7 @@ public class AvaliacaoServico  implements Serializable{
 	public void setAvaliacoes(Set<CriterioAvaliado> avaliacoes) {
 		this.avaliacoes = avaliacoes;
 	}
-	public double getMedia() {
+	public double getMediaAvaliacao() {
 		
 		OptionalDouble average = avaliacoes.stream().mapToDouble(x -> x.getNota()).average();
 		return average.orElse(0d);

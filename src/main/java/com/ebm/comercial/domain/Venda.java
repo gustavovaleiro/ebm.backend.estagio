@@ -72,7 +72,7 @@ public class Venda implements Serializable, OrigemMovimentacao{
 		this.observacao = observacao;
 	}
 	
-	public double getValorTotalProdutos() {
+	public double getValorTotal() {
 		return produtosVenda.stream().mapToDouble(x-> x.getSubTotal()).sum(); 
 	}
 
