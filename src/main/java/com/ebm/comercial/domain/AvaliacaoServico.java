@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.ebm.auth.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class AvaliacaoServico  implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -24,8 +25,8 @@ public class AvaliacaoServico  implements Serializable{
 	private Integer id;
 	@ManyToOne
 	private Usuario entrada;
+	@JsonIgnore
 	@OneToOne(mappedBy="avaliacao")
-	@Column(nullable = false)
 	private OrdemServico servico;
 	@Column(length = 400)
 	private String comentario;

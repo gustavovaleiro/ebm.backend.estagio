@@ -1,33 +1,42 @@
 package com.ebm.estoque.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-
+@Entity
+@DiscriminatorValue("E")
 public class Entrada extends Movimentacao{
 	private static final long serialVersionUID = 1L;
 	
-	private Fornecedor fornecedor;
+	@ManyToMany
+	private List<Fornecedor> fornecedor = new ArrayList<>();
 	
 	@OneToMany(mappedBy="id.entrada")
 	private Set<ProdutoEntrada> produtos = new HashSet<ProdutoEntrada>();
 	
 	public Entrada() {
-		super();
+
 	}
 
-	public Entrada(Integer id, String documento, String descricao, LocalDate dataMovimentacao, Fornecedor fornecedor) {
+	public Entrada(Integer id, String documento, String descricao, LocalDate dataMovimentacao) {
 		super(id, documento, descricao, dataMovimentacao);
-		this.fornecedor = fornecedor;
+		
 	}
 
-	public Fornecedor getFornecedor() {
+	
+
+	public List<Fornecedor> getFornecedor() {
 		return fornecedor;
 	}
 
-	public void setFornecedor(Fornecedor fornecedor) {
+	public void setFornecedor(List<Fornecedor> fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 

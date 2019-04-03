@@ -43,7 +43,6 @@ public class Venda implements Serializable, OrigemMovimentacao{
 	private LocalDate dataAbertura;
 	private BigDecimal descontoGeral;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(nullable = false)
 	private Cliente cliente;
 	@OneToOne
 	private Usuario autorizouDesconto;

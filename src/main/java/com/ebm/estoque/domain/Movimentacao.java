@@ -5,15 +5,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 
 import com.ebm.auth.Usuario;
 
 @Entity
-public abstract class Movimentacao implements Serializable{
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name  = "tipo", discriminatorType= DiscriminatorType.STRING, length=1)
+public  class Movimentacao implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -28,8 +35,10 @@ public abstract class Movimentacao implements Serializable{
 	private LocalDate dataMovimentacao;
 	
 	private LocalDateTime  dataCadastro;
+	@ManyToOne
 	private Usuario usuarioCadastro;
 	private LocalDateTime dataUltimaModificacao;
+	@ManyToOne
 	private Usuario ultimaModificacao;
 	
 	public Movimentacao() {

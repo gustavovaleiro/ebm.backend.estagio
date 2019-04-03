@@ -23,10 +23,10 @@ public class Grupo implements Serializable{
 	@Column(nullable = false, length = 60)
 	private String nome;
 	
-	@OneToMany(mappedBy="grupo")
+	@OneToMany
 	private List<Usuario>  usuarios = new ArrayList<Usuario>();
 	
-	@OneToMany(mappedBy="id.pedido")
+	@OneToMany(mappedBy="id.grupo")
 	private List<GrupoPermissao> permissoes = new ArrayList<GrupoPermissao>();
 	
 	public Grupo() {}
@@ -68,6 +68,11 @@ public class Grupo implements Serializable{
 	public void addPermissao(GrupoPermissao permissao) {
 		permissoes.add(permissao);
 	}
+	public void setUsuarios(List<Usuario> usersPersist) {
+		this.usuarios = usersPersist;
+		
+	}
+	
 
 	@Override
 	public int hashCode() {
@@ -93,7 +98,8 @@ public class Grupo implements Serializable{
 			return false;
 		return true;
 	}
-	
+
+
 	
 	
 }

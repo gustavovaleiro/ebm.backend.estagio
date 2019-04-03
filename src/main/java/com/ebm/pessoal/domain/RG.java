@@ -6,14 +6,24 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class RG {
 	
-	@Column(name="pessoa_fisica_RG", length = 11)
+	@Column( length = 11)
 	private String RG;
 	
-	@Column(name="pessoa_fisica_RG_EMISSOR", length = 4)
-	private String Emissor;
+	@Column( length = 4)
+	private String emissor;
 	
 	@Column(name="pessoa_fisica_RG_UF")
 	private Estado UF;
+	
+	
+	public RG() {}
+	
+	public RG(String rG, String emissor, Estado uF) {
+		super();
+		RG = rG;
+		this.emissor = emissor;
+		UF = uF;
+	}
 
 	public String getRG() {
 		return RG;
@@ -24,11 +34,11 @@ public class RG {
 	}
 
 	public String getEmissor() {
-		return Emissor;
+		return emissor;
 	}
 
 	public void setEmissor(String emissor) {
-		Emissor = emissor;
+		this.emissor = emissor;
 	}
 	
 	

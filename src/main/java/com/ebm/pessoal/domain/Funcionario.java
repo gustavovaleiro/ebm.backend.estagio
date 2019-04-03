@@ -25,7 +25,6 @@ public class Funcionario implements Serializable  {
 	private Pessoa pessoa;
 	
 	@OneToOne
-	@Column(nullable = false, name = "funcionario_cargo")
 	private Cargo cargo;
 	
 	@Column( name = "funcionario_data_admissao")
@@ -33,13 +32,14 @@ public class Funcionario implements Serializable  {
 	@OneToOne
 	private Usuario usuario;
 
-	private BigDecimal comissao;
+	private double comissao;
 	
 	private BigDecimal adicionalPessoal;
 	
 	private String matricula;
 	
-	public Funcionario(Integer id, Pessoa pessoa, String matricula, Cargo cargo, LocalDate dataDeAdmissao, BigDecimal comissao,
+	public Funcionario() {}
+	public Funcionario(Integer id, Pessoa pessoa, String matricula, Cargo cargo, LocalDate dataDeAdmissao, double comissao,
 			BigDecimal adicionalPessoal) {
 		this.id = id;
 		this.pessoa = pessoa;
@@ -96,11 +96,11 @@ public class Funcionario implements Serializable  {
 		this.dataDeAdmissao = dataDeAdmissao;
 	}
 
-	public BigDecimal getComissao() {
+	public double getComissao() {
 		return comissao;
 	}
 
-	public void setComissao(BigDecimal comissao) {
+	public void setComissao(double comissao) {
 		this.comissao = comissao;
 	}
 

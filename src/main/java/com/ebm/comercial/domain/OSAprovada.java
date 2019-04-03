@@ -2,9 +2,6 @@ package com.ebm.comercial.domain;
 
 import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.ebm.estoque.domain.service.MovimentacaoService;
 import com.ebm.exceptions.IlegalStateTransitionException;
 
 public class OSAprovada implements OSEstadoOperations {

@@ -5,14 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "tab_cidade")
+
 public class Cidade {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "cidade_id")
 	private Integer id;
 
 	@Column(nullable = false, length = 60)
@@ -20,7 +18,7 @@ public class Cidade {
 	
 	@Column(nullable = false)
 	private Estado estado;
-	
+	public Cidade() {}
 	
 	public Cidade(Integer id, String nome, Estado estado) {
 		this.id = id;

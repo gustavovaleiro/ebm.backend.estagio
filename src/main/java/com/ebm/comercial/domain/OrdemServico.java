@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.ebm.auth.Usuario;
+import com.ebm.estoque.domain.Servico;
 import com.ebm.pessoal.domain.Cliente;
 
 @Entity
@@ -30,7 +32,7 @@ public class OrdemServico extends Venda {
 	private Integer estadoC;
 	
 	@OneToMany
-	private Set<ServicoOrdem> servicos = new HashSet<ServicoOrdem>();
+	private Set<ServicoOrdem> servicosOrdem = new HashSet<ServicoOrdem>();
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<FuncionarioFuncao> funcionario;
@@ -78,12 +80,16 @@ public class OrdemServico extends Venda {
 	public OSEstadoOperations getEstado() {
 		return estado;
 	}
-	public Set<ServicoOrdem> getServicos() {
-		return servicos;
+	public Set<ServicoOrdem> getServicosOrdem() {
+		return servicosOrdem;
 	}
-
-	public void setServicos(Set<ServicoOrdem> servicos) {
-		this.servicos = servicos;
+	
+	public Set<Servico> getServicos(){
+		return this.servicosOrdem.stream().map(ServicoOrdem::getServico).collect(Collectors.toSet());
+	}
+	
+	public void setServicosOrdem(Set<ServicoOrdem> servicos) {
+		this.servicosOrdem = servicos;
 	}
 
 	public List<FuncionarioFuncao> getFuncionario() {
@@ -120,18 +126,19 @@ public class OrdemServico extends Venda {
 	}
 	
 	public double getValorTotalServicos() {
-		return this.servicos.stream().mapToDouble(x -> x.getSubTotal()).sum();
+		return this.servicosOrdem.stream().mapToDouble(x -> x.getSubTotal()).sum();
 	}
 	public double getValorTotal() {
 		return super.getValorTotal() + this.getValorTotalServicos();
 	}
 	public double getLucroServico() {
-		return this.servicos.stream().mapToDouble(x -> x.getLucro()).sum();
+		return this.servicosOrdem.stream().mapToDouble(x -> x.getLucro()).sum();
 	}
 	public double getLucroTotal() {
 		return super.getLucroProdutos() + this.getLucroServico();
 	}
 	
+
 	public boolean isAtraso() {
 		return atraso;
 	}

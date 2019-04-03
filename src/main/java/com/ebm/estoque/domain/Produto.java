@@ -7,11 +7,12 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import com.ebm.auth.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+@Entity
 @DiscriminatorValue("P")
 public class Produto extends Item {
 	private static final long serialVersionUID = 1L;

@@ -27,7 +27,6 @@ public class Usuario {
 	private String senha;
 	
 	@ManyToOne
-	@Column(nullable = false)
 	private Grupo grupo;
 	@OneToOne(mappedBy = "usuario")
 	private Funcionario funcionario;

@@ -37,7 +37,7 @@ public class VendaAberta implements OrigemMovimentacao{
 	private LocalDateTime dataUltimaModificacao;
 	@ManyToOne
 	private Usuario ultimaModificacao;
-	@OneToMany(mappedBy = "id.vendaAberta")
+	@OneToMany(mappedBy = "id.venda")
 	private List<ProdutoVendaAberta> produtos = new ArrayList<ProdutoVendaAberta>();
 	@JsonIgnore
 	@ManyToOne

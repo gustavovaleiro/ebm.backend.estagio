@@ -1,10 +1,8 @@
 package com.ebm.auth;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
@@ -18,8 +16,9 @@ public class GrupoPermissao {
 	@EmbeddedId
 	private GrupoPermissaoPK id  = new GrupoPermissaoPK();
 	
-	@ElementCollection
-	private Set<HttpMethod> modos = new HashSet<>();
+	private boolean read;
+	private boolean write;
+	
 	public  GrupoPermissao() {}
 	public GrupoPermissao(Grupo grupo, Permissao permissao) {
 		this.id.setGrupo(grupo);
@@ -38,15 +37,20 @@ public class GrupoPermissao {
 	public void setPermissao(Permissao permissao) {
 		this.id.setPermissao(permissao);
 	}
-	public Set<HttpMethod> getModos() {
-		return Collections.unmodifiableSet(modos);
+
+	public boolean podeLer() {
+		return read;
 	}
-	public void addModo(HttpMethod modo) {
-		this.modos.add(modo);
+	public void setRead(boolean read) {
+		this.read = read;
 	}
-	public void removeMode(HttpMethod modo) {
-		this.modos.remove(modo);
+	public boolean podeEscrever() {
+		return write;
 	}
+	public void setWrite(boolean write) {
+		this.write = write;
+	}
+	
 	
 	
 	

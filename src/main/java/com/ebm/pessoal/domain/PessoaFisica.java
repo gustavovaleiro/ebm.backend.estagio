@@ -3,8 +3,9 @@ package com.ebm.pessoal.domain;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
@@ -17,10 +18,10 @@ public class PessoaFisica extends Pessoa {
 	private String cpf; 
 	private LocalDate dataNascimento;
 	
-	@OneToOne
-	@Column(nullable = false, length = 10)
+	@Embedded
 	private RG RG;
 	private String nacionalidade;
+	@ManyToOne
 	private Cidade naturalidade;
 	
 	public PessoaFisica() {}

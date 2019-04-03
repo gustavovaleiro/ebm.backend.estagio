@@ -24,7 +24,6 @@ public class OperacoesCaixa implements Serializable{
 	@Column(nullable = false)
 	private TipoOperacao tipo;
 	@ManyToOne
-	@Column(nullable = false)
 	private Usuario usuarioAutorizou;
 	@Column(nullable = false)
 	private LocalDateTime momento = LocalDateTime.now();

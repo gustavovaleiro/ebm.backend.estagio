@@ -2,14 +2,9 @@ package com.ebm.comercial.domain;
 
 import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.ebm.estoque.domain.service.MovimentacaoService;
 import com.ebm.exceptions.IlegalStateTransitionException;
 
 public class OSProducao implements OSEstadoOperations {
-	@Autowired
-	private MovimentacaoService movimentacaoService;
 	
 	@Override
 	public OSEstado aprovar(OrdemServico os) {
@@ -19,7 +14,6 @@ public class OSProducao implements OSEstadoOperations {
 	@Override
 	public OSEstado cancelar(OrdemServico os) {
 		os.setAprovada(false);
-		movimentacaoService.cancelarBaixaEstoque(os);
 		 return OSEstado.CANCELADA;
 	}
 	

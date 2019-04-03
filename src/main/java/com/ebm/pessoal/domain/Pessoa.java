@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.ebm.auth.Usuario;
@@ -30,14 +31,16 @@ public abstract class Pessoa implements Serializable{
 	@Column(length = 60, nullable = false)
 	private String nome;
 	private LocalDateTime  dataCadastro;
+	@ManyToOne
 	private Usuario usuarioCadastro;
 	private LocalDateTime dataUltimaModificacao;
+	@ManyToOne
 	private Usuario ultimaModificacao;
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany
 	private List<Email> email = new ArrayList<Email>();
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany
 	private List<Telefone> telefone = new ArrayList<Telefone>();
-	@OneToMany(mappedBy = "pessoa")
+	@OneToMany
 	private List<Endereco> endereco = new ArrayList<Endereco>();
 	private Integer tipo;
 	

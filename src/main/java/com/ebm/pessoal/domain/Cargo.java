@@ -20,7 +20,7 @@ public class Cargo implements Serializable{
 	private String nomeCargo;
 	@Column( nullable = false)
 	private BigDecimal salarioBase;
-
+	public Cargo() {}
 	public Cargo(Integer id, String nomeCargo, BigDecimal salarioBase) {
 		this.id = id;
 		this.nomeCargo = nomeCargo;

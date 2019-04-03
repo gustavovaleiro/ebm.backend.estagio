@@ -117,6 +117,12 @@ public class Caixa implements Serializable{
 	public void setValorFechamento(BigDecimal valorFechamento) {
 		this.valorFechamento = valorFechamento;
 	}
+	
+	
+
+	public boolean isFechado() {
+		return fechado;
+	}
 
 	public LocalDateTime getFechamento() {
 		return fechamento;

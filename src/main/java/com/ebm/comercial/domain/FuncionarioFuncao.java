@@ -1,15 +1,21 @@
 package com.ebm.comercial.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import com.ebm.pessoal.domain.Funcionario;
+
+
 @Entity
 public class FuncionarioFuncao  {
 	
-		
-	@Column(nullable = false)
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer id;
+	@ManyToOne
 	private Funcionario funcionario;
 
 	private String funcao;
@@ -20,7 +26,11 @@ public class FuncionarioFuncao  {
 		this.funcionario = funcionario;
 		this.funcao = funcao;
 	}
+	
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public Funcionario getFuncionario() {
 		return funcionario;
 	}

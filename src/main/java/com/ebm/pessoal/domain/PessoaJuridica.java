@@ -13,8 +13,8 @@ public class PessoaJuridica extends Pessoa  {
 	private String cnpj; 
 	
 	@Column(nullable = false)
-	private String RazaoSocial;
-	private String incricaoEstadual;
+	private String razaoSocial;
+	private String inscricaoEstadual;
 	private String inscricaoMunicipal;
 	
 	public PessoaJuridica() {}
@@ -23,8 +23,8 @@ public class PessoaJuridica extends Pessoa  {
 	public PessoaJuridica(Integer id, String nome, String cnpj, String razaoSocial, String incricaoEstadual, String inscricaoMunicipal) {
 		super(id, nome, TipoPessoa.PESSOAJURIDICA);
 		this.cnpj = cnpj;
-		RazaoSocial = razaoSocial;
-		this.incricaoEstadual = incricaoEstadual;
+		this.razaoSocial = razaoSocial;
+		this.inscricaoEstadual = incricaoEstadual;
 		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
 
@@ -40,22 +40,22 @@ public class PessoaJuridica extends Pessoa  {
 
 
 	public String getRazaoSocial() {
-		return RazaoSocial;
+		return razaoSocial;
 	}
 
 
 	public void setRazaoSocial(String razaoSocial) {
-		RazaoSocial = razaoSocial;
+		this.razaoSocial = razaoSocial;
 	}
 
 
 	public String getIncricaoEstadual() {
-		return incricaoEstadual;
+		return inscricaoEstadual;
 	}
 
 
 	public void setIncricaoEstadual(String incricaoEstadual) {
-		this.incricaoEstadual = incricaoEstadual;
+		this.inscricaoEstadual = incricaoEstadual;
 	}
 
 

@@ -25,7 +25,7 @@ public class Endereco implements Serializable {
 	@ManyToOne
 	@JoinColumn(nullable = false, name = "endereco_cidade")
 	private Cidade cidade;
-	private int numero;
+	private String numero;
 	@Column(length = 140)
 	private String complemento;
 	@Column(nullable = false, length = 8)
@@ -35,7 +35,7 @@ public class Endereco implements Serializable {
 
 	public Endereco() {}
 
-	public Endereco(Integer id, String rua, String bairro, Cidade cidade, int numero, String complemento, String cEP,TipoEndereco tipo) {
+	public Endereco(Integer id, String rua, String bairro, Cidade cidade, String numero, String complemento, String cEP,TipoEndereco tipo) {
 		this.id = id;
 		this.rua = rua;
 		this.bairro = bairro;
@@ -78,11 +78,11 @@ public class Endereco implements Serializable {
 		this.cidade = cidade;
 	}
 
-	public int getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
-	public void setNumero(int numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 
