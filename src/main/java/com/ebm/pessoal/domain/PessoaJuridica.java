@@ -17,7 +17,9 @@ public class PessoaJuridica extends Pessoa  {
 	private String inscricaoEstadual;
 	private String inscricaoMunicipal;
 	
-	public PessoaJuridica() {}
+	public PessoaJuridica() {
+		super.setTipo(TipoPessoa.PESSOAJURIDICA);
+	}
 
 
 	public PessoaJuridica(Integer id, String nome, String cnpj, String razaoSocial, String incricaoEstadual, String inscricaoMunicipal) {
@@ -49,12 +51,12 @@ public class PessoaJuridica extends Pessoa  {
 	}
 
 
-	public String getIncricaoEstadual() {
+	public String getInscricaoEstadual() {
 		return inscricaoEstadual;
 	}
 
 
-	public void setIncricaoEstadual(String incricaoEstadual) {
+	public void setInscricaoEstadual(String incricaoEstadual) {
 		this.inscricaoEstadual = incricaoEstadual;
 	}
 

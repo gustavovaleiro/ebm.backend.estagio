@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -37,10 +38,13 @@ public abstract class Pessoa implements Serializable{
 	@ManyToOne
 	private Usuario ultimaModificacao;
 	@OneToMany
+	@JoinColumn(name = "pessoa_id")
 	private List<Email> email = new ArrayList<Email>();
 	@OneToMany
+	@JoinColumn(name = "pessoa_id")
 	private List<Telefone> telefone = new ArrayList<Telefone>();
 	@OneToMany
+	@JoinColumn(name = "pessoa_id")
 	private List<Endereco> endereco = new ArrayList<Endereco>();
 	private Integer tipo;
 	

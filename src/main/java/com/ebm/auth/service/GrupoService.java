@@ -45,10 +45,10 @@ public class GrupoService {
 	    
 		//percorrendo cada grupoPermissao e setando o grupo criado
 		for(GrupoPermissao permissao : grupo.getPermissoes()) {
-			permissao.setPermissao(grupoPermissaoService.find(permissao.getPermissao().getId()));
+			permissao.setPermissao(grupoPermissaoService.findPermissao(permissao.getPermissao().getId()));
 			permissao.setGrupo(grupo);
 		}
-		grupoPermissaoService.saveAll(grupo.getPermissoes());
+		grupoPermissaoService.insertAll(grupo.getPermissoes());
 		
 		
 		return grupo;
@@ -60,6 +60,7 @@ public class GrupoService {
 		 return grupoRepository.save(newUser);
 	}
 	public void deleteById(Integer id) {
+		find(id);
 		grupoRepository.deleteById(id);
 	}
 	

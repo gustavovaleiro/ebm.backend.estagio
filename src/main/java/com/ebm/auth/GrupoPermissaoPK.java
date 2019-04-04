@@ -19,7 +19,9 @@ public class GrupoPermissaoPK implements Serializable{
 		this.grupo = grupo;
 		this.permissao = permissao;
 	}
-
+	public GrupoPermissaoPK(GrupoPermissao permissao) {
+		this(permissao.getGrupo(), permissao.getPermissao());
+	}
 	public Grupo getGrupo() {
 		return grupo;
 	}

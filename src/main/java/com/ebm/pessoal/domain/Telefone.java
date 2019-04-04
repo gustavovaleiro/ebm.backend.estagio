@@ -3,7 +3,6 @@ package com.ebm.pessoal.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,20 +17,19 @@ public class Telefone implements Serializable {
 	private Integer id;
 	
 	@Column(length = 3, nullable = false)
-	private String DDD;
+	private String dDD;
 	
 	@Column(length = 9, nullable = false)
 	private String numero;
 	
-	@Embedded
-	private TipoTelefone tipo;
+	private String tipo;
 	
 	public Telefone() {}
 	
-	public Telefone(Integer id, String dDD, String numero, TipoTelefone tipo) {
+	public Telefone(Integer id, String dDD, String numero, String tipo) {
 		super();
 		this.id = id;
-		DDD = dDD;
+		this.dDD = dDD;
 		this.numero = numero;
 		this.tipo = tipo;
 	}
@@ -43,10 +41,10 @@ public class Telefone implements Serializable {
 	}
 	
 	public String getDDD() {
-		return DDD;
+		return dDD;
 	}
 	public void setDDD(String dDD) {
-		DDD = dDD;
+		this.dDD = dDD;
 	}
 	
 	public String getNumero() {
@@ -54,6 +52,14 @@ public class Telefone implements Serializable {
 	}
 	public void setNumero(String numero) {
 		this.numero = numero;
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	@Override

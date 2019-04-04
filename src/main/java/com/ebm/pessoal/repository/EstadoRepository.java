@@ -6,4 +6,5 @@ import com.ebm.pessoal.domain.Estado;
 
 public interface EstadoRepository extends JpaRepository<Estado, Integer> {
 
+
 }

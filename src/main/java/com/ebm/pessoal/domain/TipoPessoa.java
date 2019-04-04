@@ -1,13 +1,13 @@
 package com.ebm.pessoal.domain;
 
 public enum TipoPessoa {
-	PESSOAFISICA(0, "Pessoa Física"), 
+	PESSOAFISICA(0,"Pessoa Fisica"),
 	PESSOAJURIDICA(1, "Pessoa Juridica");
 	
 	private int cod;
 	private String desc;
 	
-	private TipoPessoa(int cod, String desc) {
+    TipoPessoa(int cod, String desc) {
 		this.cod = cod;
 		this.desc = desc;
 	}

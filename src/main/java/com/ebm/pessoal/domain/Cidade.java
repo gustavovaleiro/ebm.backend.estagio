@@ -13,7 +13,7 @@ public class Cidade {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(nullable = false, length = 60)
+	@Column(nullable = false, length = 60, unique = true)
 	private String nome;
 	
 	@Column(nullable = false)

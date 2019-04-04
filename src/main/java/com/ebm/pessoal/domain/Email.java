@@ -17,17 +17,17 @@ public class Email implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(nullable = false, length = 60, name = "email_endereco")
+	@Column(nullable = false, length = 60, unique = true)
 	private String email;
 	
 	@Column(length = 140, name = "email_descricao")
-	private String descricao;	
+	private String tipo;	
 	
 	public Email(){}
-	public Email(String email, String descricao) {
+	public Email(String email, String tipo) {
 	
 		this.email = email;
-		this.descricao = descricao;
+		this.tipo = tipo;
 	}
 	
 	public Integer getId() {
@@ -45,11 +45,11 @@ public class Email implements Serializable {
 		this.email = email;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public String getTipo() {
+		return tipo;
 	}
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	@Override

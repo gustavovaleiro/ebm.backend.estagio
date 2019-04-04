@@ -24,10 +24,12 @@ public class PessoaFisica extends Pessoa {
 	@ManyToOne
 	private Cidade naturalidade;
 	
-	public PessoaFisica() {}
+	public PessoaFisica() {
+		super.setTipo(TipoPessoa.PESSOAFISICA);
+	}
 	
 	public PessoaFisica(Integer id, String nome, String cpf, LocalDate dataNascimento,RG rG, String nacionalidade, Cidade naturalidade) {
-		super(id, nome, TipoPessoa.PESSOAJURIDICA);
+		super(id, nome, TipoPessoa.PESSOAFISICA);
 		this.cpf = cpf;
 		this.dataNascimento = dataNascimento;
 		RG = rG;

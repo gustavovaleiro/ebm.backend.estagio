@@ -30,12 +30,12 @@ public class Endereco implements Serializable {
 	private String complemento;
 	@Column(nullable = false, length = 8)
 	private String CEP;
-	@Embedded
-	private TipoEndereco tipo;
+
+	private String tipo;
 
 	public Endereco() {}
 
-	public Endereco(Integer id, String rua, String bairro, Cidade cidade, String numero, String complemento, String cEP,TipoEndereco tipo) {
+	public Endereco(Integer id, String rua, String bairro, Cidade cidade, String numero, String complemento, String cEP,String tipo) {
 		this.id = id;
 		this.rua = rua;
 		this.bairro = bairro;
@@ -102,11 +102,11 @@ public class Endereco implements Serializable {
 		CEP = cEP;
 	}
 
-	public TipoEndereco getTipo() {
+	public String getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(TipoEndereco tipo) {
+	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 

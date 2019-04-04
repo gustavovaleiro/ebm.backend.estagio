@@ -56,6 +56,7 @@ public class UsuarioService {//implements UserDetailsService {
 		 return userRepository.save(newUser);
 	}
 	public void deleteById(Integer id) {
+		find(id);
 		userRepository.deleteById(id);
 	}
 	public Usuario findByFuncionario(Funcionario funcionario) {

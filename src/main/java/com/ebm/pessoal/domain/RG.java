@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class RG {
 	
-	@Column( length = 11)
+	@Column( length = 11, unique = true)
 	private String RG;
 	
 	@Column( length = 4)
