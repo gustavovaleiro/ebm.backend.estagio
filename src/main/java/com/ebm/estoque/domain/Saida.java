@@ -7,17 +7,14 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
-import com.ebm.comercial.domain.Venda;
 
 @Entity
 @DiscriminatorValue("S")
 public class Saida extends Movimentacao {
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(targetEntity=Venda.class)
-	private OrigemMovimentacao origemSaida;
+//	@OneToOne(targetEntity=Venda.class)
+//	private OrigemMovimentacao origemSaida;
 
 	@OneToMany(mappedBy = "id.saida")
 	private Set<ProdutoSaida> produtos = new HashSet<ProdutoSaida>();
@@ -26,9 +23,9 @@ public class Saida extends Movimentacao {
 		super();
 	}
 
-	public Saida(Integer id, String documento, String descricao, LocalDate dataMovimentacao, OrigemMovimentacao saida) {
+	public Saida(Integer id, String documento, String descricao, LocalDate dataMovimentacao) {
 		super(id, documento, descricao, dataMovimentacao);
-		this.origemSaida = saida;
+		//this.origemSaida = saida;
 	}
 
 	public double getValorTotal() {
@@ -39,13 +36,13 @@ public class Saida extends Movimentacao {
 		return produtos.stream().mapToDouble(x -> x.getLucroTotalEstimado()).sum();
 	}
 
-	public OrigemMovimentacao getOrigemSaida() {
-		return origemSaida;
-	}
-
-	public void setOrigemSaida(OrigemMovimentacao saidaInterna) {
-		this.origemSaida = saidaInterna;
-	}
+//	public OrigemMovimentacao getOrigemSaida() {
+//		return origemSaida;
+//	}
+//
+//	public void setOrigemSaida(OrigemMovimentacao saidaInterna) {
+//		this.origemSaida = saidaInterna;
+//	}
 
 	public Set<ProdutoSaida> getProdutos() {
 		return produtos;

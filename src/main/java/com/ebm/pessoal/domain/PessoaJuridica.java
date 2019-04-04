@@ -4,8 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 @Entity
 @PrimaryKeyJoinColumn(name ="pessoa_id")
+@JsonTypeName("PessoaFisica")
 public class PessoaJuridica extends Pessoa  {
 	private static final long serialVersionUID = 1L;
 

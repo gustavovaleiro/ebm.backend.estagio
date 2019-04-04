@@ -8,8 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 @Entity
 @PrimaryKeyJoinColumn(name ="pessoa_id")
+@JsonTypeName("PessoaFisica")
 public class PessoaFisica extends Pessoa {
 	
 	private static final long serialVersionUID = 1L;
@@ -19,7 +22,7 @@ public class PessoaFisica extends Pessoa {
 	private LocalDate dataNascimento;
 	
 	@Embedded
-	private RG RG;
+	private RG rG;
 	private String nacionalidade;
 	@ManyToOne
 	private Cidade naturalidade;
@@ -32,7 +35,7 @@ public class PessoaFisica extends Pessoa {
 		super(id, nome, TipoPessoa.PESSOAFISICA);
 		this.cpf = cpf;
 		this.dataNascimento = dataNascimento;
-		RG = rG;
+		this.rG = rG;
 		this.nacionalidade = nacionalidade;
 		this.naturalidade = naturalidade;
 	}
@@ -54,11 +57,11 @@ public class PessoaFisica extends Pessoa {
 	}
 
 	public RG getRG() {
-		return RG;
+		return rG;
 	}
 
 	public void setRG(RG rG) {
-		RG = rG;
+		this.rG = rG;
 	}
 
 	public String getNacionalidade() {

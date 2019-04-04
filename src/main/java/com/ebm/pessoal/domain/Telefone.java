@@ -43,7 +43,7 @@ public class Telefone implements Serializable {
 	public String getDDD() {
 		return dDD;
 	}
-	public void setDDD(String dDD) {
+	public void setdDD(String dDD) {
 		this.dDD = dDD;
 	}
 	

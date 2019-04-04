@@ -1,25 +1,27 @@
 package com.ebm.pessoal.service;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Funcionario;
-import com.ebm.pessoal.domain.Pessoa;
+import com.ebm.pessoal.dtos.FuncionarioListDTO;
 import com.ebm.pessoal.repository.FuncionarioRepository;
 
-@Service	
+@Service
 public class FuncionarioService {
 
 	@Autowired
@@ -35,29 +37,28 @@ public class FuncionarioService {
 	public Funcionario insert(Funcionario funcionario) {
 		funcionario.setPessoa(pessoaService.insert(funcionario.getPessoa()));
 		funcionario.setId(null);
-		
+
 		if (funcionario.getDataDeAdmissao().isAfter(LocalDate.now()))
 			throw new DataIntegrityException("A data de admissão do funcionario nao pode ser futura");
-		
-		if( !cargoService.exist(funcionario.getCargo()))
+
+		if (!cargoService.exist(funcionario.getCargo()))
 			funcionario.setCargo(cargoService.insert(funcionario.getCargo()));
-		
+
 		return funcionarioRepository.save(funcionario);
 	}
 
 	// update
 	// -------------------------------------------------------------------------------------------
 	public Funcionario update(Funcionario funcionario) {
-		 findById(funcionario.getId());
+		findById(funcionario.getId());
 		funcionario.setPessoa(pessoaService.update(funcionario.getPessoa()));
 		return funcionarioRepository.save(funcionario);
 	}
 
 	// delete
 	// -------------------------------------------------------------------------------------------
-	public void delete(Funcionario funcionario) {
-		findById(funcionario.getId());
-		funcionarioRepository.delete(funcionario);
+	public void delete(Integer id) {
+		funcionarioRepository.delete(findById(id));
 	}
 
 	// find
@@ -68,48 +69,32 @@ public class FuncionarioService {
 				() -> new ObjectNotFoundException("Não foi possivel encontrar o funcionario de id: " + id));
 	}
 
-	public Funcionario findByCpf(String cpf) {
-		return findByPessoa(pessoaService.findbyCPF(cpf));
-	}
-	
+	public Funcionario findByCpfOrCnpj(String cpf, String cnpj) {
 
-	public Funcionario findByCNPJ(String cnpj) {
-		return findByPessoa(pessoaService.findByCPNJ(cnpj));
+		return findByPessoa(pessoaService.findByCpfOrCnpj(cpf, cnpj));
 	}
-	
-	public Page<Funcionario> findByCargo(Cargo cargo, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return funcionarioRepository.findAllByCargo(cargo, pageRequest);
-	}
-	
-	
-	public Page<Funcionario> findByNome(String nome, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
 
-		List<Funcionario> funcionarios = pessoaService.findByNome(nome).stream().map(p -> findByPessoa(p))
+	public Page<FuncionarioListDTO> findBy(String tipo, String nome, String nomeFantasia, String razaoSocial,
+			String cargo, PageRequest pageRequest) {
+
+		Set<Integer> idsPessoa = pessoaService.getPessoaIdBy(tipo, nome, nomeFantasia, razaoSocial);
+		Set<Funcionario> funcionarios = findAllByPessoaId(idsPessoa);
+		funcionarios.addAll(findByCargoName(cargo));
+		List<FuncionarioListDTO> funcionariosDTO = funcionarios.stream().map(f -> new FuncionarioListDTO(f))
 				.collect(Collectors.toList());
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return new PageImpl<>(funcionarios, pageRequest, funcionarios.size());
 
+		return new PageImpl<>(funcionariosDTO, pageRequest, funcionariosDTO.size());
 	}
 
-	public Page<Funcionario> findByNomeFantasia(String nome, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		List<Funcionario> funcionarios = pessoaService.findbyNomeFantasia(nome).stream().map(p -> findByPessoa(p))
-				.collect(Collectors.toList());
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return new PageImpl<>(funcionarios, pageRequest, funcionarios.size());
+	public Collection<? extends Funcionario> findByCargoName(String cargo) {
 
+		return funcionarioRepository.findByCargoName(cargo);
 	}
 
-	public Page<Funcionario> findByRazaoSocial(String nome, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		List<Funcionario> funcionarios = pessoaService.findByRazaoSocial(nome).stream().map(p -> findByPessoa(p))
-				.collect(Collectors.toList());
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return new PageImpl<>(funcionarios, pageRequest, funcionarios.size());
-
+	@Transactional
+	private Set<Funcionario> findAllByPessoaId(Set<Integer> idsPessoa) {
+		// TODO Auto-generated method stub
+		return idsPessoa.stream().map(id -> findById(id)).collect(Collectors.toSet());
 	}
 
 //	public Page<Funcionario> findByNome(String nome, Integer page, Integer linesPerPage, String orderBy,
@@ -126,14 +111,14 @@ public class FuncionarioService {
 //		   
 //		  return  new PageImpl<>(funcionarios, pageRequest, funcionarios.size());
 //	}
-	public Funcionario findByPessoa(Pessoa pessoa) {
-		return funcionarioRepository.findOneByPessoa(pessoa).orElseThrow(
-				() -> new ObjectNotFoundException("Não existe um funcionario cadastrado para: " + pessoa.getNome()));
+	public Funcionario findByPessoa(Integer id) {
+		return funcionarioRepository.findByPessoaId(id)
+				.orElseThrow(() -> new ObjectNotFoundException("Não foi possivel encontrar uma pessoa de id: " + id));
 	}
 
-	//aux
+	// aux
 	public boolean existWith(Cargo cargo) {
-		return funcionarioRepository.countByCargo(cargo) == 0 ? false: true;
+		return funcionarioRepository.countByCargo(cargo) == 0 ? false : true;
 	}
 
 }

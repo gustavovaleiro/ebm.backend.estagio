@@ -14,11 +14,14 @@ import com.ebm.auth.Usuario;
 import com.ebm.auth.repository.UsuarioRepository;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.service.FuncionarioService;
 
 @Service
 public class UsuarioService {//implements UserDetailsService {
 	@Autowired
 	private UsuarioRepository userRepository;
+	@Autowired
+	private FuncionarioService funcionarioService;
 	
 	public UsuarioService() {}
 
@@ -47,6 +50,9 @@ public class UsuarioService {//implements UserDetailsService {
 	
 	public Usuario insert(Usuario user) {
 		user.setId(null);
+//		Funcionario func = funcionarioService.findById(user.getFuncionario().getId());
+//		userRepository.save(user);
+//		func.setUsuario(USER);
 		return userRepository.save(user);
 	}
 	

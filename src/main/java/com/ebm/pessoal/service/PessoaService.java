@@ -1,28 +1,34 @@
 package com.ebm.pessoal.service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.pessoal.domain.Email;
+import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.RG;
+import com.ebm.pessoal.domain.Telefone;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.repository.PessoaFisicaRepository;
 import com.ebm.pessoal.repository.PessoaJuridicaRepository;
+
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 
 @Service
 public class PessoaService {
@@ -36,18 +42,22 @@ public class PessoaService {
 	private EmailService emailService;
 	@Autowired
 	private TelefoneService telefoneService;
+	
 
 	// insert --------------------------------------------------------------------------------------------------------
 	@Transactional
-	public PessoaFisica insert(PessoaFisica pf) {
+	public PessoaFisica insert(PessoaFisica pf) {	
+		validateCPF(pf.getCpf());
+		
 		try{
 			findbyCPF(pf.getCpf());
 			throw new DataIntegrityException("Ja existe uma pessoa com esse cpf, se você deseja alterar dados, modifique a pessoa ja existente");
 		}catch(ObjectNotFoundException e) {
 			pf.setId(null);
-			pf = pessoaFisicaRepository.save(pf);
 			pf.setDataCadastro(LocalDateTime.now());
 			saveAssociations(pf);
+			pf = pessoaFisicaRepository.save(pf);
+			
 			return pf;	
 		}
 		
@@ -56,11 +66,13 @@ public class PessoaService {
 	@Transactional
 	public PessoaJuridica insert(PessoaJuridica pj) {
 		pj.setId(null);
+		validateCNPJ(pj.getCnpj());
 		pj.setDataCadastro(LocalDateTime.now());
 		pj = pessoaJuridicaRepository.save(pj);
 		saveAssociations(pj);
 		return pj;
 	}
+
 
 	public Pessoa insert(Pessoa pessoa) {
 		return pessoa.getTipo() == TipoPessoa.PESSOAFISICA ? insert((PessoaFisica) pessoa) : insert((PessoaJuridica) pessoa);
@@ -73,6 +85,7 @@ public class PessoaService {
 	}
 	public PessoaFisica update(PessoaFisica pf) {
 		findPF(pf.getId());
+		validateCPF(pf.getCpf());
 		saveAssociations(pf);
 		pf.setDataUltimaModificacao(LocalDateTime.now());
 		pf = pessoaFisicaRepository.save(pf);
@@ -81,6 +94,7 @@ public class PessoaService {
 
 	public PessoaJuridica update( PessoaJuridica pj) {
 		findPJ(pj.getId());
+		validateCNPJ(pj.getCnpj());
 		saveAssociations(pj);
 		pj.setDataUltimaModificacao(LocalDateTime.now());
 		pj = pessoaJuridicaRepository.save(pj);
@@ -110,35 +124,34 @@ public class PessoaService {
 	}
 
 	// find --------------------------------------------------------------------------------------------------------
+	public Pessoa findById(Integer id) {
+		Optional<PessoaFisica> pf =  pessoaFisicaRepository.findById(id);
+		
+		if(pf.isPresent()) 
+			return pf.get();
+		
+		return pessoaJuridicaRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("não foi possivel encontrar a pessoa de id: " + id));
+	}
+	
 	public PessoaFisica findPF(Integer id) {
 		Optional<PessoaFisica> pf = pessoaFisicaRepository.findById(id);
 		return pf.orElseThrow(() -> new ObjectNotFoundException("não foi possivel encontrar a pessoa de id: " + id));
 	}
 
-	public Page<PessoaFisica> findByNome(String nome, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaFisicaRepository.findAllByNomeLikeIgnoreCase(nome, pageRequest);
-	}
 	public List<PessoaFisica> findByNome(String nome) {
 		return pessoaFisicaRepository.findAllByNomeLikeIgnoreCase(nome);
 	}
-
-
 	public PessoaFisica findbyCPF(String cpf) {
 		return pessoaFisicaRepository.findOneByCpf(cpf).orElseThrow(
 				() -> new ObjectNotFoundException("Não foi possivel encontrar uma pessoa com o cpf: " + cpf));
 	}
 
-	public Page<PessoaFisica> findPFByEmail(String email, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaFisicaRepository.findAllByEmailLike(email, pageRequest);
+	public List<PessoaFisica> findPFByEmail(String email){
+		return pessoaFisicaRepository.findAllByEmailLike(email);
 	}
 
-	public Page<PessoaFisica> findByRG(RG rg, Integer page, Integer linesPerPage, String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaFisicaRepository.findAllByRG(Example.of(rg), pageRequest);
+	public List<PessoaFisica> findByRG(RG rg) {
+		return pessoaFisicaRepository.findAllByRG(Example.of(rg));
 
 	}
 
@@ -147,73 +160,88 @@ public class PessoaService {
 		return pj.orElseThrow(() -> new ObjectNotFoundException("não foi possivel encontrar a pessoa de id: " + id));
 	}
 
-	public Page<PessoaJuridica> findbyNomeFantasia(String nome, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaJuridicaRepository.findAllByNomeLikeIgnoreCase(nome, pageRequest);
-	}
 
 	public PessoaJuridica findByCPNJ(String cnpj) {
 		return pessoaJuridicaRepository.findOneByCnpj(cnpj).orElseThrow(
 				() -> new ObjectNotFoundException("Não foi possivel encontrar uma pessoa com o cnpj: " + cnpj));
 	}
 
-	public Page<PessoaJuridica> findPJByEmail(String email, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaJuridicaRepository.findAllByEmailLike(email, pageRequest);
+	public List<PessoaJuridica> findPJByEmail(String email) {
+		 
+		return pessoaJuridicaRepository.findAllByEmailLike(email);
 	}
 
-	public Page<PessoaJuridica> findByRazaoSocial(String razaoSocial, Integer page, Integer linesPerPage,
-			String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaJuridicaRepository.findAllByRazaoSocialIgnoreCaseContaining(razaoSocial, pageRequest);
-	}
 	public List<PessoaJuridica> findbyNomeFantasia(String nome) {
 		return pessoaJuridicaRepository.findAllByNomeLikeIgnoreCase(nome);	
 	}
 	public List<PessoaJuridica> findByRazaoSocial(String nome) {
 		return pessoaJuridicaRepository.findAllByRazaoSocialIgnoreCaseContaining(nome);
 	}
-
-
-	public Page<PessoaJuridica> findByInscricaoEstadual(String inscricaoEstadual, Integer page, Integer linesPerPage,
-			String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaJuridicaRepository.findAllByInscricaoEstadualIgnoreCaseContaining(inscricaoEstadual, pageRequest);
+	public List<PessoaJuridica> findByInscricaoEstadual(String inscricaoEstadual) {
+		 
+		return pessoaJuridicaRepository.findAllByInscricaoEstadualIgnoreCaseContaining(inscricaoEstadual);
 	}
-
-	public Page<PessoaJuridica> findByInscricaoMunicipal(String inscricaoEstadual, Integer page, Integer linesPerPage,
-			String orderBy, String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return pessoaJuridicaRepository.findAllByInscricaoEstadualIgnoreCaseContaining(inscricaoEstadual, pageRequest);
+	public List<PessoaJuridica> findByInscricaoMunicipal(String inscricaoEstadual, Integer page, Integer linesPerPage,
+			String orderBy, String direction) { 
+		return pessoaJuridicaRepository.findAllByInscricaoEstadualIgnoreCaseContaining(inscricaoEstadual);
+	}
+	
+	public List<? extends Pessoa> findByTipo(TipoPessoa tipo) {
+		if(tipo == TipoPessoa.PESSOAFISICA)
+			return pessoaFisicaRepository.findAll();
+		
+		return pessoaJuridicaRepository.findAll();
+	}
+	public Set<Integer> getPessoaIdBy(String tipo, String nome, String nomeFantasia, String razaoSocial) {
+		Set<Integer> ids = new HashSet<>();
+		
+		if(tipo.equals(TipoPessoa.PESSOAFISICA.getDescricao()) ){
+			ids.addAll(pessoaFisicaRepository.findIdOfAll());
+			if(!nome.equals(""))
+			ids.addAll(pessoaFisicaRepository.findIdOfAllWithNameContain(nome));
+		}else if(tipo.equals(TipoPessoa.PESSOAJURIDICA.getDescricao())) {
+			if(!nomeFantasia.equals(""))
+				ids.addAll(pessoaJuridicaRepository.findIdOfAllWithNameContain(nomeFantasia));
+			if(!razaoSocial.equals(""))
+				ids.addAll(pessoaJuridicaRepository.findIdOfAllWithRazaoSocialContain(razaoSocial));
+		}
+		return ids;
 	}
 
 	// aux --------------------------------------------------------------------------------------------------------
 	private void saveAssociations(Pessoa p) {
-		p.setEmail(p.getEmail().stream().map( e -> e.getId() == 0 ? emailService.insert(e) : emailService.update(e)).collect(Collectors.toList()));
-		p.setEndereco(p.getEndereco().stream().map( e -> e.getId() == 0 ? enderecoService.insert(e) : enderecoService.update(e)).collect(Collectors.toList()));
-		p.setTelefone(p.getTelefone().stream().map( t -> t.getId() == 0 ? telefoneService.insert(t) : telefoneService.update(t)).collect(Collectors.toList()));
+		Optional<List<Email>> emails = Optional.of(p.getEmail());
+		Optional<List<Endereco>> enderecos = Optional.of(p.getEndereco());
+		Optional<List<Telefone>> telefones = Optional.of(p.getTelefone());
+		enderecos.ifPresent( o ->  p.setEndereco(o.stream().map( e -> e.getId() == null ? enderecoService.insert(e) : enderecoService.update(e)).collect(Collectors.toList()))   );
+		emails.ifPresent( o -> p.setEmail(o.stream().map( e -> e.getId() == null ? emailService.insert(e) : emailService.update(e)).collect(Collectors.toList())));
+		telefones.ifPresent(o -> p.setTelefone(o.stream().map( t -> t.getId() == null ? telefoneService.insert(t) : telefoneService.update(t)).collect(Collectors.toList())));
+		
+	}
+	
+	public void validateCPF(String cpf) {
+		try{
+			CPFValidator cpfValidator = new CPFValidator();
+			cpfValidator.assertValid(cpf);
+		}catch(InvalidStateException e) {
+			throw new DataIntegrityException("Não foi possivel validar esse cpf, tente novamente com um cpf valido");
+		}
+	}
+	public void validateCNPJ(String cnpj) {
+		try{
+			CNPJValidator cnpjValidator = new CNPJValidator();
+			cnpjValidator.assertValid(cnpj);
+		}catch(InvalidStateException e) {
+			throw new DataIntegrityException("Não foi possivel validar esse cnpj, tente novamente com um cnpj valido");
+		}
 	}
 
-//	private void getAssociationsFromBD(Pessoa p) {
-//		p.setEmail(emailService.findByPessoaId(p.getId()));
-//		p.setEndereco(enderecoService.findByPessoaId(p.getId()));
-//		p.setTelefone(telefoneService.findByPessoaId(p.getId()));
-//	}
-
-//	public PessoaJuridica fromDTO(@Valid PessoaJuridicaUpdateDTO dto) {
-//		PessoaJuridica pj = new PessoaJuridica(dto.getId(), dto.getNome(), dto.getCnpj(), dto.getRazaoSocial(),
-//				dto.getInscricaoEstadual(), dto.getInscricaoMunicipal());
-//		getAssociationsFromBD(pj);
-//		return pj;
-//	}
-//
-//	public PessoaFisica fromDTO(@Valid PessoaFisicaUpdateDTO dto) {
-//		PessoaFisica pf = new PessoaFisica(dto.getId(), dto.getNome(), dto.getCpf(), dto.getDataNascimento(),
-//				dto.getRG(), dto.getNacionalidade(), dto.getNaturalidade());
-//		getAssociationsFromBD(pf);
-//		return pf;
-//	}
+	public Integer findByCpfOrCnpj(String cpf, String cnpj) {
+		try{
+			return  findbyCPF(cpf).getId();
+		} catch(ObjectNotFoundException e ) {
+			return findByCPNJ(cnpj).getId();
+		}
+	}
 
 }

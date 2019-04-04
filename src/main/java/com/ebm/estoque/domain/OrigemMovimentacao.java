@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.ebm.auth.Usuario;
-import com.ebm.comercial.domain.FuncionarioFuncao;
 import com.ebm.pessoal.domain.Cliente;
 
 public interface OrigemMovimentacao {
@@ -14,7 +13,7 @@ public interface OrigemMovimentacao {
 
 	public Usuario getUsuario();
 
-	public List<FuncionarioFuncao> getFuncionariosComFuncao();
+	//public List<FuncionarioFuncao> getFuncionariosComFuncao();
 
 	public String getDescricao();
 	
