@@ -1,5 +1,6 @@
 package com.ebm.pessoal.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -28,5 +29,11 @@ public interface PessoaJuridicaRepository extends JpaRepository<PessoaJuridica, 
 	@Transactional(readOnly=true)
 	@Query("SELECT pj FROM PessoaJuridica pj INNER JOIN pj.email email WHERE email LIKE ?1")
 	Page<PessoaJuridica> findAllByEmailLike(String email, Pageable page);
+	
+	@Transactional(readOnly=true)
+	List<PessoaJuridica> findAllByRazaoSocialIgnoreCaseContaining(String nome);
+	
+	@Transactional(readOnly=true)
+	List<PessoaJuridica> findAllByNomeLikeIgnoreCase(String nome);
 
 }

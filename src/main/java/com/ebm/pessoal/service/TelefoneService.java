@@ -17,7 +17,7 @@ public class TelefoneService {
 	@Autowired
 	private TelefoneRepository telefoneRepository;
 	
-	//insert
+	//insert --------------------------------------------------------------------------------------------------------
 	public Telefone insert(Telefone telefone) {
 		
 		if(existeTelefone(telefone.getDDD(), telefone.getNumero()))
@@ -35,7 +35,7 @@ public class TelefoneService {
 		return  telefoneRepository.countByDDDAndNumero(ddd,telefone)  == 0 ? false : true;
 	}
 	
-	//update
+	//update --------------------------------------------------------------------------------------------------------
 	public Telefone update(Telefone telefone) {
 		find(telefone.getId());
 		
@@ -48,7 +48,7 @@ public class TelefoneService {
 		return telefone.stream().map( e -> this.update(e)).collect(Collectors.toList());
 	}
 	
-	//delete
+	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
 		find(id);
 		telefoneRepository.deleteById(id);
@@ -61,7 +61,7 @@ public class TelefoneService {
 	}
 	
 	
-	//find
+	//find --------------------------------------------------------------------------------------------------------
 	public Telefone find(Integer id) {
 		return telefoneRepository.findById(id).orElseThrow( 
 				() -> new ObjectNotFoundException("Não foi possivel encontrar o telefone de id: " + id));

@@ -14,33 +14,35 @@ import javax.persistence.OneToOne;
 import com.ebm.auth.Usuario;
 
 @Entity
-public class Funcionario implements Serializable  {
+public class Funcionario implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@Column(nullable = false)
 	private Pessoa pessoa;
-	
+
 	@OneToOne
 	private Cargo cargo;
-	
-	@Column( name = "funcionario_data_admissao")
+
+	@Column
 	private LocalDate dataDeAdmissao;
 	@OneToOne
 	private Usuario usuario;
 
 	private double comissao;
-	
+
 	private BigDecimal adicionalPessoal;
-	
+
 	private String matricula;
-	
-	public Funcionario() {}
-	public Funcionario(Integer id, Pessoa pessoa, String matricula, Cargo cargo, LocalDate dataDeAdmissao, double comissao,
-			BigDecimal adicionalPessoal) {
+
+	public Funcionario() {
+	}
+
+	public Funcionario(Integer id, Pessoa pessoa, String matricula, Cargo cargo, LocalDate dataDeAdmissao,
+			double comissao, BigDecimal adicionalPessoal) {
 		this.id = id;
 		this.pessoa = pessoa;
 		this.cargo = cargo;
@@ -49,17 +51,14 @@ public class Funcionario implements Serializable  {
 		this.adicionalPessoal = adicionalPessoal;
 		this.matricula = matricula;
 	}
-	
 
 	public Integer getId() {
 		return id;
 	}
 
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
 
 	public Pessoa getPessoa() {
 		return pessoa;
@@ -68,17 +67,14 @@ public class Funcionario implements Serializable  {
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
 	}
-	
-	
+
 	public String getMatricula() {
 		return matricula;
 	}
 
-
 	public void setMatricula(String matricula) {
 		this.matricula = matricula;
 	}
-
 
 	public Cargo getCargo() {
 		return cargo;
@@ -111,16 +107,15 @@ public class Funcionario implements Serializable  {
 	public void setAdicionalPessoal(BigDecimal adicionalPessoal) {
 		this.adicionalPessoal = adicionalPessoal;
 	}
-	
 
 	public Usuario getUsuario() {
 		return usuario;
 	}
 
-
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -146,7 +141,4 @@ public class Funcionario implements Serializable  {
 		return true;
 	}
 
-	
-	
-	
 }

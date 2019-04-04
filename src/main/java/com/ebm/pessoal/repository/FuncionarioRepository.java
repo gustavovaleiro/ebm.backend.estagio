@@ -30,5 +30,8 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
 	
 	@Transactional(readOnly=true)
 	Page<Funcionario> findAll(Pageable page);
+	
+	@Transactional(readOnly=true)
+	int countByCargo(Cargo cargo);
 
 }

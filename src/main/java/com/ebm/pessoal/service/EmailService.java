@@ -17,7 +17,7 @@ public class EmailService {
 	@Autowired
 	private EmailRepository emailRepository;
 	
-	//insert
+	//insert --------------------------------------------------------------------------------------------------------
 	public Email insert(Email email) {
 		
 		if(existeEmail(email.getEmail()))
@@ -34,8 +34,9 @@ public class EmailService {
 	private boolean existeEmail(String email) {
 		return  emailRepository.countByEmailIgnoreCase(email)  == 0 ? false : true;
 	}
+
 	
-	//update
+	//update --------------------------------------------------------------------------------------------------------
 	public Email update(Email email) {
 		find(email.getId());
 		
@@ -48,7 +49,7 @@ public class EmailService {
 		return email.stream().map( e -> this.update(e)).collect(Collectors.toList());
 	}
 	
-	//delete
+	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
 		find(id);
 		emailRepository.deleteById(id);
@@ -61,7 +62,7 @@ public class EmailService {
 	}
 	
 	
-	//find
+	//find --------------------------------------------------------------------------------------------------------
 	public Email find(Integer id) {
 		return emailRepository.findById(id).orElseThrow( 
 				() -> new ObjectNotFoundException("Não foi possivel encontrar o email de id: " + id));

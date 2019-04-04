@@ -27,7 +27,7 @@ public class EnderecoService {
 	private EstadoRepository estadoRepository;
 	
 	
-	//insert
+	//insert --------------------------------------------------------------------------------------------------------
 	public Endereco insert(Endereco endereco) {
 		endereco.setId(null);
 		
@@ -43,7 +43,8 @@ public class EnderecoService {
 		return endereco.stream().map( e -> this.insert(e)).collect(Collectors.toList());
 	}
 		
-	//update
+	 
+	//update --------------------------------------------------------------------------------------------------------
 	public Endereco update(Endereco endereco) {
 		find(endereco.getId());
 		return enderecoRepository.save(endereco);
@@ -61,7 +62,8 @@ public class EnderecoService {
 		 return estadoRepository.save(estado);
 	}
 		
-	//delete
+	
+	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
 		find(id);
 		enderecoRepository.deleteById(id);
@@ -81,7 +83,8 @@ public class EnderecoService {
 		estadoRepository.delete(findEstadoById(id));
 	}
 		
-	//find
+	
+	//find --------------------------------------------------------------------------------------------------------
 	public Endereco find(Integer id) {
 		return enderecoRepository.findById(id).orElseThrow( 
 				() -> new ObjectNotFoundException("Não foi possivel encontrar o endereco de id: " + id));

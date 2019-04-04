@@ -1,5 +1,6 @@
 package com.ebm.pessoal.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Example;
@@ -28,4 +29,7 @@ public interface PessoaFisicaRepository extends JpaRepository<PessoaFisica, Inte
 	
 	@Transactional(readOnly=true)
 	Page<PessoaFisica> findAllByRG(Example<RG> example, Pageable page);
+	
+	@Transactional(readOnly=true)
+	List<PessoaFisica> findAllByNomeLikeIgnoreCase(String nome);
 }
