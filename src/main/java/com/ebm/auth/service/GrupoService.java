@@ -1,13 +1,17 @@
 package com.ebm.auth.service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.ebm.auth.Grupo;
@@ -64,9 +68,15 @@ public class GrupoService {
 		grupoRepository.deleteById(id);
 	}
 	
-	public Page<GrupoDTO> findAllResumo( Integer page, Integer linesPerPage, String orderBy, String direction){
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return grupoRepository.findAllResumido(pageRequest);
+	public Page<GrupoDTO> findBy(String nome, PageRequest pageRequest){
+		Set<Integer> ids = new HashSet<>(grupoRepository.findIdAll());
+		
+		if(!nome.equals(""))
+			ids.retainAll(grupoRepository.findAllIdByNome(nome));
+		
+		List<GrupoDTO> grupos = ids.stream().map(id -> new GrupoDTO(find(id))).collect(Collectors.toList());
+		
+		return new PageImpl<>(grupos, pageRequest, grupos.size());
 	}
 	
 

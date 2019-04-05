@@ -17,7 +17,7 @@ public class Estado implements Serializable{
 	private Integer id;
 	
 	@Column(nullable = false, length = 2, name = "estado_uf")
-	private String UF;
+	private String uF;
 	
 	@Column(length = 20, name = "estado_nome")
 	private String nome;
@@ -29,7 +29,7 @@ public class Estado implements Serializable{
 	public Estado(Integer id, String uF, String nome) {
 		super();
 		this.id = id;
-		UF = uF;
+		this.uF = uF;
 		this.nome = nome;
 	}
 
@@ -43,10 +43,10 @@ public class Estado implements Serializable{
 	}
 	
 	public String getUF() {
-		return UF;
+		return uF;
 	}
 	public void setUF(String uF) {
-		UF = uF;
+		this.uF = uF;
 	}
 	
 	

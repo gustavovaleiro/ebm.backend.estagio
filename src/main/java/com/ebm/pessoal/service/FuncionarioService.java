@@ -2,6 +2,7 @@ package com.ebm.pessoal.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +19,7 @@ import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.dtos.FuncionarioListDTO;
 import com.ebm.pessoal.repository.FuncionarioRepository;
 
@@ -35,23 +37,25 @@ public class FuncionarioService {
 	// insert
 	// -------------------------------------------------------------------------------------------
 	public Funcionario insert(Funcionario funcionario) {
-		funcionario.setPessoa(pessoaService.insert(funcionario.getPessoa()));
+		
+	
 		funcionario.setId(null);
-
+		
+		lidaComPessoa(funcionario);
 		if (funcionario.getDataDeAdmissao().isAfter(LocalDate.now()))
 			throw new DataIntegrityException("A data de admissão do funcionario nao pode ser futura");
 
-		if (!cargoService.exist(funcionario.getCargo()))
-			funcionario.setCargo(cargoService.insert(funcionario.getCargo()));
+		lidaComCargo(funcionario);
 
 		return funcionarioRepository.save(funcionario);
 	}
+
 
 	// update
 	// -------------------------------------------------------------------------------------------
 	public Funcionario update(Funcionario funcionario) {
 		findById(funcionario.getId());
-		funcionario.setPessoa(pessoaService.update(funcionario.getPessoa()));
+		
 		return funcionarioRepository.save(funcionario);
 	}
 
@@ -76,10 +80,16 @@ public class FuncionarioService {
 
 	public Page<FuncionarioListDTO> findBy(String tipo, String nome, String nomeFantasia, String razaoSocial,
 			String cargo, PageRequest pageRequest) {
+		Set<Funcionario> funcionarios = new HashSet<>();
+		
+		if( !nome.equals("") || !nomeFantasia.equals("") || !razaoSocial.equals("")) {
+			Set<Integer> idsPessoa = pessoaService.getPessoaIdBy(tipo, nome, nomeFantasia, razaoSocial);
+			funcionarios.addAll(idsPessoa.stream().map(id -> findByPessoa(id)).collect(Collectors.toList()));
+		}
+		
+		if(!cargo.equals("")) 
+			funcionarios.retainAll(findByCargoName(cargo));
 
-		Set<Integer> idsPessoa = pessoaService.getPessoaIdBy(tipo, nome, nomeFantasia, razaoSocial);
-		Set<Funcionario> funcionarios = findAllByPessoaId(idsPessoa);
-		funcionarios.addAll(findByCargoName(cargo));
 		List<FuncionarioListDTO> funcionariosDTO = funcionarios.stream().map(f -> new FuncionarioListDTO(f))
 				.collect(Collectors.toList());
 
@@ -97,28 +107,40 @@ public class FuncionarioService {
 		return idsPessoa.stream().map(id -> findById(id)).collect(Collectors.toSet());
 	}
 
-//	public Page<Funcionario> findByNome(String nome, Integer page, Integer linesPerPage, String orderBy,
-//			String direction) {
-//		
-//		   Set<Pessoa> pessoa = new HashSet<>();
-//		   pessoa.addAll(pessoaService.findByNome(nome));
-//		   pessoa.addAll(pessoaService.findbyNomeFantasia(nome));
-//		   pessoa.addAll(pessoaService.findByRazaoSocial(nome));
-//		   
-//		   List<Funcionario> funcionarios = pessoa.stream().map( p -> findByPessoa(p)).collect(Collectors.toList());
-//		   
-//		   PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-//		   
-//		  return  new PageImpl<>(funcionarios, pageRequest, funcionarios.size());
-//	}
 	public Funcionario findByPessoa(Integer id) {
 		return funcionarioRepository.findByPessoaId(id)
 				.orElseThrow(() -> new ObjectNotFoundException("Não foi possivel encontrar uma pessoa de id: " + id));
 	}
-
+	public Set<Integer> findAllIdByNome(String nome) {
+		return pessoaService.findAllByNome(nome).stream().map(p -> findByPessoa(p.getId()).getId()).collect(Collectors.toSet());
+		
+	}
 	// aux
 	public boolean existWith(Cargo cargo) {
 		return funcionarioRepository.countByCargo(cargo) == 0 ? false : true;
+	}
+
+	public List<Funcionario> findByNome(String nome) {
+		
+		return pessoaService.findByNome(nome).stream().map(p -> findByPessoa(p.getId())).collect(Collectors.toList());
+	}
+
+	private void lidaComPessoa(Funcionario funcionario) {
+		Pessoa findByDocument = pessoaService.findByDocument( funcionario.getPessoa());
+		if( funcionario.getPessoa().getId() == null && findByDocument  == null  )
+			funcionario.setPessoa(pessoaService.insert(funcionario.getPessoa()));
+		
+		if(findByDocument != null)
+			funcionario.setPessoa(findByDocument);
+	}
+	private void lidaComCargo(Funcionario funcionario) {
+		Cargo findResult = cargoService.findByIdOrName(funcionario.getCargo());
+		
+		if(findResult == null)
+			funcionario.setCargo(cargoService.insert(funcionario.getCargo()));
+		else
+			funcionario.setCargo(findResult);
+		
 	}
 
 }

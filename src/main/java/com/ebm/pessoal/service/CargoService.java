@@ -1,5 +1,7 @@
 package com.ebm.pessoal.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +49,17 @@ public class CargoService {
 	}
 
 	//aux
-	public boolean exist(Cargo cargo) {
-		return cargoRepository.existsById(cargo.getId());
+
+	public Cargo findByIdOrName(Cargo cargo) {
+		Optional<Cargo> cargoF = Optional.empty();
+		
+		if(cargo.getId() != null)
+			cargoRepository.findById(cargo.getId());
+		
+		if(!cargoF.isPresent() )
+			cargoF = cargoRepository.findByNomeCargo(cargo.getNomeCargo());
+		
+		return cargoF.orElse(null);
 	}
 
 

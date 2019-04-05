@@ -31,14 +31,35 @@ public class EnderecoService {
 	public Endereco insert(Endereco endereco) {
 		endereco.setId(null);
 		
-		if(!estadoRepository.exists(Example.of(endereco.getCidade().getEstado()))) 
-			estadoRepository.save(endereco.getCidade().getEstado());
+		lidaComEstado(endereco.getCidade());
 		
-		if(!cidadeRepository.exists(Example.of(endereco.getCidade())))
-			cidadeRepository.save(endereco.getCidade());
-		
+		Optional<Cidade> cidadeResult = cidadeRepository.findOneByNomeAndEstado(endereco.getCidade().getNome(), endereco.getCidade().getEstado().getUF());
+		if(!cidadeResult.isPresent())
+			endereco.setCidade(insert(endereco.getCidade()));
+		else {
+			endereco.setCidade(cidadeResult.get());
+		}
+			
+			
 		return enderecoRepository.save(endereco);
 	}
+
+	public void lidaComEstado(Cidade cidade) {
+		Optional<Estado> estadoResult = estadoRepository.findOneByUF(cidade.getEstado().getUF());
+		if(!estadoResult.isPresent()) 
+			cidade.setEstado(estadoRepository.save(cidade.getEstado()));
+		else
+			cidade.setEstado(estadoResult.get());
+	}
+	
+	public Cidade insert(Cidade cidade) {
+		cidade.setId(null);
+		
+		return lidaComCidadeInsert(cidade);
+	}
+
+	
+	
 	public List<Endereco> insertAll(List<Endereco> endereco) {
 		return endereco.stream().map( e -> this.insert(e)).collect(Collectors.toList());
 	}
@@ -121,6 +142,26 @@ public class EnderecoService {
 	}
 	public List<Cidade> findCidadeByEstadoId(Integer id){
 		return cidadeRepository.findAllByEstado(findEstadoById(id));
+	}
+	public Optional<Cidade> findCidadeByNomeAndEstado(String nome, String uf) {
+		// TODO Auto-generated method stub
+		return cidadeRepository.findOneByNomeAndEstado(nome, uf);
+	}
+	
+	public boolean exist(Cidade cidade) {
+		return cidadeRepository.exists(Example.of(cidade));
+	}
+
+
+	public Cidade lidaComCidadeInsert(Cidade cidade) {
+		Optional<Cidade> cidadeResult = cidadeRepository.findOneByNomeAndEstado(cidade.getNome(),cidade.getEstado().getUF());
+		if(!cidadeResult.isPresent()) {
+			lidaComEstado(cidade);
+			return cidadeRepository.save(cidade);
+		}
+		else {
+			return cidadeResult.get();
+		}
 	}
 	
 	

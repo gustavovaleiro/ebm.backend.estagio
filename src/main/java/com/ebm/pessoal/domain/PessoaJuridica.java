@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 public class PessoaJuridica extends Pessoa  {
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String cnpj; 
 	
 	@Column(nullable = false)

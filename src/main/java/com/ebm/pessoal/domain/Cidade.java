@@ -1,14 +1,20 @@
 package com.ebm.pessoal.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 
-public class Cidade {
+public class Cidade implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -16,7 +22,7 @@ public class Cidade {
 	@Column(nullable = false, length = 60, unique = true)
 	private String nome;
 	
-	@Column(nullable = false)
+	@ManyToOne()
 	private Estado estado;
 	public Cidade() {}
 	

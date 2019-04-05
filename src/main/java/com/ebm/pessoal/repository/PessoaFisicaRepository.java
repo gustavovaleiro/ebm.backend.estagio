@@ -14,7 +14,7 @@ import com.ebm.pessoal.domain.RG;
 
 
 @Repository
-public interface PessoaFisicaRepository extends JpaRepository<PessoaFisica, Integer> {
+public interface PessoaFisicaRepository extends JpaRepository<PessoaFisica, Integer>{
 	
 	@Transactional(readOnly=true)
 	List<PessoaFisica> findAllByNomeLikeIgnoreCase(String nome );

@@ -3,8 +3,6 @@ package com.ebm.auth;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,16 +15,23 @@ public class Permissao implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	private String desc;
-	
-	@Enumerated(EnumType.STRING)
-	private Modulo modulo; 
+	private Integer modulo; 
+
 	public Permissao() {}
 	
-	public Permissao(Integer id, String desc) {
+	public Permissao(Integer id, String desc, Modulo modulo) {
 		this.id = id;
 		this.desc = desc;
+		this.modulo = modulo.getId();
 	}
-
+	
+	
+	public Modulo getModulo() {
+		return Modulo.toEnum(modulo);
+	}
+	public void setModulo(Modulo modulo) {
+		this.modulo = modulo.getId();
+	}
 	public Integer getId() {
 		return id;
 	}

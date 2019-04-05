@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.ebm.auth.Usuario;
@@ -21,7 +22,8 @@ public class Funcionario implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(nullable = false)
+	@OneToOne
+	@JoinColumn(nullable = false)
 	private Pessoa pessoa;
 
 	@OneToOne
@@ -120,7 +122,7 @@ public class Funcionario implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((pessoa == null) ? 0 : pessoa.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -133,10 +135,10 @@ public class Funcionario implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Funcionario other = (Funcionario) obj;
-		if (pessoa == null) {
-			if (other.pessoa != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!pessoa.equals(other.pessoa))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

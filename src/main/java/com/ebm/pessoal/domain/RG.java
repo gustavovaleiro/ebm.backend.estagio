@@ -1,18 +1,25 @@
 package com.ebm.pessoal.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Embeddable
-public class RG {
-	
-	@Column( length = 11, unique = true)
+public class RG implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	@Column( length = 11, unique = true, name = "rg_numero")
 	private String RG;
 	
-	@Column( length = 4)
+	@Column( length = 4, name = "rg_emissor")
 	private String emissor;
-	
-	@Column(name="pessoa_fisica_RG_UF")
+
+	@ManyToOne
+	@JoinColumn(name = "rg_uf")
 	private Estado UF;
 	
 	
