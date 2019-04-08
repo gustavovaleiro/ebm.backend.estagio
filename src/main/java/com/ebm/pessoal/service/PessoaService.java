@@ -42,7 +42,7 @@ public class PessoaService {
 	private EmailService emailService;
 	@Autowired
 	private TelefoneService telefoneService;
-
+	
 	// insert
 	// --------------------------------------------------------------------------------------------------------
 	@Transactional
@@ -297,6 +297,14 @@ public class PessoaService {
 		} catch (InvalidStateException e) {
 			throw new DataIntegrityException("Não foi possivel validar esse cnpj, tente novamente com um cnpj valido");
 		}
+	}
+
+	public void deleteAll(boolean b) {
+		if(b) {
+			pessoaFisicaRepository.deleteAll();
+			pessoaJuridicaRepository.deleteAll();
+		}
+		
 	}
 
 }

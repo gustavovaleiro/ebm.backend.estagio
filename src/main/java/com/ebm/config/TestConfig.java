@@ -18,7 +18,7 @@ public class TestConfig {
 	 
 	@Bean
 	public boolean intantiateDatabase() throws ParseException {
-		dbService.insert();
+		//dbService.insert();
 		return true;
 	}
 	

@@ -108,6 +108,7 @@ public class PessoaPopulaTest {
 		email3 = new Email("test54@gmail.com", "");
 		email4 = new Email("test454@gmail.com", "");
 		
+		
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30), new RG("23123", "SSP", estadoGO ), "Brasileira", goiania);
 		pf1.getTelefone().add(telefone1);
 		pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30), new RG("3234", "SSP", estadoGO ), "Brasileira", goiania);
@@ -128,9 +129,6 @@ public class PessoaPopulaTest {
 		pj2.getEndereco().add(endereco5);
 		pj3 = new PessoaJuridica(null, "Profissionais", "46530490000139", "Profissionais ME", "inscricaoEstadual3", "inscricaoEstadual3");
 		pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4", "inscricaoMunicipal4");
-
-		
-; 
 		
 	}
 	
@@ -193,4 +191,166 @@ public class PessoaPopulaTest {
 		saveClientes();
 		saveFuncionarios();
 	}
+
+	public PessoaFisica getPf1() {
+		return pf1;
+	}
+
+	public void setPf1(PessoaFisica pf1) {
+		this.pf1 = pf1;
+	}
+
+	public PessoaFisica getPf2() {
+		return pf2;
+	}
+
+	public void setPf2(PessoaFisica pf2) {
+		this.pf2 = pf2;
+	}
+
+	public PessoaFisica getPf3() {
+		return pf3;
+	}
+
+	public void setPf3(PessoaFisica pf3) {
+		this.pf3 = pf3;
+	}
+
+	public PessoaFisica getPf4() {
+		return pf4;
+	}
+
+	public void setPf4(PessoaFisica pf4) {
+		this.pf4 = pf4;
+	}
+
+	public PessoaJuridica getPj1() {
+		return pj1;
+	}
+
+	public void setPj1(PessoaJuridica pj1) {
+		this.pj1 = pj1;
+	}
+
+	public PessoaJuridica getPj4() {
+		return pj4;
+	}
+
+	public void setPj4(PessoaJuridica pj4) {
+		this.pj4 = pj4;
+	}
+
+	public PessoaJuridica getPj2() {
+		return pj2;
+	}
+
+	public void setPj2(PessoaJuridica pj2) {
+		this.pj2 = pj2;
+	}
+
+	public PessoaJuridica getPj3() {
+		return pj3;
+	}
+
+	public void setPj3(PessoaJuridica pj3) {
+		this.pj3 = pj3;
+	}
+
+	public Cliente getCli1() {
+		return cli1;
+	}
+
+	public void setCli1(Cliente cli1) {
+		this.cli1 = cli1;
+	}
+
+	public Cliente getCli2() {
+		return cli2;
+	}
+
+	public void setCli2(Cliente cli2) {
+		this.cli2 = cli2;
+	}
+
+	public Cliente getCli3() {
+		return cli3;
+	}
+
+	public void setCli3(Cliente cli3) {
+		this.cli3 = cli3;
+	}
+
+	public Cliente getCli4() {
+		return cli4;
+	}
+
+	public void setCli4(Cliente cli4) {
+		this.cli4 = cli4;
+	}
+
+	public Cliente getCli5() {
+		return cli5;
+	}
+
+	public void setCli5(Cliente cli5) {
+		this.cli5 = cli5;
+	}
+
+	public Cliente getCli6() {
+		return cli6;
+	}
+
+	public void setCli6(Cliente cli6) {
+		this.cli6 = cli6;
+	}
+
+	public Funcionario getFuncionario1() {
+		return funcionario1;
+	}
+
+	public void setFuncionario1(Funcionario funcionario1) {
+		this.funcionario1 = funcionario1;
+	}
+
+	public Funcionario getFuncionario2() {
+		return funcionario2;
+	}
+
+	public void setFuncionario2(Funcionario funcionario2) {
+		this.funcionario2 = funcionario2;
+	}
+
+	public Funcionario getFuncionario3() {
+		return funcionario3;
+	}
+
+	public void setFuncionario3(Funcionario funcionario3) {
+		this.funcionario3 = funcionario3;
+	}
+
+	public Funcionario getFuncionario4() {
+		return funcionario4;
+	}
+
+	public void setFuncionario4(Funcionario funcionario4) {
+		this.funcionario4 = funcionario4;
+	}
+
+	public Funcionario getFuncionario5() {
+		return funcionario5;
+	}
+
+	public void setFuncionario5(Funcionario funcionario5) {
+		this.funcionario5 = funcionario5;
+	}
+
+	public Funcionario getFuncionario6() {
+		return funcionario6;
+	}
+
+	public void setFuncionario6(Funcionario funcionario6) {
+		this.funcionario6 = funcionario6;
+	}
+	
+	
 }

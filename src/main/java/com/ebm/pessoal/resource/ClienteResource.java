@@ -59,7 +59,7 @@ public class ClienteResource {
 		return ResponseEntity.ok(obj);
 	}
 	
-	@GetMapping
+	@GetMapping(value="/documents")
 	public ResponseEntity<Cliente> findBy( 
 			@RequestParam(value ="cpf", defaultValue="", required = false) final String cpf,
 			@RequestParam(value = "cnpj", defaultValue="", required = false) final String cnpj){
