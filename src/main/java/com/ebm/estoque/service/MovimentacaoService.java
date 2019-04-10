@@ -1,4 +1,4 @@
-package com.ebm.estoque.domain.service;
+package com.ebm.estoque.service;
 
 import com.ebm.estoque.domain.OrigemMovimentacao;
 

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 
+import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,7 +89,7 @@ public class PessoaServiceTest extends DevApplicationTests{
 		pf1.getEndereco().add(endereco1);
 		pf1.getEmail().add(email1);
 		pf1.getTelefone().add(telefone1);
-		
+		pf1.getTelefone().add(telefone2);
 
 		
 		//executando teste
@@ -98,7 +99,7 @@ public class PessoaServiceTest extends DevApplicationTests{
 		assertThat(1, equalTo(result.getId()));
 		assertThat(result.getEmail().get(0).getEmail(), equalTo(email1.getEmail()));
 		assertThat(result.getEndereco().get(0).getId(), equalTo(1));
-		assertThat(result.getTelefone().get(0).getNumero(), equalTo(telefone1.getNumero()));
+		assertThat(result.getTelefone().size(), equalTo(2));
 	}
 	
 	//teste inserção de pessoa fisica com cpf invalido
@@ -112,21 +113,76 @@ public class PessoaServiceTest extends DevApplicationTests{
 			pessoaService.insert(pf1);
 			fail("Falha. Uma exceção deve ser lançada!");
 		}catch(DataIntegrityException ex) {
-			assertThat(ex.getMessage(), equalTo("Não foi possivel validar esse cpf, tente novamente com um cpf valido"));
+			assertThat(ex.getMessage(), equalTo(PessoaService.INVALID_CPF));
 		}
 	
 	}
 	
 	//test inserção de pessoa fisica com cpf ja cadastrado
-//	public void testInsercaoPessoaFisicaCpfDuplicado
+	@Test
+	public void testInsercaoPessoaFisicaCpfDuplicado() {
+		//cenario
+		pf2.setCpf(pf1.getCpf());
+		
+		//executando
+		pessoaService.insert(pf1);
+		
+		//validando
+		try {
+			pessoaService.insert(pf2);
+			fail("Falha. Uma exceção deve ser lançada!");
+		} catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(PessoaService.DUPLICATE_CPF));
+		}
+		
+		
+	}
 	
 	
 	//Test de inserção de pj;
-	
+	@Test
+	public void testaInsercaoPessoaJuridica() {
+		//exeutando
+		PessoaJuridica retorno = (PessoaJuridica) pessoaService.insert(pj1);
+		
+		//validando
+		assertThat(retorno.getCnpj(), equalTo(pj1.getCnpj()));
+		
+	}
 	//test de inserção de pj com cnpj invalido
+	@Test
+	public void testInsercaoPessoaJuridicaCnpjInvalido() {
+		//cenario
+		pj1.setCnpj("2312412312");
+		//executando 
+		try {
+			pessoaService.insert(pj1);
+			fail("Falha. Uma exceção deve ser lançada!");
+		}catch(DataIntegrityException ex) {
+			//validando
+			assertThat(ex.getMessage(), equalTo(PessoaService.INVALID_CNPJ));
+		}
+		
+	}
 	
 	//teste de pj com cnpj duplicado
-	
+	@Test
+	public void testInsercaoPessoaJuridicaCnpjDuplicado() {
+		//cenario
+		pj2.setCnpj(pj1.getCnpj());
+		//executando
+		pessoaService.insert(pj1);
+		
+		//validando
+		try {
+			pessoaService.insert(pj2);
+			fail("Falha. Uma exceção deve ser lançada!");
+		} catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(PessoaService.INVALID_CNPJ));
+		}
+			
+		
+	}
 	
 	
 

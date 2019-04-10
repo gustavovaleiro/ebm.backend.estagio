@@ -1,3 +1,5 @@
+
+
 package com.ebm.pessoal.service;
 
 import java.time.LocalDateTime;
@@ -9,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,13 @@ import br.com.caelum.stella.validation.InvalidStateException;
 
 @Service
 public class PessoaService {
+	public static final String INVALID_CNPJ = "Não foi possivel validar esse cnpj, tente novamente com um cnpj valido";
+	public static final String INVALID_CPF = "Não foi possivel validar esse cpf, tente novamente com um cpf valido";
+	public static final String NOT_FIND_CNPJ = "Não foi possivel encontrar uma pessoa com o cnpj: ";
+	public static final String NOT_FIND_CPF = "Não foi possivel encontrar uma pessoa com o cpf: ";
+	public static final String NOT_FIND_ID = "não foi possivel encontrar a pessoa de id: ";
+	public static final String DUPLICATE_CPF = "Ja existe uma pessoa com esse cpf, se você deseja alterar dados, modifique a pessoa ja existente";
+	public static final String DUPLICATE_CNPJ = "Ja existe uma pessoa com esse cnpj, se você deseja alterar dados, modifique a pessoa ja existente";
 	@Autowired
 	private PessoaFisicaRepository pessoaFisicaRepository;
 	@Autowired
@@ -43,6 +54,7 @@ public class PessoaService {
 	@Autowired
 	private TelefoneService telefoneService;
 	
+	Logger LOG = LoggerFactory.getLogger(PessoaService.class);
 	// insert
 	// --------------------------------------------------------------------------------------------------------
 	@Transactional
@@ -52,13 +64,17 @@ public class PessoaService {
 		try {
 			findbyCPF(pf.getCpf());
 			throw new DataIntegrityException(
-					"Ja existe uma pessoa com esse cpf, se você deseja alterar dados, modifique a pessoa ja existente");
+					DUPLICATE_CPF);
 		} catch (ObjectNotFoundException e) {
 			pf.setId(null);
 			pf.setDataCadastro(LocalDateTime.now());
+			LOG.info("Salvando associaçoes...");
 			saveAssociations(pf);
-
-			pf.setNaturalidade(enderecoService.lidaComCidadeInsert(pf.getNaturalidade()));
+			LOG.info("Associaçoes salvadas com sucesso");
+			LOG.info("Salvando naturalidade");
+			
+		    pf.setNaturalidade(enderecoService.lidaComCidadeInsert(pf.getNaturalidade()));
+			LOG.info("Naturailidade salva");
 			pf = pessoaFisicaRepository.save(pf);
 
 			return pf;
@@ -73,7 +89,7 @@ public class PessoaService {
 		try {
 			findByCPNJ(pj.getCnpj());
 			throw new DataIntegrityException(
-					"Ja existe uma pessoa com esse cpf, se você deseja alterar dados, modifique a pessoa ja existente");
+					DUPLICATE_CNPJ);
 		} catch (ObjectNotFoundException e) {
 			pj.setDataCadastro(LocalDateTime.now());
 			saveAssociations(pj);
@@ -118,7 +134,19 @@ public class PessoaService {
 	// --------------------------------------------------------------------------------------------------------
 	public void delete(PessoaFisica pf) {
 		findPF(pf.getId());
+		//deleteAssociations(pf);
 		pessoaFisicaRepository.delete(pf);
+		
+	}
+
+	private void deleteAssociations(Pessoa p) {
+		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
+		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
+		Optional<List<Telefone>> telefones = Optional.ofNullable(p.getTelefone());
+		enderecos.ifPresent(o -> enderecoService.deleteAll(o));
+		emails.ifPresent(o -> emailService.deleteAll(o));
+		telefones.ifPresent(o -> telefoneService.deleteAll(o));
+		
 	}
 
 	public void delete(PessoaJuridica pj) {
@@ -146,14 +174,14 @@ public class PessoaService {
 			return pf.get();
 
 		return pessoaJuridicaRepository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException("não foi possivel encontrar a pessoa de id: " + id));
+				.orElseThrow(() -> new ObjectNotFoundException(NOT_FIND_ID + id));
 	}
 
 	public PessoaFisica findPF(Integer id) {
 		if (id == null)
 			throw new NullPointerException();
 		Optional<PessoaFisica> pf = pessoaFisicaRepository.findById(id);
-		return pf.orElseThrow(() -> new ObjectNotFoundException("não foi possivel encontrar a pessoa de id: " + id));
+		return pf.orElseThrow(() -> new ObjectNotFoundException(NOT_FIND_ID + id));
 	}
 
 	public Set<Pessoa> findAllByNome(String nome) {
@@ -169,7 +197,7 @@ public class PessoaService {
 
 	public PessoaFisica findbyCPF(String cpf) {
 		return pessoaFisicaRepository.findOneByCpf(cpf).orElseThrow(
-				() -> new ObjectNotFoundException("Não foi possivel encontrar uma pessoa com o cpf: " + cpf));
+				() -> new ObjectNotFoundException(NOT_FIND_CPF + cpf));
 	}
 
 	public List<PessoaFisica> findPFByEmail(String email) {
@@ -182,12 +210,12 @@ public class PessoaService {
 
 	public PessoaJuridica findPJ(Integer id) {
 		Optional<PessoaJuridica> pj = pessoaJuridicaRepository.findById(id);
-		return pj.orElseThrow(() -> new ObjectNotFoundException("não foi possivel encontrar a pessoa de id: " + id));
+		return pj.orElseThrow(() -> new ObjectNotFoundException(NOT_FIND_ID + id));
 	}
 
 	public PessoaJuridica findByCPNJ(String cnpj) {
 		return pessoaJuridicaRepository.findOneByCnpj(cnpj).orElseThrow(
-				() -> new ObjectNotFoundException("Não foi possivel encontrar uma pessoa com o cnpj: " + cnpj));
+				() -> new ObjectNotFoundException(NOT_FIND_CNPJ + cnpj));
 	}
 
 	public List<PessoaJuridica> findbyNomeFantasia(String nome) {
@@ -286,7 +314,7 @@ public class PessoaService {
 			CPFValidator cpfValidator = new CPFValidator();
 			cpfValidator.assertValid(cpf);
 		} catch (InvalidStateException e) {
-			throw new DataIntegrityException("Não foi possivel validar esse cpf, tente novamente com um cpf valido");
+			throw new DataIntegrityException(INVALID_CPF);
 		}
 	}
 
@@ -295,7 +323,7 @@ public class PessoaService {
 			CNPJValidator cnpjValidator = new CNPJValidator();
 			cnpjValidator.assertValid(cnpj);
 		} catch (InvalidStateException e) {
-			throw new DataIntegrityException("Não foi possivel validar esse cnpj, tente novamente com um cnpj valido");
+			throw new DataIntegrityException(INVALID_CNPJ);
 		}
 	}
 
