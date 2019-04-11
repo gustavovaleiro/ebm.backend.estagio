@@ -2,7 +2,7 @@ package com.ebm.exceptions;
 public class ObjectNotFoundException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
-	
+	public static final String DEFAULT = "Não foi possivel encontrar";
 	public ObjectNotFoundException(String msg) {
 		super(msg);
 	}

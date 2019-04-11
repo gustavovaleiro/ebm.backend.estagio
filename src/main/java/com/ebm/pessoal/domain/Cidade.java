@@ -2,6 +2,7 @@ package com.ebm.pessoal.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ public class Cidade implements Serializable {
 	@Column(nullable = false, length = 60, unique = true)
 	private String nome;
 	
-	@ManyToOne()
+	@ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REMOVE})
 	private Estado estado;
 	public Cidade() {}
 	

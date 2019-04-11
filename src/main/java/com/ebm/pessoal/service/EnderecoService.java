@@ -31,8 +31,6 @@ public class EnderecoService {
 	public Endereco insert(Endereco endereco) {
 		endereco.setId(null);
 		
-		lidaComEstado(endereco.getCidade());
-		
 		Optional<Cidade> cidadeResult = cidadeRepository.findOneByNomeAndEstado(endereco.getCidade().getNome(), endereco.getCidade().getEstado().getUF());
 		if(!cidadeResult.isPresent())
 			endereco.setCidade(insert(endereco.getCidade()));
@@ -44,22 +42,6 @@ public class EnderecoService {
 		return enderecoRepository.save(endereco);
 	}
 
-	public void lidaComEstado(Cidade cidade) {
-		Optional<Estado> estadoResult = estadoRepository.findOneByUF(cidade.getEstado().getUF());
-		if(!estadoResult.isPresent()) 
-			cidade.setEstado(estadoRepository.save(cidade.getEstado()));
-		else
-			cidade.setEstado(estadoResult.get());
-	}
-	
-	public Cidade insert(Cidade cidade) {
-		cidade.setId(null);
-		
-		return lidaComCidadeInsert(cidade);
-	}
-
-	
-	
 	public List<Endereco> insertAll(List<Endereco> endereco) {
 		return endereco.stream().map( e -> this.insert(e)).collect(Collectors.toList());
 	}
@@ -74,15 +56,6 @@ public class EnderecoService {
 		return endereco.stream().map( e -> this.update(e)).collect(Collectors.toList());
 	}
 	
-	public Cidade update(Cidade cidade) {
-		 findCidadeById(cidade.getId());
-		 return cidadeRepository.save(cidade);
-	}
-	public Estado update(Estado estado) {
-		 findCidadeById(estado.getId());
-		 return estadoRepository.save(estado);
-	}
-		
 	
 	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
@@ -96,14 +69,6 @@ public class EnderecoService {
 		deleteAll(findByPessoaId(id));
 	}
 	
-	public void deleteCidadeById(Integer id) {
-		cidadeRepository.delete(findCidadeById(id));
-	}
-		
-	public void deleteEstadoById(Integer id) {
-		estadoRepository.delete(findEstadoById(id));
-	}
-		
 	
 	//find --------------------------------------------------------------------------------------------------------
 	public Endereco find(Integer id) {
@@ -123,48 +88,7 @@ public class EnderecoService {
 	}
 	public List<String> getTipoEndereco(){
 		return enderecoRepository.findAllTipoEndereco();
-	}
-	
-
-	public Cidade findCidadeById(Integer id) {
-		Optional<Cidade> cidadeBd = cidadeRepository.findById(id);
-		return cidadeBd.orElseThrow(
-				() -> new ObjectNotFoundException("Cidade de id: " + id + " não pode ser encontrada"));
-	}
-	public Estado findEstadoById(Integer id) {
-		Optional<Estado> estado = estadoRepository.findById(id);
-		return estado.orElseThrow(
-				() -> new ObjectNotFoundException("Estado de id: " + id + " não pode ser encontradO"));
-	}
-	
-	public List<Cidade> findCidadeByEstado(Estado estado){
-		return cidadeRepository.findAllByEstado(estado);
-	}
-	public List<Cidade> findCidadeByEstadoId(Integer id){
-		return cidadeRepository.findAllByEstado(findEstadoById(id));
-	}
-	public Optional<Cidade> findCidadeByNomeAndEstado(String nome, String uf) {
-		// TODO Auto-generated method stub
-		return cidadeRepository.findOneByNomeAndEstado(nome, uf);
-	}
-	
-	public boolean exist(Cidade cidade) {
-		return cidadeRepository.exists(Example.of(cidade));
-	}
-
-
-	public Cidade lidaComCidadeInsert(Cidade cidade) {
-		Optional<Cidade> cidadeResult = cidadeRepository.findOneByNomeAndEstado(cidade.getNome(),cidade.getEstado().getUF());
-		if(!cidadeResult.isPresent()) {
-			lidaComEstado(cidade);
-			return cidadeRepository.save(cidade);
-		}
-		else {
-			return cidadeResult.get();
-		}
-	}
-	
-	
+	}	
 
 }
 

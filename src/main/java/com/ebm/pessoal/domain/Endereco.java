@@ -2,6 +2,7 @@ package com.ebm.pessoal.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ public class Endereco implements Serializable {
 	private String rua;
 	@Column(length = 20)
 	private String bairro;
-	@ManyToOne
+	@ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REMOVE})
 	@JoinColumn(nullable = false, name = "endereco_cidade")
 	private Cidade cidade;
 	private String numero;
