@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Estado;
 @ActiveProfiles("test")
@@ -30,12 +34,12 @@ public class CidadeServiceTest {
 	
 	@Before
 	public void setUp() {
-		cidadeService.deleteAll();
+		cidadeService.deleteAll(true);
 		estado = new Estado(null, "GO", "Goias");
 		cidade = new Cidade(null, "Goiania", estado);
 		
 	}
-	
+	//testes de insert
 	@Test
 	public void salvaCidadeSemEstado() {
 		cidade.setEstado(null);
@@ -66,5 +70,68 @@ public class CidadeServiceTest {
 		assertNotNull(cidade.getId());
 		assertNotNull(estado.getId());
 		assertThat(cidade.getEstado().getUF(), equalTo("MT"));
+	}
+	
+	@Test
+	public void updateCidadeTrocarEstadoNome() {
+		cidadeService.save(cidade);
+		
+		assertNotNull(cidade.getId());
+		
+		cidade.setEstado(new Estado(null, "PA", "PARA"));
+		cidade.setNome("Belem");
+		
+		cidadeService.save(cidade);
+		
+		assertNotNull(cidade.getEstado().getId());
+		assertThat(cidade.getEstado().getUF(), equalTo(cidade.getEstado().getUF()));
+		assertThat(cidade.getNome(), equalTo("Belem"));
+		
+	}
+	
+	@Test
+	public void findById() {
+		cidadeService.save(cidade);
+		
+		Cidade retorno  = cidadeService.findById(cidade.getId());
+		
+		assertThat(cidade.getNome(), equalTo(retorno.getNome()));
+		
+	}
+	@Test
+	public void findByIdLancaException() {
+		try {
+			cidadeService.findById(1);
+			fail();
+		}catch(ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(cidadeService.CIDADE_NOTFOUND_ID + 1));
+		}
+		
+	}
+	
+	@Test
+	public void findByEstado() {
+		Cidade cidade2 = new Cidade(null, "Santa Rita", estado);
+		Cidade cidade3 = new Cidade(null, "Mineiros", estado);
+		Cidade cidade4 = new Cidade(null, "Araguaia", new Estado(null, "MT", "Mato Grosso"));
+		
+		cidadeService.saveAll(Arrays.asList(cidade, cidade2,cidade3,cidade4));
+		
+		List<Cidade> cidadeGO = cidadeService.findByEstado(estado.getUF());
+		List<Cidade> cidadeMT = cidadeService.findByEstado("MT");
+		
+		assertThat(cidadeGO.size(), equalTo(3));
+		assertThat(cidadeMT.size(), equalTo(1));
+	}
+	@Test
+	public void findByEstadoSemCidade() {
+		estadoService.save(new Estado(null, "PR", "PARANA"));
+		
+		try {
+			cidadeService.findByEstado("PR");
+			fail();
+		} catch (ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(CidadeService.CIDADE_NOTFOUND_UF + "PR"));
+		}
 	}
 }

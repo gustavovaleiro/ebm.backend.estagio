@@ -8,46 +8,36 @@ import org.springframework.stereotype.Service;
 
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
-import com.ebm.pessoal.domain.Telefone;
 import com.ebm.pessoal.domain.Pessoa;
+import com.ebm.pessoal.domain.Telefone;
 import com.ebm.pessoal.repository.TelefoneRepository;
 
 @Service
 public class TelefoneService {
 	@Autowired
 	private TelefoneRepository telefoneRepository;
-	
-	//insert --------------------------------------------------------------------------------------------------------
-	public Telefone insert(Telefone telefone) {
+public Telefone save(Telefone telefone) {
 		
-		if(existeTelefone(telefone.getDDD(), telefone.getNumero()))
-			throw new DataIntegrityException("O telefone: "+ telefone.getNumero() + " ja existe.");
-		
-		telefone.setId(null);
+		try {
+			Telefone result = findByDDDAndNumero(telefone.getDDD(), telefone.getNumero());
+			if(result.getId() != telefone.getId())
+				throw new DataIntegrityException("O telefone: " + telefone.toString() + " ja existe.");		
+		}catch(ObjectNotFoundException e) {}
 		
 		return telefoneRepository.save(telefone);
-	}
-	public List<Telefone> insertAll(List<Telefone> telefone) {
-		return telefone.stream().map( e -> this.insert(e)).collect(Collectors.toList());
 	}
 
-	private boolean existeTelefone(String ddd,String telefone) {
-		return  telefoneRepository.countByDDDAndNumero(ddd,telefone)  == 0 ? false : true;
+
+	public Telefone findByDDDAndNumero(String ddd, String numero) {
+	// TODO Auto-generated method stub
+	return telefoneRepository.findByDDDAndNumero(ddd,numero).orElseThrow(
+			() -> new ObjectNotFoundException(ObjectNotFoundException.DEFAULT + "telefone "+ (new Telefone(null, ddd, numero, null).toString())));
+}
+
+
+	public List<Telefone> saveAll(List<Telefone> telefone) {
+		return telefone.stream().map( e -> this.save(e)).collect(Collectors.toList());
 	}
-	
-	//update --------------------------------------------------------------------------------------------------------
-	public Telefone update(Telefone telefone) {
-		find(telefone.getId());
-		
-		if(existeTelefone(telefone.getDDD(),telefone.getNumero()))
-			throw new DataIntegrityException("O telefone: "+ telefone.getNumero() + " ja existe.");
-		
-		return telefoneRepository.save(telefone);
-	}
-	public List<Telefone> updateAll(List<Telefone> telefone) {
-		return telefone.stream().map( e -> this.update(e)).collect(Collectors.toList());
-	}
-	
 	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
 		find(id);

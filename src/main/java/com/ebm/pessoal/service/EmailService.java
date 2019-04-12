@@ -18,37 +18,28 @@ public class EmailService {
 	private EmailRepository emailRepository;
 	
 	//insert --------------------------------------------------------------------------------------------------------
-	public Email insert(Email email) {
+	
+	public Email save(Email email) {
 		
-		if(existeEmail(email.getEmail()))
-			throw new DataIntegrityException("O email: "+ email.getEmail() + " ja existe.");
-		
-		email.setId(null);
+		try {
+			Email result = findByEmail(email.getEmail());
+			if(result.getId() != email.getId())
+				throw new DataIntegrityException("O email: "+ email.getEmail() + " ja existe.");		
+		}catch(ObjectNotFoundException e) {}
 		
 		return emailRepository.save(email);
 	}
-	public List<Email> insertAll(List<Email> email) {
-		return email.stream().map( e -> this.insert(e)).collect(Collectors.toList());
+
+
+	public List<Email> saveAll(List<Email> email) {
+		return email.stream().map( e -> this.save(e)).collect(Collectors.toList());
 	}
 
-	private boolean existeEmail(String email) {
-		return  emailRepository.countByEmailIgnoreCase(email)  == 0 ? false : true;
-	}
+
 
 	
 	//update --------------------------------------------------------------------------------------------------------
-	public Email update(Email email) {
-		find(email.getId());
-		
-		if(existeEmail(email.getEmail()))
-			throw new DataIntegrityException("O email: "+ email.getEmail() + " ja existe.");
-		
-		return emailRepository.save(email);
-	}
-	public List<Email> updateAll(List<Email> email) {
-		return email.stream().map( e -> this.update(e)).collect(Collectors.toList());
-	}
-	
+
 	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
 		find(id);
@@ -79,10 +70,16 @@ public class EmailService {
 
 		return emails;
 	}
-
+	
+	public Email findByEmail(String email) {
+		
+		return emailRepository.findByEmail(email).orElseThrow(
+				() -> new ObjectNotFoundException("Não foi possivel encontrar o email."));
+	}
 	public List<String> getTipoEmail(){
 		return emailRepository.findAllTipoEmail();
 	}
+
 }
 
 

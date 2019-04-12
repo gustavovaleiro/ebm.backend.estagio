@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
@@ -19,43 +20,28 @@ import com.ebm.pessoal.repository.EstadoRepository;
 
 @Service
 public class EnderecoService {
+	
+	public static final String DATAINTEGRITY_ENDERECOCIDADE = DataIntegrityException.DEFAULT+": É necessario uma cidade para salvar o endereco";
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 	@Autowired
-	private CidadeRepository cidadeRepository;
-	@Autowired
-	private EstadoRepository estadoRepository;
+	private CidadeService cidadeService;
 	
 	
-	//insert --------------------------------------------------------------------------------------------------------
-	public Endereco insert(Endereco endereco) {
-		endereco.setId(null);
+	public Endereco save(Endereco endereco) {
 		
-		Optional<Cidade> cidadeResult = cidadeRepository.findOneByNomeAndEstado(endereco.getCidade().getNome(), endereco.getCidade().getEstado().getUF());
-		if(!cidadeResult.isPresent())
-			endereco.setCidade(insert(endereco.getCidade()));
-		else {
-			endereco.setCidade(cidadeResult.get());
-		}
-			
-			
+		if(endereco.getCidade() == null)
+			throw new DataIntegrityException(DATAINTEGRITY_ENDERECOCIDADE);
+		cidadeService.save(endereco.getCidade());
+		
 		return enderecoRepository.save(endereco);
+	}	
+
+	
+	public List<Endereco> salveAll(List<Endereco> endereco) {
+		return endereco.stream().map( e -> this.save(e)).collect(Collectors.toList());
 	}
 
-	public List<Endereco> insertAll(List<Endereco> endereco) {
-		return endereco.stream().map( e -> this.insert(e)).collect(Collectors.toList());
-	}
-		
-	 
-	//update --------------------------------------------------------------------------------------------------------
-	public Endereco update(Endereco endereco) {
-		find(endereco.getId());
-		return enderecoRepository.save(endereco);
-	}
-	public List<Endereco> updateAll(List<Endereco> endereco) {
-		return endereco.stream().map( e -> this.update(e)).collect(Collectors.toList());
-	}
-	
 	
 	//delete --------------------------------------------------------------------------------------------------------
 	public void deleteById(Integer id) {
@@ -64,6 +50,11 @@ public class EnderecoService {
 	}
 	public void deleteAll(List<Endereco> endereco) {
 		endereco.forEach( e -> deleteById(e.getId()));
+	}
+	public void deleteAll(Boolean propagaDeletacao	) {
+		enderecoRepository.deleteAll();
+		if(propagaDeletacao)
+			cidadeService.deleteAll(true);
 	}
 	public void deleteByPessoaId(Integer id) {
 		deleteAll(findByPessoaId(id));
@@ -88,7 +79,9 @@ public class EnderecoService {
 	}
 	public List<String> getTipoEndereco(){
 		return enderecoRepository.findAllTipoEndereco();
-	}	
+	}
+
+
 
 }
 

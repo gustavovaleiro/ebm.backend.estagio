@@ -2,7 +2,6 @@ package com.ebm.pessoal.domain;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ public class PessoaFisica extends Pessoa {
 	@Embedded
 	private RG rG;
 	private String nacionalidade;
-	@ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REMOVE})
+	@ManyToOne
 	private Cidade naturalidade;
 	
 	public PessoaFisica() {

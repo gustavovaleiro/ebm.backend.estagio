@@ -7,12 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -53,12 +50,13 @@ public class PessoaService {
 	private EmailService emailService;
 	@Autowired
 	private TelefoneService telefoneService;
-	
-	Logger LOG = LoggerFactory.getLogger(PessoaService.class);
+	@Autowired
+	private CidadeService cidadeService;
+
 	// insert
 	// --------------------------------------------------------------------------------------------------------
 	@Transactional
-	private PessoaFisica insert(PessoaFisica pf) {
+	private PessoaFisica save(PessoaFisica pf) {
 		validateCPF(pf.getCpf());
 
 		try {
@@ -66,24 +64,20 @@ public class PessoaService {
 			throw new DataIntegrityException(
 					DUPLICATE_CPF);
 		} catch (ObjectNotFoundException e) {
-			pf.setId(null);
+		
 			pf.setDataCadastro(LocalDateTime.now());
-			LOG.info("Salvando associaçoes...");
-			saveAssociations(pf);
-			LOG.info("Associaçoes salvadas com sucesso");
-			LOG.info("Salvando naturalidade");
 			
-		    pf.setNaturalidade(enderecoService.lidaComCidadeInsert(pf.getNaturalidade()));
-			LOG.info("Naturailidade salva");
-			pf = pessoaFisicaRepository.save(pf);
+			saveAssociations(pf);
 
-			return pf;
+			cidadeService.save(pf.getNaturalidade());
+
+			return pessoaFisicaRepository.save(pf);
 		}
 
 	}
 
 	@Transactional
-	private PessoaJuridica insert(PessoaJuridica pj) {
+	private PessoaJuridica save(PessoaJuridica pj) {
 		pj.setId(null);
 		validateCNPJ(pj.getCnpj());
 		try {
@@ -93,48 +87,24 @@ public class PessoaService {
 		} catch (ObjectNotFoundException e) {
 			pj.setDataCadastro(LocalDateTime.now());
 			saveAssociations(pj);
-			pj = pessoaJuridicaRepository.save(pj);
-			return pj;
+			
+			return pessoaJuridicaRepository.save(pj);
 		}
 	}
 
-	public Pessoa insert(Pessoa pessoa) {
-		return pessoa.getTipo() == TipoPessoa.PESSOAFISICA ? insert((PessoaFisica) pessoa)
-				: insert((PessoaJuridica) pessoa);
+	public Pessoa save(Pessoa pessoa) {
+		return pessoa.getTipo() == TipoPessoa.PESSOAFISICA ? save((PessoaFisica) pessoa)
+				: save((PessoaJuridica) pessoa);
 	}
 
-	// update
-	// --------------------------------------------------------------------------------------------------------
-	public Pessoa update(Pessoa pessoa) {
-		return pessoa.getTipo() == TipoPessoa.PESSOAFISICA ? update((PessoaFisica) pessoa)
-				: update((PessoaJuridica) pessoa);
 
-	}
 
-	private PessoaFisica update(PessoaFisica pf) {
-		findPF(pf.getId());
-		validateCPF(pf.getCpf());
-		saveAssociations(pf);
-
-		pf.setDataUltimaModificacao(LocalDateTime.now());
-		pf = pessoaFisicaRepository.save(pf);
-		return pf;
-	}
-
-	private PessoaJuridica update(PessoaJuridica pj) {
-		findPJ(pj.getId());
-		validateCNPJ(pj.getCnpj());
-		saveAssociations(pj);
-		pj.setDataUltimaModificacao(LocalDateTime.now());
-		pj = pessoaJuridicaRepository.save(pj);
-		return pj;
-	}
 
 	// delete
 	// --------------------------------------------------------------------------------------------------------
 	public void delete(PessoaFisica pf) {
 		findPF(pf.getId());
-		//deleteAssociations(pf);
+		deleteAssociations(pf);
 		pessoaFisicaRepository.delete(pf);
 		
 	}
@@ -297,15 +267,11 @@ public class PessoaService {
 		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
 		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
 		Optional<List<Telefone>> telefones = Optional.ofNullable(p.getTelefone());
-		enderecos.ifPresent(o -> p.setEndereco(
-				o.stream().map(e -> e.getId() == null ? enderecoService.insert(e) : enderecoService.update(e))
-						.collect(Collectors.toList())));
-		emails.ifPresent(
-				o -> p.setEmail(o.stream().map(e -> e.getId() == null ? emailService.insert(e) : emailService.update(e))
-						.collect(Collectors.toList())));
-		telefones.ifPresent(o -> p.setTelefone(
-				o.stream().map(t -> t.getId() == null ? telefoneService.insert(t) : telefoneService.update(t))
-						.collect(Collectors.toList())));
+		enderecos.ifPresent(
+				o -> p.setEndereco(enderecoService.salveAll(p.getEndereco())));
+		emails.ifPresent(o -> p.setEmail(emailService.saveAll(p.getEmail())));
+		telefones.ifPresent(
+				o -> p.setTelefone(telefoneService.saveAll(p.getTelefone())));
 
 	}
 

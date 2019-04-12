@@ -87,5 +87,8 @@ public class Telefone implements Serializable {
 		return true;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "("+dDD+")"+ numero;
+	}
 }

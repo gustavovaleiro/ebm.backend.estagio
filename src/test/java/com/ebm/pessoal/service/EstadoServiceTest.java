@@ -28,17 +28,13 @@ public class EstadoServiceTest {
 	@Autowired
 	private EstadoService estadoService;
 	private Estado eGO;
-	private Estado eMT;
-	private boolean deleteAll = true;
 	@Autowired
 	private CidadeService cidadeService;
 	
 	@Before
 	public  void setUp() {
 		estadoService.deleteAll(false);
-		eGO = new Estado(null, "GO", "Goias");
-		eMT = new Estado(null, "MT", "Mato Grosso");
-		
+		eGO = new Estado(null, "GO", "Goias");		
 	}
 	
 	//Test Insercao de Estado com uf invalida
@@ -177,10 +173,8 @@ public class EstadoServiceTest {
 			estadoService.delete(eGO.getId());
 			fail("Era esperado lançar uma exception ao tentar deletar o estado que tivesse uma cidade");
 		} catch(DataIntegrityException ex) {
-			assertThat(ex.getMessage(), equalTo(estadoService.DATAINTEGRITY_ETADOCOMCIDADE));
+			assertThat(ex.getMessage(), equalTo(EstadoService.DATAINTEGRITY_ETADOCOMCIDADE));
 		}
 		cidadeService.delete(cidade);
 	}
-	
-	
 }
