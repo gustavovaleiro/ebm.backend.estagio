@@ -38,23 +38,26 @@ public class Estado implements Serializable{
 	public Integer getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public Estado setId(Integer id) {
 		this.id = id;
+		return this;
 	}
 	
 	public String getUF() {
 		return uF;
 	}
-	public void setUF(String uF) {
+	public Estado setUF(String uF) {
 		this.uF = uF;
+		return this;
 	}
 	
 	
 	public String getNome() {
 		return nome;
 	}
-	public void setNome(String nome) {
+	public Estado setNome(String nome) {
 		this.nome = nome;
+		return this;
 	}
 
 
@@ -88,3 +91,4 @@ public class Estado implements Serializable{
 	
 	
 }
+

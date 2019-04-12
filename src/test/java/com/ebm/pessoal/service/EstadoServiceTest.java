@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Estado;
 
 @ActiveProfiles("test")
@@ -23,18 +26,33 @@ import com.ebm.pessoal.domain.Estado;
 public class EstadoServiceTest {
 		
 	@Autowired
-	EstadoService estadoService;
+	private EstadoService estadoService;
 	private Estado eGO;
 	private Estado eMT;
+	private boolean deleteAll = true;
+	@Autowired
+	private CidadeService cidadeService;
 	
 	@Before
 	public  void setUp() {
-		estadoService.deleteAll();
+		estadoService.deleteAll(false);
 		eGO = new Estado(null, "GO", "Goias");
 		eMT = new Estado(null, "MT", "Mato Grosso");
 		
 	}
 	
+	//Test Insercao de Estado com uf invalida
+	@Test
+	public void testInsercaoUfInvalida() {
+		eGO.setUF("ASD");
+		
+		try {
+			estadoService.save(eGO);
+			fail();
+		} catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(EstadoService.UF_INVALIDO));
+		}
+	}
 	//test de inserção
 	@Test
 	public void AtestInsercao() {
@@ -145,6 +163,23 @@ public class EstadoServiceTest {
 			assertThat(ex.getMessage(), equalTo((EstadoService.NOTFOUND_UF + result.getUF())));
 		}
 		
+	}
+	
+	//tenta deletar um estado que esta associado a uma cidade sem suprimir a exção deve falhar
+	@Test
+	@Transactional
+	public void testExcecaoDIEnoDeleteDeEstadoComCidade() {
+		Cidade cidade = new Cidade(null, "Cidade de teste", eGO);
+	    estadoService.save(eGO);
+		cidade = cidadeService.save(cidade);
+		
+		try {
+			estadoService.delete(eGO.getId());
+			fail("Era esperado lançar uma exception ao tentar deletar o estado que tivesse uma cidade");
+		} catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(estadoService.DATAINTEGRITY_ETADOCOMCIDADE));
+		}
+		cidadeService.delete(cidade);
 	}
 	
 	

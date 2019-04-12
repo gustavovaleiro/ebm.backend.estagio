@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.repository.EstadoRepository;
@@ -14,17 +15,24 @@ import com.ebm.pessoal.repository.EstadoRepository;
 public class EstadoService {
 	public static final String NOTFOUND_UF = ObjectNotFoundException.DEFAULT +  " um estado com uf: ";
 	public static final String NOTFOUND_ID =  ObjectNotFoundException.DEFAULT + " um estado com id: ";
+	public static final String DATAINTEGRITY_ETADOCOMCIDADE = DataIntegrityException.DEFAULT +": o estado possui cidades cadastradas";
+	public static final String UF_INVALIDO = DataIntegrityException.DEFAULT+ ": estado deve possuir uf com duas letras.";
 	@Autowired
 	private EstadoRepository estadoRepository;
+	@Autowired
+	private CidadeService cidadeService;
 	
 	// insert & update
 
 	public Estado save(Estado estado) {
 			Optional<Estado> estadoR = estadoRepository.findOneByUF(estado.getUF());
 			
-			if(estadoR.isPresent()) 
+			if(estadoR.isPresent()) {
 				estado.setId(estadoR.get().getId());
-			
+			}
+				
+			if(estado.getUF().length() != 2)
+				throw new DataIntegrityException(UF_INVALIDO);
 			return estadoRepository.save(estado);
 	
 	}
@@ -42,7 +50,11 @@ public class EstadoService {
 
 	
 	//delets
-	public void deleteAll() {
+	public void deleteAll(boolean deletarMesmoComCidade) {
+		if(!deletarMesmoComCidade && cidadeService.count() > 0) {
+			throw new DataIntegrityException(DATAINTEGRITY_ETADOCOMCIDADE);
+		}
+			
 		estadoRepository.deleteAll();
 		
 	}
@@ -58,12 +70,17 @@ public class EstadoService {
 	}
 
 	public void delete(Integer id) {
-		find(id);
+		Estado estado = find(id);
+		if(cidadeService.exist(estado))
+			throw new DataIntegrityException(DATAINTEGRITY_ETADOCOMCIDADE);
 		estadoRepository.deleteById(id);	
 	}
 
 	public void deleteByUf(String uf) {
-		estadoRepository.delete(findByUf(uf));
+		Estado estado = findByUf(uf);
+		if(cidadeService.exist(estado))
+			throw new DataIntegrityException(DATAINTEGRITY_ETADOCOMCIDADE);
+		estadoRepository.delete(estado);
 		
 	}
 

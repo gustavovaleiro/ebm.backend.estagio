@@ -23,7 +23,7 @@ public class Cidade implements Serializable {
 	@Column(nullable = false, length = 60, unique = true)
 	private String nome;
 	
-	@ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.REMOVE})
+	@ManyToOne(optional = false)
 	private Estado estado;
 	public Cidade() {}
 	
