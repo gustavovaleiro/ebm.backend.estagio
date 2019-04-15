@@ -46,6 +46,9 @@ public Telefone save(Telefone telefone) {
 	public void deleteAll(List<Telefone> telefone) {
 		telefone.forEach( e -> deleteById(e.getId()));
 	}
+	public void deleteAll() {
+		telefoneRepository.deleteAll();
+	}
 	public void deleteByPessoaId(Integer id) {
 		deleteAll(findByPessoaId(id));
 	}

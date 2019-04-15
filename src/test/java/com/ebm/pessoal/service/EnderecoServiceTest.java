@@ -38,7 +38,8 @@ public class EnderecoServiceTest {
 	
 	@Before
 	public void setUp() {
-		enderecoService.deleteAll(true);
+		enderecoService.deleteAll();
+		cidadeService.deleteAll(true);
 		cidade = new Cidade(null, "Cuiaba", new Estado(null, "MT", "Mato Grosso"));
 		endereco = new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", "Comercial");
 		

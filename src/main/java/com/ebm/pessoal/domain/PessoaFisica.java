@@ -24,7 +24,7 @@ public class PessoaFisica extends Pessoa {
 	@Embedded
 	private RG rG;
 	private String nacionalidade;
-	@ManyToOne
+	@ManyToOne(optional = true)
 	private Cidade naturalidade;
 	
 	public PessoaFisica() {

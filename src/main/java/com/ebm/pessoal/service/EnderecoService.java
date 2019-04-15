@@ -32,7 +32,8 @@ public class EnderecoService {
 		
 		if(endereco.getCidade() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_ENDERECOCIDADE);
-		cidadeService.save(endereco.getCidade());
+		
+		endereco.setCidade(cidadeService.save(endereco.getCidade()));
 		
 		return enderecoRepository.save(endereco);
 	}	
@@ -51,10 +52,9 @@ public class EnderecoService {
 	public void deleteAll(List<Endereco> endereco) {
 		endereco.forEach( e -> deleteById(e.getId()));
 	}
-	public void deleteAll(Boolean propagaDeletacao	) {
+	public void deleteAll() {
 		enderecoRepository.deleteAll();
-		if(propagaDeletacao)
-			cidadeService.deleteAll(true);
+
 	}
 	public void deleteByPessoaId(Integer id) {
 		deleteAll(findByPessoaId(id));

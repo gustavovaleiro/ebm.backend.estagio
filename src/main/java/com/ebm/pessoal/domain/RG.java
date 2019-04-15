@@ -47,6 +47,14 @@ public class RG implements Serializable{
 	public void setEmissor(String emissor) {
 		this.emissor = emissor;
 	}
+
+	public Estado getUF() {
+		return UF;
+	}
+
+	public void setUF(Estado uF) {
+		UF = uF;
+	}
 	
 	
 }

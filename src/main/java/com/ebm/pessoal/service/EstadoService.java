@@ -54,7 +54,7 @@ public class EstadoService {
 		if(!deletarMesmoComCidade && cidadeService.count() > 0) {
 			throw new DataIntegrityException(DATAINTEGRITY_ETADOCOMCIDADE);
 		}
-			
+		
 		estadoRepository.deleteAll();
 		
 	}

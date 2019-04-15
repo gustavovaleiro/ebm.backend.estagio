@@ -1,13 +1,14 @@
 package com.ebm.pessoal.service;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
-import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.RG;
 import com.ebm.pessoal.domain.Telefone;
+import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.repository.EnderecoRepository;
 import com.ebm.pessoal.repository.PessoaFisicaRepository;
 import com.ebm.pessoal.repository.PessoaJuridicaRepository;
@@ -43,6 +45,7 @@ public class PessoaServiceTest extends DevApplicationTests{
 	@Autowired
 	private PessoaService pessoaService;
 
+
 	private Telefone telefone1;
 	private Email email1;
 	private Endereco endereco1;
@@ -51,13 +54,17 @@ public class PessoaServiceTest extends DevApplicationTests{
 	private PessoaFisica pf1;
 	private PessoaJuridica pj1;
 
+	private Telefone telefone2;
+
 	
 	
 	
 	@Before
 	public void set_up() {
 		pessoaService.deleteAll(true);
+		
 		telefone1 = new Telefone(null, "66", "43423423", "Celular");
+		telefone2 = new Telefone(null, "65", "434223423", "Celular");
 		email1 = new Email("tes43t@gmail.com", "");
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
@@ -65,6 +72,10 @@ public class PessoaServiceTest extends DevApplicationTests{
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30), new RG("23123", "SSP", estadoGO ), "Brasileira", goiania);	
 		pj1 = new PessoaJuridica(null, "Lanches", "99787331000180", "Lanches ME", "inscricaoEstadual1", "inscricaoMunicipal1");
 	
+		pf1.getEndereco().add(endereco1);
+		pf1.getTelefone().add(telefone1);
+		pj1.getEndereco().add(endereco1);
+		pj1.getTelefone().add(telefone2);
 	}
 	
 	
@@ -72,20 +83,15 @@ public class PessoaServiceTest extends DevApplicationTests{
 	@Test
 	public void testInsercaoPessoaFisica() {
 		//preparando o cenario
-		pf1.getEndereco().add(endereco1);
 		pf1.getEmail().add(email1);
-		pf1.getTelefone().add(telefone1);
-
-
-		
 		//executando teste
 		Pessoa result = pessoaService.save(pf1);
 		
 		//VALIDANDO
-		assertThat(1, equalTo(result.getId()));
+		assertNotNull(result.getId());
 		assertThat(result.getEmail().get(0).getEmail(), equalTo(email1.getEmail()));
-		assertThat(result.getEndereco().get(0).getId(), equalTo(1));
-		assertThat(result.getTelefone().size(), equalTo(2));
+		assertNotNull(result.getEndereco().get(0).getId());
+		assertThat(result.getTelefone().size(), equalTo(1));
 	}
 	
 	//teste inserção de pessoa fisica com cpf invalido
@@ -93,7 +99,6 @@ public class PessoaServiceTest extends DevApplicationTests{
 	public void testInsercaoPessoaFisicaCPFInvalido() {
 		//cenario
 		pf1.setCpf("1233232323");
-		
 		//executando
 		try {
 			pessoaService.save(pf1);
@@ -108,11 +113,11 @@ public class PessoaServiceTest extends DevApplicationTests{
 	@Test
 	public void testInsercaoPessoaFisicaCpfDuplicado() {
 		PessoaFisica pf2 = new PessoaFisica(null, "Test", pf1.getCpf(),  LocalDate.of(1990, 4, 30), new RG("23123", "SSP", estadoGO ), "Brasileira", goiania);
-
-		
+		pf2.getEndereco().add(endereco1);
+		pf2.getTelefone().add(telefone2);
 		//executando
 		pessoaService.save(pf1);
-		
+
 		//validando
 		try {
 			pessoaService.save(pf2);
@@ -123,12 +128,16 @@ public class PessoaServiceTest extends DevApplicationTests{
 		
 		
 	}
+	@Test
+	public void testInsercaoList() {
+		pessoaService.saveAll(Arrays.asList(pf1,pj1)).forEach( p -> assertNotNull(p.getId()));;
+	}
 	
 	
 	//Test de inserção de pj;
 	@Test
 	public void testaInsercaoPessoaJuridica() {
-		//exeutando
+
 		PessoaJuridica retorno = (PessoaJuridica) pessoaService.save(pj1);
 		
 		//validando
@@ -156,7 +165,11 @@ public class PessoaServiceTest extends DevApplicationTests{
 	public void testInsercaoPessoaJuridicaCnpjDuplicado() {
 		//cenario
 		PessoaJuridica pj2 = new PessoaJuridica(null, "TEST", pj1.getCnpj(), "AADFAS", "DFS", "ADSFA");
+		pj2.getEndereco().add(endereco1);
+		pj2.getTelefone().add(telefone1);
 		//executando
+		pj1.getEndereco().add(endereco1);
+		pj1.getTelefone().add(telefone2);
 		pessoaService.save(pj1);
 		
 		//validando
@@ -164,9 +177,42 @@ public class PessoaServiceTest extends DevApplicationTests{
 			pessoaService.save(pj2);
 			fail("Falha. Uma exceção deve ser lançada!");
 		} catch(DataIntegrityException ex) {
-			assertThat(ex.getMessage(), equalTo(PessoaService.INVALID_CNPJ));
+			assertThat(ex.getMessage(), equalTo(PessoaService.DUPLICATE_CNPJ));
 		}
 	}
+	
+	
+	//testes de alteraçoes
+	@Test 
+	public void testUpdateCidade() {
+		this.pf1 = (PessoaFisica) pessoaService.save(pf1);
+		
+		pf1.setNaturalidade(new Cidade(null, "Mineiros", new Estado(null, "GO", "gOAS")));
+		pf1.setNome("Gustavo");
+		pf1.setRG(null);
+		pf1 = (PessoaFisica) pessoaService.save(pf1);
+		
+		//validando
+		assertThat(pf1.getNaturalidade().getEstado().getNome(), equalTo( "gOAS"));
+		assertThat(pf1.getNome(), equalTo("Gustavo"));
+		
+	}
+	
+	//testes de alteraçoes
+	@Test 
+	public void testUpdateCidadePJ() {
+		this.pj1 =  (PessoaJuridica) pessoaService.save(pj1);
+		
+		pj1.setNome("Gustavo ME");
+		pj1 = (PessoaJuridica) pessoaService.save(pj1);
+		
+		//validando
+		assertThat(pj1.getNome(), equalTo("Gustavo ME"));
+		
+	}
+	
+	//testes de buscas
+	
 	
 	
 

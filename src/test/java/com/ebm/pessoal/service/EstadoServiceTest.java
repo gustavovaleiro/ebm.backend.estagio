@@ -30,10 +30,13 @@ public class EstadoServiceTest {
 	private Estado eGO;
 	@Autowired
 	private CidadeService cidadeService;
+	@Autowired
+	private EnderecoService enderecoService;
 	
 	@Before
 	public  void setUp() {
-		estadoService.deleteAll(false);
+		enderecoService.deleteAll();
+		cidadeService.deleteAll(true);
 		eGO = new Estado(null, "GO", "Goias");		
 	}
 	

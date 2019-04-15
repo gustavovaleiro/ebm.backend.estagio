@@ -28,7 +28,12 @@ public class ClienteService {
 
 	@Autowired
 	private PessoaService pessoaService;
-
+	
+	
+	public Cliente save(Cliente cliente) {
+		if
+		
+	}
 	// insert
 	// -------------------------------------------------------------------------------------------
 	public Cliente insert(Cliente cliente) {
@@ -90,13 +95,5 @@ public class ClienteService {
 				.orElseThrow(() -> new ObjectNotFoundException("Não existe uma pessoa de id: " + id));
 	}
 
-	private void lidaComPessoa(Cliente cliente) {
-		Pessoa findByDocument = pessoaService.findByDocument(cliente.getPessoa());
-		if (cliente.getPessoa().getId() == null && findByDocument == null)
-			cliente.setPessoa(pessoaService.insert(cliente.getPessoa()));
-
-		if (findByDocument != null)
-			cliente.setPessoa(findByDocument);
-	}
 
 }

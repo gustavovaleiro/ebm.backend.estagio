@@ -17,6 +17,8 @@ public class EmailService {
 	@Autowired
 	private EmailRepository emailRepository;
 	
+	
+	
 	//insert --------------------------------------------------------------------------------------------------------
 	
 	public Email save(Email email) {
@@ -47,6 +49,9 @@ public class EmailService {
 	}
 	public void deleteAll(List<Email> email) {
 		email.forEach( e -> deleteById(e.getId()));
+	}
+	public void deleteAll() {
+		emailRepository.deleteAll();
 	}
 	public void deleteByPessoaId(Integer id) {
 		deleteAll(findByPessoaId(id));
