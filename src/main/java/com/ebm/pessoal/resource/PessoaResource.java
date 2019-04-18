@@ -25,7 +25,7 @@ public class PessoaResource {
 	
 	@PostMapping
 	public ResponseEntity<Void> insert( @RequestBody Pessoa pessoa){
-		Pessoa obj = pessoaService.insert(pessoa);
+		Pessoa obj = pessoaService.save(pessoa);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(obj.getId()).toUri();
@@ -36,7 +36,7 @@ public class PessoaResource {
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Pessoa pessoa, @PathVariable Integer id){
 		pessoa.setId(id);
-		pessoa = pessoaService.update(pessoa);
+		pessoa = pessoaService.save(pessoa);
 		return ResponseEntity.noContent().build();
 		
 	}
