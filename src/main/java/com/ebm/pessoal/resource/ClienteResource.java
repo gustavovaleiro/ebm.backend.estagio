@@ -32,7 +32,7 @@ public class ClienteResource {
 	
 	@PostMapping
 	public ResponseEntity<Void> insert( @RequestBody Cliente cliente){
-		Cliente obj = clienteService.insert(cliente);
+		Cliente obj = clienteService.save(cliente);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(obj.getId()).toUri();
@@ -42,7 +42,7 @@ public class ClienteResource {
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Cliente cliente, @PathVariable Integer id){
 		cliente.setId(id);
-		cliente = clienteService.update(cliente);
+		cliente = clienteService.save(cliente);
 		return ResponseEntity.noContent().build();
 		
 	}
@@ -75,17 +75,17 @@ public class ClienteResource {
 
 	@GetMapping(value="/page")
 	public ResponseEntity<Page<ClienteListDTO>> findAllBy(
-			@RequestParam(value ="nome", defaultValue="") String nome,
-			@RequestParam(value ="tipo", defaultValue="") String tipo,
-			@RequestParam(value ="nomeFantasia", defaultValue="") String nomeFantasia,
-			@RequestParam(value ="razaoSocial", defaultValue="") String razaoSocial,
+			@RequestParam(value ="nome", defaultValue="null") String nome,
+			@RequestParam(value ="tipo", defaultValue="null") String tipo,
+			@RequestParam(value ="nomeFantasia", defaultValue="null") String nomeFantasia,
+			@RequestParam(value ="razaoSocial", defaultValue="null") String razaoSocial,
 			@RequestParam(value ="page", defaultValue="0") Integer page,
 			@RequestParam(value ="linesPerPage", defaultValue="10")Integer linesPerPage,
 			@RequestParam(value ="orderBy", defaultValue="nome")String orderBy,
 			@RequestParam(value ="direction", defaultValue="ASC")String direction ) {
 		
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<ClienteListDTO> rs = clienteService.findBy(tipo, nome, nomeFantasia, razaoSocial, pageRequest);
+		Page<ClienteListDTO> rs = clienteService.findBy(tipo, nome, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 	

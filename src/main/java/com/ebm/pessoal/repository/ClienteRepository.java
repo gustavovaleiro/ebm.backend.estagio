@@ -27,6 +27,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
 	@Transactional(readOnly=true)
 	@Query("Select c FROM Cliente c WHERE c.pessoa.id = ?1")
 	Optional<Cliente> findByPessoaId(Integer id);
+	
+	
   
 	
 }

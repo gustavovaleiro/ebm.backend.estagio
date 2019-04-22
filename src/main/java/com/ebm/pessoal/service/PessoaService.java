@@ -247,6 +247,7 @@ public class PessoaService {
 		pessoaFisicaRepository.deleteAll();
 		pessoaJuridicaRepository.deleteAll();
 		if (b) {
+			
 			enderecoService.deleteAll();
 			telefoneService.deleteAll();
 		}

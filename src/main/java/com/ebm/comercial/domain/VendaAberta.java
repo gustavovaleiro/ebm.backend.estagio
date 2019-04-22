@@ -138,7 +138,7 @@ public class VendaAberta implements OrigemMovimentacao{
 		return this.usuarioCadastro;
 	}
 
-	@Override
+
 	public List<FuncionarioFuncao> getFuncionariosComFuncao() {
 		// TODO Auto-generated method stub
 		return Arrays.asList(new FuncionarioFuncao(this.getUsuario().getFuncionario(), "Vendedor"));

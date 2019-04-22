@@ -1,8 +1,8 @@
 package com.ebm.pessoal.domain;
 
 public enum TipoPessoa {
-	PESSOAFISICA(0,"Pessoa Fisica"),
-	PESSOAJURIDICA(1, "Pessoa Juridica"),
+	PESSOAFISICA(0,"PessoaFisica"),
+	PESSOAJURIDICA(1, "PessoaJuridica"),
 	ALL(3, "Todos");
 	
 	private int cod;
