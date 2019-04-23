@@ -1,15 +1,16 @@
 package com.ebm.pessoal.dtos;
 
 import com.ebm.pessoal.domain.Cliente;
+import com.ebm.pessoal.domain.TipoPessoa;
 
 public class ClienteListDTO {
 	
 	private Integer id;
 	private String nome;
-	private String tipo;
+	private TipoPessoa tipo;
 	private Double limteCompra;
 	public ClienteListDTO() {}
-	public ClienteListDTO(Integer id, String nome, String tipo, double limite) {
+	public ClienteListDTO(Integer id, String nome, TipoPessoa tipo, double limite) {
 		this.id=id;
 		this.nome=nome;
 		this.tipo = tipo;
@@ -17,7 +18,7 @@ public class ClienteListDTO {
 	}
 
 	public ClienteListDTO(Cliente c) {
-		this(c.getId(), c.getPessoa().getNome(), c.getPessoa().getTipo().getDescricao(), c.getLimite_compra().doubleValue());
+		this(c.getId(), c.getPessoa().getNome(), c.getPessoa().getTipo(), c.getLimite_compra().doubleValue());
 	}
 	public Double getLimteCompra() {
 		return limteCompra;
@@ -37,10 +38,10 @@ public class ClienteListDTO {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public String getTipo() {
+	public TipoPessoa getTipo() {
 		return tipo;
 	}
-	public void setTipo(String tipo) {
+	public void setTipo(TipoPessoa tipo) {
 		this.tipo = tipo;
 	}
 }

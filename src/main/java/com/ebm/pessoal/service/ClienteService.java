@@ -19,6 +19,7 @@ import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
+import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.ClienteListDTO;
 import com.ebm.pessoal.repository.ClienteRepository;
 
@@ -72,22 +73,18 @@ public class ClienteService {
 				.orElseThrow(() -> new ObjectNotFoundException("Não foi possivel encontrar o cliente de id: " + id));
 	}
 
-	public Page<ClienteListDTO> findBy(String tipo, String nome, PageRequest pageRequest) {
+	public Page<ClienteListDTO> findBy(TipoPessoa tipo, String nome, PageRequest pageRequest) {
 		
 		ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreCase().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 		
-		Pessoa pessoa;
-		if(tipo.toLowerCase().contains("sica"))
-			pessoa = new PessoaFisica(null, nome, null, null, null, null, null);
-		else if(tipo.toLowerCase().contains("dica"))
-			pessoa = new PessoaJuridica(null, nome, null, null, null, null);
-		else
-			throw new DataIntegrityException(DataIntegrityException.DEFAULT + ": Tipo de pessoa invalido");
+		if(tipo == null) 
+			matcher = matcher.withIgnorePaths("pessoa.tipo");
 		
+		Pessoa pessoa =Pessoa.getPessoa(tipo);
+		pessoa.setNome(nome);
+	
 		Cliente cliente = new Cliente(null, pessoa, null, null);
 		List<ClienteListDTO> clientes = clienteRepository.findAll(Example.of(cliente ,matcher)).stream().map(c -> new ClienteListDTO(c)).collect(Collectors.toList());
-	
-		
 		
 		return  new PageImpl<>(clientes, pageRequest, clientes.size());
 	}

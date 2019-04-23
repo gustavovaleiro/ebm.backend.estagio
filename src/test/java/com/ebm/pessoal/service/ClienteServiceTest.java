@@ -1,8 +1,10 @@
 package com.ebm.pessoal.service;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
@@ -165,30 +167,21 @@ public class ClienteServiceTest {
 		}
 	}
 	
-	@Transactional
-	@Test
-	public void testaBuscaParamiterizada() {
-
+	
+	private void cenarioParaBuscaParamiterizada() {
 		PessoaFisica pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30), new RG("3234", "SSP", estadoGO ), "Brasileira", goiania);
 		PessoaFisica pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30), new RG("54345", "SSP", estadoGO ), "Brasileira", goiania);
 		PessoaFisica pf4 = new PessoaFisica(null, "Maria Carvalho", "58522943060", LocalDate.of(1990, 1, 30), new RG("4523", "SSP", estadoGO ), "Brasileira", goiania);
 		PessoaJuridica pj2 = new PessoaJuridica(null, "Juniscleids ME", "18038642000145", "Juniscleids ME", "inscricaoEstadual2", "inscricaoMunicipal2");
-		PessoaJuridica pj3 = new PessoaJuridica(null, "Profissionais", "46530490000139", "Profissionais ME", "inscricaoEstadual3", "inscricaoEstadual3");
+		PessoaJuridica pj3 = new PessoaJuridica(null, "Joao Dev", "46530490000139", "Profissionais ME", "inscricaoEstadual3", "inscricaoEstadual3");
 		PessoaJuridica pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4", "inscricaoMunicipal4");
-		
 		Arrays.asList(pf2,pf3,pf4,pj2,pj3,pj4).forEach( p -> {
 			p.getEndereco().add(endereco1);
 			p.getTelefone().add(Utils.getRandomTelefone());
 		});
 		
 		
-		
-		
-		
-		
 		Cliente cf2 = new Cliente(null, pf2, BigDecimal.valueOf(1233), "12312");
-
-
 		Cliente cf3 = new Cliente(null, pf3, BigDecimal.valueOf(1233), "12312");
 		Cliente cf4 = new Cliente(null, pf4, BigDecimal.valueOf(2412), "descricao");
 		Cliente cj2 = new Cliente(null, pj2, new BigDecimal(2133), "sdaf");
@@ -197,14 +190,86 @@ public class ClienteServiceTest {
 
 		
 		clienteService.saveAll(Arrays.asList(cf1,cf2,cf3,cf4,cj1,cj2,cj3,cj4));
-		
-		// test
-		
-		
-		PageRequest pageRequest = PageRequest.of(1, 5);
-		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOAFISICA.getDescricao(), null, pageRequest );
-		
-		assertThat(result.getNumberOfElements(), equalTo(4));
+	}
 	
+	
+	@Transactional
+	@Test
+	public void testaBuscaParamiterizadaPessoaFisica() {
+
+		cenarioParaBuscaParamiterizada();
+		
+		// executa
+		PageRequest pageRequest = PageRequest.of(1, 5);
+		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOA_FISICA, null, pageRequest );
+		
+		//verifica
+		assertThat(result.getNumberOfElements(), equalTo(4));
+		assertTrue(result.get().allMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)));
+		assertFalse(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));
+	}
+	
+	@Transactional
+	@Test
+	public void testaBuscaParamiterizadaPessoaJuridica() {
+
+		cenarioParaBuscaParamiterizada();
+		
+		// executa
+		PageRequest pageRequest = PageRequest.of(1, 5);
+		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOA_JURIDICA, null, pageRequest );
+		
+		//verifica
+		assertThat(result.getNumberOfElements(), equalTo(4));
+		assertTrue(result.get().allMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));
+		assertFalse(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)));
+	}
+	@Transactional
+	@Test
+	public void testaBuscaParamiterizadaPFOuPJ() {
+
+		cenarioParaBuscaParamiterizada();
+		
+		// executa
+		PageRequest pageRequest = PageRequest.of(1, 8);
+		Page<ClienteListDTO> result = clienteService.findBy(null, null, pageRequest );
+		
+		//verifica
+		assertThat(result.getNumberOfElements(), equalTo(8));
+		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)));
+		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));
+	}
+	
+	@Transactional
+	@Test
+	public void testaBuscaParamiterizadaNome() {
+
+		cenarioParaBuscaParamiterizada();
+		
+		// executa
+		PageRequest pageRequest = PageRequest.of(1, 8);
+		Page<ClienteListDTO> result = clienteService.findBy(null, "joao", pageRequest );
+		
+		//verifica
+		assertThat(result.getNumberOfElements(), equalTo(3));
+		assertTrue(result.get().filter( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)).count() == 2 );
+		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));		
+
+	}
+	
+	@Transactional
+	@Test
+	public void testaBuscaParamiterizadaNomeAndTipo() {
+
+		cenarioParaBuscaParamiterizada();
+		
+		// executa
+		PageRequest pageRequest = PageRequest.of(1, 8);
+		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOA_FISICA, "joao", pageRequest );
+		
+		//verifica
+		assertThat(result.getNumberOfElements(), equalTo(2));
+		assertTrue(result.get().allMatch(c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)) );
+
 	}
 }

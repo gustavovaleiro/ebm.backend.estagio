@@ -28,11 +28,11 @@ public class PessoaFisica extends Pessoa {
 	private Cidade naturalidade;
 	
 	public PessoaFisica() {
-		super.setTipo(TipoPessoa.PESSOAFISICA);
+		super.setTipo(TipoPessoa.PESSOA_FISICA);
 	}
 	
 	public PessoaFisica(Integer id, String nome, String cpf, LocalDate dataNascimento,RG rG, String nacionalidade, Cidade naturalidade) {
-		super(id, nome, TipoPessoa.PESSOAFISICA);
+		super(id, nome, TipoPessoa.PESSOA_FISICA);
 		this.cpf = cpf;
 		this.dataNascimento = dataNascimento;
 		this.rG = rG;

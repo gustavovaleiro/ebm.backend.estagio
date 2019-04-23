@@ -1,16 +1,17 @@
 package com.ebm.pessoal.domain;
 
 public enum TipoPessoa {
-	PESSOAFISICA(0,"PessoaFisica"),
-	PESSOAJURIDICA(1, "PessoaJuridica"),
-	ALL(3, "Todos");
+	PESSOA_FISICA(0,"Pessoa Física"),
+	PESSOA_JURIDICA(1, "Pessoa Jurídica" );
 	
 	private int cod;
 	private String desc;
+
 	
     TipoPessoa(int cod, String desc) {
 		this.cod = cod;
 		this.desc = desc;
+
 	}
 	public int getCod() {
 		return cod;
@@ -18,18 +19,6 @@ public enum TipoPessoa {
 	public String getDescricao() {
 		return desc;
 	}
+
 	
-	public static TipoPessoa toEnum(Integer cod) {
-		if(cod == null) {
-			return null;
-		}
-		if(cod == 3)
-			throw new IllegalArgumentException("id invalido: " + cod);
-		for(TipoPessoa x: TipoPessoa.values()) {
-			if(cod.equals(x.getCod()))
-				return x;
-		}
-		
-		throw new IllegalArgumentException("id invalido: " + cod);
-	}
 }

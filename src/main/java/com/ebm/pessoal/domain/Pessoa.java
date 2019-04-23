@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +50,8 @@ public abstract class Pessoa implements Serializable{
 	@OneToMany
 	@JoinColumn(name = "pessoa_id")
 	private List<Endereco> endereco = new ArrayList<Endereco>();
-	private Integer tipo;
+	@Enumerated(EnumType.STRING )
+	private TipoPessoa tipo;
 	
 	public Pessoa() {}
 	
@@ -57,7 +60,7 @@ public abstract class Pessoa implements Serializable{
 		super();
 		this.id = id;
 		this.nome = nome;
-		this.tipo = tipo.getCod();
+		this.tipo = tipo;
 	}
 
 	
@@ -76,10 +79,10 @@ public abstract class Pessoa implements Serializable{
 	}
 	
 	public void setTipo(TipoPessoa tipo) {
-		this.tipo = tipo.getCod();
+		this.tipo = tipo;
 	}
 	public TipoPessoa getTipo() {
-		return TipoPessoa.toEnum(tipo);
+		return this.tipo;
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
@@ -154,6 +157,14 @@ public abstract class Pessoa implements Serializable{
 		this.endereco = endereco;
 	}
 
+	public static Pessoa getPessoa(TipoPessoa tipo) {
+		
+		if(tipo == null || tipo.equals(TipoPessoa.PESSOA_FISICA))
+			return new PessoaFisica();
+		return new PessoaJuridica();
+	
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -178,6 +189,7 @@ public abstract class Pessoa implements Serializable{
 			return false;
 		return true;
 	}
+
 
 	
 	

@@ -21,12 +21,12 @@ public class PessoaJuridica extends Pessoa  {
 	private String inscricaoMunicipal;
 	
 	public PessoaJuridica() {
-		super.setTipo(TipoPessoa.PESSOAJURIDICA);
+		super.setTipo(TipoPessoa.PESSOA_JURIDICA);
 	}
 
 
 	public PessoaJuridica(Integer id, String nome, String cnpj, String razaoSocial, String incricaoEstadual, String inscricaoMunicipal) {
-		super(id, nome, TipoPessoa.PESSOAJURIDICA);
+		super(id, nome, TipoPessoa.PESSOA_JURIDICA);
 		this.cnpj = cnpj;
 		this.razaoSocial = razaoSocial;
 		this.inscricaoEstadual = incricaoEstadual;

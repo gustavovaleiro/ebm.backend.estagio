@@ -110,7 +110,7 @@ public class PessoaService {
 	}
 
 	public Pessoa save(Pessoa pessoa) {
-		return pessoa.getTipo() == TipoPessoa.PESSOAFISICA ? save((PessoaFisica) pessoa)
+		return pessoa.getTipo() == TipoPessoa.PESSOA_FISICA ? save((PessoaFisica) pessoa)
 				: save((PessoaJuridica) pessoa);
 	}
 	
