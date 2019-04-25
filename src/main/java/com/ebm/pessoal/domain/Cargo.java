@@ -18,15 +18,24 @@ public class Cargo implements Serializable{
 	private Integer id;
 	@Column( nullable = false, length = 44)
 	private String nomeCargo;
+	@Column
+	private String descricao;
 	@Column( nullable = false)
 	private BigDecimal salarioBase;
 	public Cargo() {}
-	public Cargo(Integer id, String nomeCargo, BigDecimal salarioBase) {
+	public Cargo(Integer id, String nomeCargo, BigDecimal salarioBase, String descricao) {
 		this.id = id;
 		this.nomeCargo = nomeCargo;
 		this.salarioBase = salarioBase;
+		this.descricao = descricao;
 	}
 
+	public String getDescricao() {
+		return descricao;
+	}
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 	public Integer getId() {
 		return id;
 	}

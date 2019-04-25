@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.pessoal.domain.Cliente;
+import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.ClienteListDTO;
 import com.ebm.pessoal.service.ClienteService;
 
@@ -75,17 +76,16 @@ public class ClienteResource {
 
 	@GetMapping(value="/page")
 	public ResponseEntity<Page<ClienteListDTO>> findAllBy(
-			@RequestParam(value ="nome", defaultValue="null") String nome,
-			@RequestParam(value ="tipo", defaultValue="null") String tipo,
-			@RequestParam(value ="nomeFantasia", defaultValue="null") String nomeFantasia,
-			@RequestParam(value ="razaoSocial", defaultValue="null") String razaoSocial,
+			@RequestParam(value ="nome", required=false) String nome,
+			@RequestParam(value ="tipo", required=false) String tipo,
 			@RequestParam(value ="page", defaultValue="0") Integer page,
 			@RequestParam(value ="linesPerPage", defaultValue="10")Integer linesPerPage,
 			@RequestParam(value ="orderBy", defaultValue="nome")String orderBy,
 			@RequestParam(value ="direction", defaultValue="ASC")String direction ) {
+	
 		
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<ClienteListDTO> rs = clienteService.findBy(tipo, nome, pageRequest);
+		Page<ClienteListDTO> rs = clienteService.findBy(TipoPessoa.fromString(tipo), nome, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 	

@@ -17,8 +17,6 @@ import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.Pessoa;
-import com.ebm.pessoal.domain.PessoaFisica;
-import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.ClienteListDTO;
 import com.ebm.pessoal.repository.ClienteRepository;
@@ -26,47 +24,46 @@ import com.ebm.pessoal.repository.ClienteRepository;
 @Service
 public class ClienteService {
 
-	public static final String DATAINTEGRITY_CLIENTWITHOUTPERSON = DataIntegrityException.DEFAULT + ": Não é possivel salvar um cliente que não possui uma pessoa associada";
+	public static final String DATAINTEGRITY_CLIENTWITHOUTPERSON = DataIntegrityException.DEFAULT
+			+ ": Não é possivel salvar um cliente que não possui uma pessoa associada";
 
-	public static final String DATAINTEGRITY_DUPLICATEPERSON = DataIntegrityException.DEFAULT + ": Não é possivel salvar multiplos clientes para uma mesma pessoa";
+	public static final String DATAINTEGRITY_DUPLICATEPERSON = DataIntegrityException.DEFAULT
+			+ ": Não é possivel salvar multiplos clientes para uma mesma pessoa";
 
 	@Autowired
 	private ClienteRepository clienteRepository;
 
 	@Autowired
 	private PessoaService pessoaService;
-	
+
 	@Transactional
 	public Cliente save(Cliente cliente) {
-		
-		if(cliente.getPessoa() == null)
+
+		if (cliente.getPessoa() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_CLIENTWITHOUTPERSON);
-		
-		if(cliente.getPessoa().getId() != null) {//garantir que nao exista outra cliente salvado com a mesma pessoa
+
+		if (cliente.getPessoa().getId() != null) {// garantir que nao exista outra cliente salvado com a mesma pessoa
 			try {
 				Cliente result = findById(cliente.getPessoa().getId());
-				if(result.getId() != cliente.getId())
+				if (result.getId() != cliente.getId())
 					throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEPERSON);
-			}catch(ObjectNotFoundException ex) { }
+			} catch (ObjectNotFoundException ex) {
+			}
 		}
-			
-		
+
 		cliente.setPessoa(pessoaService.save(cliente.getPessoa()));
 		return clienteRepository.save(cliente);
 	}
 
-	
-
-	
 	public void delete(Integer id) {
 		clienteRepository.delete(findById(id));
 	}
+
 	public void deleteAll() {
 		clienteRepository.deleteAll();
-		
+
 	}
 
-	
 	public Cliente findById(Integer id) {
 		Optional<Cliente> cliente = clienteRepository.findById(id);
 		return cliente
@@ -74,40 +71,33 @@ public class ClienteService {
 	}
 
 	public Page<ClienteListDTO> findBy(TipoPessoa tipo, String nome, PageRequest pageRequest) {
-		
-		ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreCase().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-		
-		if(tipo == null) 
+
+		ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreCase()
+				.withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+		if (tipo == null)
 			matcher = matcher.withIgnorePaths("pessoa.tipo");
-		
-		Pessoa pessoa =Pessoa.getPessoa(tipo);
+
+		Pessoa pessoa = Pessoa.getPessoa(tipo);
 		pessoa.setNome(nome);
-	
+
 		Cliente cliente = new Cliente(null, pessoa, null, null);
-		List<ClienteListDTO> clientes = clienteRepository.findAll(Example.of(cliente ,matcher)).stream().map(c -> new ClienteListDTO(c)).collect(Collectors.toList());
-		
-		return  new PageImpl<>(clientes, pageRequest, clientes.size());
+
+		Page<Cliente> clientes = clienteRepository.findAll(Example.of(cliente, matcher), pageRequest);
+		List<ClienteListDTO> clientesDTO = clientes.get().map(c -> new ClienteListDTO(c)).collect(Collectors.toList());
+
+		return new PageImpl<>(clientesDTO, pageRequest, clientesDTO.size());
 	}
-
-
 
 	public Cliente findByCpfOrCnpj(String cpf, String cnpj) {
 
 		return findById(pessoaService.findByCpfOrCnpj(cpf, cnpj));
 	}
 
-
-
-
 	public List<Cliente> saveAll(List<Cliente> clientes) {
-		
-		return clientes.stream().map( c -> this.save(c)).collect(Collectors.toList());
-		
+
+		return clientes.stream().map(c -> this.save(c)).collect(Collectors.toList());
+
 	}
-
-
-
-
-
 
 }
