@@ -200,7 +200,7 @@ public class ClienteServiceTest {
 		cenarioParaBuscaParamiterizada();
 		
 		// executa
-		PageRequest pageRequest = PageRequest.of(1, 5);
+		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOA_FISICA, null, pageRequest );
 		
 		//verifica
@@ -216,7 +216,7 @@ public class ClienteServiceTest {
 		cenarioParaBuscaParamiterizada();
 		
 		// executa
-		PageRequest pageRequest = PageRequest.of(1, 5);
+		PageRequest pageRequest = PageRequest.of(0, 5);
 		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOA_JURIDICA, null, pageRequest );
 		
 		//verifica
@@ -231,7 +231,7 @@ public class ClienteServiceTest {
 		cenarioParaBuscaParamiterizada();
 		
 		// executa
-		PageRequest pageRequest = PageRequest.of(1, 8);
+		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<ClienteListDTO> result = clienteService.findBy(null, null, pageRequest );
 		
 		//verifica
@@ -247,7 +247,7 @@ public class ClienteServiceTest {
 		cenarioParaBuscaParamiterizada();
 		
 		// executa
-		PageRequest pageRequest = PageRequest.of(1, 8);
+		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<ClienteListDTO> result = clienteService.findBy(null, "joao", pageRequest );
 		
 		//verifica
@@ -264,7 +264,7 @@ public class ClienteServiceTest {
 		cenarioParaBuscaParamiterizada();
 		
 		// executa
-		PageRequest pageRequest = PageRequest.of(1, 8);
+		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<ClienteListDTO> result = clienteService.findBy(TipoPessoa.PESSOA_FISICA, "joao", pageRequest );
 		
 		//verifica
