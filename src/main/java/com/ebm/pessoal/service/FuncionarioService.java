@@ -2,8 +2,14 @@ package com.ebm.pessoal.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +17,9 @@ import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.domain.Pessoa;
+import com.ebm.pessoal.domain.TipoPessoa;
+import com.ebm.pessoal.dtos.FuncionarioListDTO;
 import com.ebm.pessoal.repository.FuncionarioRepository;
 
 @Service
@@ -28,6 +37,9 @@ public class FuncionarioService {
 	public static final String DATAINTEGRITY_CHANCEPERSON = DataIntegrityException.DEFAULT
 			+ ": Não é possivel trocar a pessoa que um colaborador esta associado.";
 
+	public static final String DATAINTEGRITY_DUPLICATEMATRICULA = DataIntegrityException.DEFAULT
+			+ ": Já existe um colaborador com essa mesma matricula.";
+
 	@Autowired
 	private FuncionarioRepository funcionarioRepository;
 
@@ -38,35 +50,58 @@ public class FuncionarioService {
 
 	@Transactional
 	public Funcionario save(Funcionario funcionario) {
+		garantaIntegridade(funcionario);
+		saveAssociations(funcionario);
+		return funcionarioRepository.save(funcionario);
+	}
+
+	private void saveAssociations(Funcionario funcionario) {
+		funcionario.setPessoa(pessoaService.save(funcionario.getPessoa()));
+		funcionario.setCargo(cargoService.save(funcionario.getCargo()));
+	}
+
+	private void garantaIntegridade(Funcionario funcionario) {
+		garantaIntegridadeQuantoPessoa(funcionario);
+		garantaIntegridadeQuantoMatricula(funcionario);
+		garantaIntegridadeQuantoCargo(funcionario);
+	}
+
+	private void garantaIntegridadeQuantoCargo(Funcionario funcionario) {
+		if (funcionario.getCargo() == null)
+			throw new DataIntegrityException(DATAINTEGRITY_EMPLOYEWITHOUTOFFICE);
+	}
+
+	private void garantaIntegridadeQuantoMatricula(Funcionario funcionario) {
+		Optional<Funcionario> funcionarioByMatricula = funcionarioRepository
+				.findOneByMatricula(funcionario.getMatricula());
+		if (!(funcionario.getMatricula().isEmpty() || funcionario.getMatricula() == null)
+				&& (funcionarioByMatricula.isPresent() && funcionarioByMatricula.get().getId() != funcionario.getId()))
+			throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEMATRICULA);
+	}
+
+	private void garantaIntegridadeQuantoPessoa(Funcionario funcionario) {
 		if (funcionario.getPessoa() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_EMPLOYEWITHOUTPERSON);
 
-		if (funcionario.getPessoa().getId() != null) {// garantir que nao exista outra funcionario salvado com a mesma
-														// pessoa
+		if (funcionario.getPessoa().getId() != null) {
 			try {
 				Funcionario result = findById(funcionario.getPessoa().getId());
 				if (result.getId() != funcionario.getId())
 					throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEPERSON);
-			} catch (ObjectNotFoundException ex) {}
-		} 
-		
-		
-		if(funcionario.getId() != null && funcionario.getId() != funcionario.getPessoa().getId())
+			} catch (ObjectNotFoundException ex) {
+			}
+		}
+
+		if (funcionario.getId() != null && funcionario.getId() != funcionario.getPessoa().getId())
 			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
-		
-		funcionario.setPessoa(pessoaService.save(funcionario.getPessoa()));
-		if (funcionario.getCargo() == null)
-			throw new DataIntegrityException(DATAINTEGRITY_EMPLOYEWITHOUTOFFICE);
-		
-		funcionario.setCargo(cargoService.save(funcionario.getCargo()));
-		return funcionarioRepository.save(funcionario);
 	}
-	
+
 	@Transactional
-	public List<Funcionario> saveAll(List<Funcionario> asList) {
-		// TODO Auto-generated method stub
-		
+	public List<Funcionario> saveAll(List<Funcionario> funcionarios) {
+		return funcionarios.stream().map(f -> this.save(f)).collect(Collectors.toList());
+
 	}
+
 	// delete
 	// -------------------------------------------------------------------------------------------
 	public void delete(Integer id) {
@@ -86,26 +121,29 @@ public class FuncionarioService {
 				() -> new ObjectNotFoundException("Não foi possivel encontrar o funcionario de id: " + id));
 	}
 
-//	public Funcionario findByCpfOrCnpj(String cpf, String cnpj) {
-//
-//		return findByPessoa(pessoaService.findByCpfOrCnpj(cpf, cnpj));
-//	}
-//
-//	public Page<FuncionarioListDTO> findBy(String tipo, String nome, String nomeFantasia, String razaoSocial,
-//			String cargo, PageRequest pageRequest) {
-//		
-//	}
-//
-//	public Collection<? extends Funcionario> findByCargoName(String cargo) {
-//
-//		return funcionarioRepository.findByCargoName(cargo);
-//	}
+	public Page<FuncionarioListDTO> findBy(TipoPessoa tipo, String cargoNome, String nome, String matricula,
+			PageRequest pageRequest) {
+
+		ExampleMatcher matcher = PessoaService.ExampleMatcherDinamicFilterFor(true, tipo);
+		Pessoa pessoa = PessoaService.getPessoa(tipo, nome);
+		Cargo cargo = null;
+		if (Optional.ofNullable(cargoNome).isPresent())
+			cargo = new Cargo(null, cargoNome, null, null);
+		Funcionario funcionario = new Funcionario(null, pessoa, matricula, cargo, null, null, null);
+		Page<Funcionario> funcionarios = funcionarioRepository.findAll(Example.of(funcionario, matcher), pageRequest);
+		List<FuncionarioListDTO> funcionariosDTO = funcionarios.get().map(f -> new FuncionarioListDTO(f))
+				.collect(Collectors.toList());
+
+		return new PageImpl<>(funcionariosDTO, pageRequest, funcionariosDTO.size());
+	}
+
+	public Funcionario findByCpfOrCnpj(String document) {
+		
+		return findById(pessoaService.findByCpfOrCnpj(document).getId());
+	}
 
 	// aux
 	public boolean existWith(Cargo cargo) {
 		return funcionarioRepository.countByCargo(cargo) == 0 ? false : true;
 	}
-
-	
-
 }

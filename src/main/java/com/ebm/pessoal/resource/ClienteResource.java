@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.ClienteListDTO;
@@ -62,16 +61,9 @@ public class ClienteResource {
 	
 	@GetMapping(value="/documents")
 	public ResponseEntity<Cliente> findBy( 
-			@RequestParam(value ="cpf", defaultValue="", required = false) final String cpf,
-			@RequestParam(value = "cnpj", defaultValue="", required = false) final String cnpj){
+			@RequestParam(value ="value", required = true) final String document){
 		
-		Cliente cli;
-		if(!cpf.equals("") || !cnpj.equals("")) 
-			cli = clienteService.findByCpfOrCnpj(cpf, cnpj);
-		 else 
-			throw new DataIntegrityException("Não foi passado dados");
-		
-		return ResponseEntity.ok(cli);
+		return ResponseEntity.ok(clienteService.findByCpfOrCnpj(document));
 	}
 
 	@GetMapping(value="/page")

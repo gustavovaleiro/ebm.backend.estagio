@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FuncionarioListDTO;
 import com.ebm.pessoal.service.FuncionarioService;
 
@@ -32,7 +32,7 @@ public class FuncionarioResource {
 	
 	@PostMapping
 	public ResponseEntity<Void> insert( @RequestBody Funcionario funcionario){
-		Funcionario obj = funcionarioService.insert(funcionario);
+		Funcionario obj = funcionarioService.save(funcionario);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(obj.getId()).toUri();
@@ -42,7 +42,7 @@ public class FuncionarioResource {
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Funcionario funcionario, @PathVariable Integer id){
 		funcionario.setId(id);
-		funcionario = funcionarioService.update(funcionario);
+		funcionario = funcionarioService.save(funcionario);
 		return ResponseEntity.noContent().build();
 		
 	}
@@ -61,31 +61,24 @@ public class FuncionarioResource {
 	
 	@GetMapping(value="/documents")
 	public ResponseEntity<Funcionario> findBy( 
-			@RequestParam(value ="cpf", defaultValue="", required = false) final String cpf,
-			@RequestParam(value = "cnpj", defaultValue="", required = false) final String cnpj){
-		Funcionario funcionario;
-		if(!cpf.equals("") || !cnpj.equals("")) 
-			funcionario = funcionarioService.findByCpfOrCnpj(cpf, cnpj);
-		 else 
-			throw new DataIntegrityException("Não foi passado dados");
-		
-		return ResponseEntity.ok(funcionario);
+			@RequestParam(value ="value", required = true) final String document){
+	
+		return ResponseEntity.ok(funcionarioService.findByCpfOrCnpj(document));
 	}
 
 	@GetMapping(value="/page")
 	public ResponseEntity<Page<FuncionarioListDTO>> findAllBy(
-			@RequestParam(value ="nome", defaultValue="") String nome,
-			@RequestParam(value ="tipo", defaultValue="") String tipo,
-			@RequestParam(value ="nomeFantasia", defaultValue="") String nomeFantasia,
-			@RequestParam(value ="razaoSocial", defaultValue="") String razaoSocial,
-			@RequestParam(value ="cargo", defaultValue="") String cargo,
+			@RequestParam(value ="nome", required=false) String nome,
+			@RequestParam(value ="tipo", required=false) String tipo,
+			@RequestParam(value ="cargo", required=false) String cargo,
+			@RequestParam(value ="matricula", required=false) String matricula,
 			@RequestParam(value ="page", defaultValue="0") Integer page,
 			@RequestParam(value ="linesPerPage", defaultValue="10")Integer linesPerPage,
 			@RequestParam(value ="orderBy", defaultValue="nome")String orderBy,
 			@RequestParam(value ="direction", defaultValue="ASC")String direction ) {
 		
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<FuncionarioListDTO> rs = funcionarioService.findBy(tipo, nome, nomeFantasia, razaoSocial, cargo, pageRequest);
+		Page<FuncionarioListDTO> rs = funcionarioService.findBy(TipoPessoa.fromString(tipo), cargo, nome, matricula, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 	

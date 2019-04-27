@@ -72,6 +72,12 @@ public class PessoaJuridica extends Pessoa  {
 	public void setInscricaoMunicipal(String inscricaoMunicipal) {
 		this.inscricaoMunicipal = inscricaoMunicipal;
 	}
+
+
+	public Pessoa withNome(String nome) {
+		super.nome = nome;;
+		return this;
+	}
 	
 	
 	

@@ -39,6 +39,16 @@ public class ClienteService {
 	@Transactional
 	public Cliente save(Cliente cliente) {
 
+		garantaIntegridade(cliente);
+		saveAssociations(cliente);
+		return clienteRepository.save(cliente);
+	}
+
+	private void saveAssociations(Cliente cliente) {
+		cliente.setPessoa(pessoaService.save(cliente.getPessoa()));
+	}
+
+	private void garantaIntegridade(Cliente cliente) {
 		if (cliente.getPessoa() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_CLIENTWITHOUTPERSON);
 
@@ -50,9 +60,6 @@ public class ClienteService {
 			} catch (ObjectNotFoundException ex) {
 			}
 		}
-
-		cliente.setPessoa(pessoaService.save(cliente.getPessoa()));
-		return clienteRepository.save(cliente);
 	}
 
 	public void delete(Integer id) {
@@ -72,15 +79,10 @@ public class ClienteService {
 
 	public Page<ClienteListDTO> findBy(TipoPessoa tipo, String nome, PageRequest pageRequest) {
 
-		ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreCase()
-				.withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+		ExampleMatcher matcher = PessoaService.ExampleMatcherDinamicFilterFor(true, tipo);
 
-		if (tipo == null)
-			matcher = matcher.withIgnorePaths("pessoa.tipo");
-
-		Pessoa pessoa = Pessoa.getPessoa(tipo);
-		pessoa.setNome(nome);
-
+		Pessoa pessoa = PessoaService.getPessoa(tipo,nome);
+	
 		Cliente cliente = new Cliente(null, pessoa, null, null);
 
 		Page<Cliente> clientes = clienteRepository.findAll(Example.of(cliente, matcher), pageRequest);
@@ -89,9 +91,8 @@ public class ClienteService {
 		return new PageImpl<>(clientesDTO, pageRequest, clientesDTO.size());
 	}
 
-	public Cliente findByCpfOrCnpj(String cpf, String cnpj) {
-
-		return findById(pessoaService.findByCpfOrCnpj(cpf, cnpj));
+	public Cliente findByCpfOrCnpj(String document) {
+		return findById(pessoaService.findByCpfOrCnpj(document).getId());
 	}
 
 	public List<Cliente> saveAll(List<Cliente> clientes) {

@@ -2,18 +2,18 @@
 package com.ebm.pessoal.service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Email;
@@ -44,6 +44,7 @@ public class PessoaService {
 			+ ": É necessario pelo menos um endereco para cadastrar uma pessoa.";
 	public static final String NEED_PHONE = DataIntegrityException.DEFAULT
 			+ ": É necessario pelo menos um telefone para cadastrar uma pessoa.";
+	public static final String NOT_FOUND_DOCUMENT = "Não foi possivel encontrar uma pessoa com o documento nº: ";;
 
 	@Autowired
 	private PessoaFisicaRepository pessoaFisicaRepository;
@@ -176,7 +177,7 @@ public class PessoaService {
 		return pf.orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND_ID + id));
 	}
 
-	public PessoaFisica findbyCPF(String cpf) {
+	private PessoaFisica findbyCPF(String cpf) {
 		return pessoaFisicaRepository.findOneByCpf(cpf)
 				.orElseThrow(() -> new ObjectNotFoundException(NOT_FIND_CPF + cpf));
 	}
@@ -191,19 +192,24 @@ public class PessoaService {
 
 	public PessoaJuridica findPJ(Integer id) {
 		Optional<PessoaJuridica> pj = pessoaJuridicaRepository.findById(id);
-		return pj.orElseThrow(() -> new ObjectNotFoundException(NOT_FOUND_ID + id));
+		return pj.orElseThrow(() -> new ObjectNotFoundException());
 	}
 
-	public PessoaJuridica findByCPNJ(String cnpj) {
+	private PessoaJuridica findByCPNJ(String cnpj) {
 		return pessoaJuridicaRepository.findOneByCnpj(cnpj)
-				.orElseThrow(() -> new ObjectNotFoundException(NOT_FIND_CNPJ + cnpj));
+				.orElseThrow(() -> new ObjectNotFoundException());
 	}
 
-	public Integer findByCpfOrCnpj(String cpf, String cnpj) {
+	public Pessoa findByCpfOrCnpj(String document) {
 		try {
-			return findbyCPF(cpf).getId();
+			return findbyCPF(document);
 		} catch (ObjectNotFoundException e) {
-			return findByCPNJ(cnpj).getId();
+			try {
+				return findByCPNJ(document);
+			}catch (ObjectNotFoundException ex) {
+				throw new ObjectNotFoundException(NOT_FOUND_DOCUMENT + document);
+			}
+			
 		}
 	}
 
@@ -253,5 +259,19 @@ public class PessoaService {
 		}
 
 	}
+
+	public static ExampleMatcher ExampleMatcherDinamicFilterFor(Boolean ignoreCase, TipoPessoa tipo) {
+		ExampleMatcher matcher = Utils.getExampleMatcherForDinamicFilter(ignoreCase);
+		if (tipo == null)
+			matcher = matcher.withIgnorePaths("pessoa.tipo");
+		return matcher;
+	}
+
+	public static Pessoa getPessoa(TipoPessoa tipo, String nome) {
+		if(tipo == null || tipo.equals(TipoPessoa.PESSOA_FISICA))
+			return new PessoaFisica().withNome(nome);
+		return new PessoaJuridica().withNome(nome);
+	}
+
 
 }

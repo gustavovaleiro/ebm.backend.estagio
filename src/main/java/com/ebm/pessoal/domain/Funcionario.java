@@ -36,7 +36,7 @@ public class Funcionario implements Serializable {
 	@OneToOne
 	private Usuario usuario;
 
-	private double comissao;
+	private Double comissao;
 
 	private BigDecimal adicionalPessoal;
 
@@ -46,7 +46,7 @@ public class Funcionario implements Serializable {
 	}
 
 	public Funcionario(Integer id, Pessoa pessoa, String matricula, Cargo cargo, LocalDate dataDeAdmissao,
-			double comissao, BigDecimal adicionalPessoal) {
+			Double comissao, BigDecimal adicionalPessoal) {
 		this.id = id;
 		this.pessoa = pessoa;
 		this.cargo = cargo;
@@ -96,11 +96,11 @@ public class Funcionario implements Serializable {
 		this.dataDeAdmissao = dataDeAdmissao;
 	}
 
-	public double getComissao() {
+	public Double getComissao() {
 		return comissao;
 	}
 
-	public void setComissao(double comissao) {
+	public void setComissao(Double comissao) {
 		this.comissao = comissao;
 	}
 

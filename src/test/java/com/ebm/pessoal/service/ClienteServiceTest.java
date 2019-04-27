@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.Endereco;
@@ -167,7 +168,35 @@ public class ClienteServiceTest {
 		}
 	}
 	
+	@Test
+	public void testFindCnpj() {
+		clienteService.save(cj1);
+		
+		Cliente result = clienteService.findByCpfOrCnpj(((PessoaJuridica) cj1.getPessoa()).getCnpj());
+		
+		assertNotNull(result.getId());
+		assertThat(((PessoaJuridica) result.getPessoa()).getCnpj(), equalTo(((PessoaJuridica) cj1.getPessoa()).getCnpj()));
+	}
+	@Test
+	public void testFindCPF() {
+		clienteService.save(cf1);
+		
+		Cliente result = clienteService.findByCpfOrCnpj(((PessoaFisica) cf1.getPessoa()).getCpf());
+		
+		assertNotNull(result.getId());
+		assertThat(((PessoaFisica) result.getPessoa()).getCpf(), equalTo(((PessoaFisica) result.getPessoa()).getCpf()));
+	}
 	
+	@Test
+	public void testFindCPFEx() {
+	
+		try {
+			 clienteService.findByCpfOrCnpj(((PessoaFisica) cf1.getPessoa()).getCpf());
+			fail();
+		}catch(ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(PessoaService.NOT_FOUND_DOCUMENT + ((PessoaFisica) cf1.getPessoa()).getCpf())  );
+		}
+	}
 	private void cenarioParaBuscaParamiterizada() {
 		PessoaFisica pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30), new RG("3234", "SSP", estadoGO ), "Brasileira", goiania);
 		PessoaFisica pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30), new RG("54345", "SSP", estadoGO ), "Brasileira", goiania);
@@ -205,8 +234,8 @@ public class ClienteServiceTest {
 		
 		//verifica
 		assertThat(result.getNumberOfElements(), equalTo(4));
-		assertTrue(result.get().allMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)));
-		assertFalse(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));
+		assertTrue(result.get().allMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
+		assertFalse(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
 	}
 	
 	@Transactional
@@ -221,8 +250,8 @@ public class ClienteServiceTest {
 		
 		//verifica
 		assertThat(result.getNumberOfElements(), equalTo(4));
-		assertTrue(result.get().allMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));
-		assertFalse(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)));
+		assertTrue(result.get().allMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
+		assertFalse(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
 	}
 	@Transactional
 	@Test
@@ -236,8 +265,8 @@ public class ClienteServiceTest {
 		
 		//verifica
 		assertThat(result.getNumberOfElements(), equalTo(8));
-		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)));
-		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));
+		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
+		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
 	}
 	
 	@Transactional
@@ -252,8 +281,8 @@ public class ClienteServiceTest {
 		
 		//verifica
 		assertThat(result.getNumberOfElements(), equalTo(3));
-		assertTrue(result.get().filter( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)).count() == 2 );
-		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA)));		
+		assertTrue(result.get().filter( c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())).count() == 2 );
+		assertTrue(result.get().anyMatch( c-> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));		
 
 	}
 	
@@ -269,7 +298,7 @@ public class ClienteServiceTest {
 		
 		//verifica
 		assertThat(result.getNumberOfElements(), equalTo(2));
-		assertTrue(result.get().allMatch(c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA)) );
+		assertTrue(result.get().allMatch(c-> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())) );
 
 	}
 }

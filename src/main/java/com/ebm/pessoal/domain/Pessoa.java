@@ -34,7 +34,7 @@ public abstract class Pessoa implements Serializable{
 	private Integer id;
 	
 	@Column(length = 60, nullable = false)
-	private String nome;
+	protected String nome;
 	private LocalDateTime  dataCadastro;
 	@ManyToOne
 	private Usuario usuarioCadastro;
@@ -84,8 +84,9 @@ public abstract class Pessoa implements Serializable{
 	public TipoPessoa getTipo() {
 		return this.tipo;
 	}
-	public void setNome(String nome) {
+	public Pessoa setNome(String nome) {
 		this.nome = nome;
+		return this;
 	}
 
 
@@ -157,13 +158,6 @@ public abstract class Pessoa implements Serializable{
 		this.endereco = endereco;
 	}
 
-	public static Pessoa getPessoa(TipoPessoa tipo) {
-		
-		if(tipo == null || tipo.equals(TipoPessoa.PESSOA_FISICA))
-			return new PessoaFisica();
-		return new PessoaJuridica();
-	
-	}
 
 
 	@Override

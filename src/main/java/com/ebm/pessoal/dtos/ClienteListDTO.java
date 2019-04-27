@@ -7,13 +7,13 @@ public class ClienteListDTO {
 	
 	private Integer id;
 	private String nome;
-	private TipoPessoa tipo;
+	private String tipo;
 	private Double limteCompra;
 	public ClienteListDTO() {}
 	public ClienteListDTO(Integer id, String nome, TipoPessoa tipo, double limite) {
 		this.id=id;
 		this.nome=nome;
-		this.tipo = tipo;
+		this.tipo = tipo.getDescricao();
 		this.limteCompra = limite;
 	}
 
@@ -38,10 +38,10 @@ public class ClienteListDTO {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	public TipoPessoa getTipo() {
+	public String getTipo() {
 		return tipo;
 	}
-	public void setTipo(TipoPessoa tipo) {
+	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 }

@@ -1,6 +1,7 @@
 package com.ebm.pessoal.dtos;
 
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.domain.TipoPessoa;
 
 public class FuncionarioListDTO {
 
@@ -11,16 +12,16 @@ public class FuncionarioListDTO {
 	private String cargo;
 	
 	public FuncionarioListDTO() {}
-	public FuncionarioListDTO(Integer id, String nome, String tipo, String matricula, String cargo) {
+	public FuncionarioListDTO(Integer id, String nome, TipoPessoa tipo, String matricula, String cargo) {
 		this.id=id;
 		this.nome=nome;
-		this.tipo = tipo;
+		this.tipo = tipo.getDescricao();
 		this.matricula=matricula;
 		this.cargo = cargo;
 	}
 
 	public FuncionarioListDTO(Funcionario f ) {
-		this(f.getId(), f.getPessoa().getNome(), f.getPessoa().getTipo().getDescricao(), f.getMatricula(), f.getCargo().getNomeCargo());
+		this(f.getId(), f.getPessoa().getNome(), f.getPessoa().getTipo(), f.getMatricula(), f.getCargo().getNomeCargo());
 	}
 	
 
