@@ -32,6 +32,8 @@ public class Produto extends Item {
 	@JsonIgnore
 	@OneToMany(mappedBy="id.produto")
 	private Set<ProdutoSaida> saidas = new HashSet<>();
+	
+	
 	public Produto() {
 	}
 
