@@ -1,7 +1,7 @@
 package com.ebm.estoque.domain;
 
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,14 +10,12 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import com.ebm.auth.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("P")
 public class Produto extends Item {
 	private static final long serialVersionUID = 1L;
 	
-	@Column(nullable = false)
 	private int estoqueMinimo;
 	private int estoqueMax;
 	private int estoqueAtual;
@@ -37,12 +35,18 @@ public class Produto extends Item {
 	public Produto() {
 	}
 
-	public Produto(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
-			String codInterno, double margemLucro, int estoqueMinimo, LocalDateTime dataCadastro, Usuario usuarioCadastro) {
-		super(id, nome, descricao, unidade, categoria, codInterno, margemLucro, dataCadastro, usuarioCadastro);
-		this.estoqueMinimo = estoqueMinimo;
 	
+
+	public Produto(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
+			String codInterno, BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro,
+			Double comissaoVenda, int estoqueMinimo, int estoqueAtual, int estoqueMaximo) {
+		super(id, nome, descricao, unidade, categoria, codInterno, valorCompraMedio, outrasDespesa, margemLucro, comissaoVenda);
+		this.estoqueMinimo = estoqueMinimo;
+		this.estoqueAtual = estoqueAtual;
+		this.estoqueMax = estoqueMaximo;
 	}
+
+
 
 	public int getEstoqueMinimo() {
 		return estoqueMinimo;
