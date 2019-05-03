@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.springframework.data.domain.ExampleMatcher;
 
+import com.ebm.estoque.domain.TipoItem;
 import com.ebm.pessoal.domain.Telefone;
 
 public class Utils {
@@ -23,6 +24,11 @@ public class Utils {
 		
 		return ExampleMatcher.matchingAll().
 				withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+	}
+
+
+	public static String getRandomCodInterno(TipoItem tipo, String nome) {
+		return tipo.getDescricao()+"-"+nome+nome.hashCode();
 	}
 
 

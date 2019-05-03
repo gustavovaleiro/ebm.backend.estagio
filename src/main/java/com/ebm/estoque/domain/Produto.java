@@ -1,30 +1,29 @@
 package com.ebm.estoque.domain;
 
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import com.ebm.auth.Usuario;
+import com.ebm.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("P")
 public class Produto extends Item {
 	private static final long serialVersionUID = 1L;
 	
-	@Column(nullable = false)
-	private int estoqueMinimo;
-	private int estoqueMax;
-	private int estoqueAtual;
-	private double peso;
-	private double altura;
-	private double largura;
-	private double comprimento;
+	private Integer estoqueMinimo;
+	private Integer estoqueMax;
+	private Integer estoqueAtual;
+	private Double peso;
+	private Double altura;
+	private Double largura;
+	private Double comprimento;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="id.produto")
@@ -33,16 +32,25 @@ public class Produto extends Item {
 	@OneToMany(mappedBy="id.produto")
 	private Set<ProdutoSaida> saidas = new HashSet<>();
 	
+	public static Produto of(String nome, Unidade un, CategoriaItem categoria) {
+		return new Produto(null, nome, nome, un, categoria,  Utils.getRandomCodInterno(TipoItem.PRODUTO, nome), null, null, null, null, null, null, null);
+	}
 	
 	public Produto() {
 	}
 
-	public Produto(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
-			String codInterno, double margemLucro, int estoqueMinimo, LocalDateTime dataCadastro, Usuario usuarioCadastro) {
-		super(id, nome, descricao, unidade, categoria, codInterno, margemLucro, dataCadastro, usuarioCadastro);
-		this.estoqueMinimo = estoqueMinimo;
 	
+
+	public Produto(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
+			String codInterno, BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro,
+			Double comissaoVenda, Integer estoqueMinimo, Integer estoqueAtual, Integer estoqueMaximo) {
+		super(id, nome, descricao, unidade, categoria, codInterno, valorCompraMedio, outrasDespesa, margemLucro, comissaoVenda);
+		this.estoqueMinimo = estoqueMinimo;
+		this.estoqueAtual = estoqueAtual;
+		this.estoqueMax = estoqueMaximo;
 	}
+
+
 
 	public int getEstoqueMinimo() {
 		return estoqueMinimo;
@@ -98,6 +106,13 @@ public class Produto extends Item {
 
 	public void setComprimento(double comprimento) {
 		this.comprimento = comprimento;
+	}
+
+
+
+	@Override
+	public String getTipo() {
+		return TipoItem.PRODUTO.getDescricao();
 	}
 
 	

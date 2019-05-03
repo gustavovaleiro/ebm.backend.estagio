@@ -3,6 +3,7 @@ package com.ebm.estoque.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -44,22 +45,24 @@ public abstract class Item implements Serializable {
 	private String codInterno;
 	
 	private BigDecimal valorCompraMedio;
-	
 	private BigDecimal outrasDespesa;
-	
-	private double margemLucro;
-	private double comissaoVenda;
+	private Double margemLucro;
+	private Double comissaoVenda;
 	private LocalDateTime  dataCadastro;
 	@ManyToOne
 	private Usuario usuarioCadastro;
 	private LocalDateTime dataUltimaModificacao;
 	@ManyToOne
 	private Usuario ultimaModificacao;
+
+	private String tipo;
 	
 	public Item() {}
 
+
+	
 	public Item(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria, String codInterno,
-			double margemLucro, LocalDateTime dataCadastro, Usuario usuarioCadastro) {
+			BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro, Double comissaoVenda) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -67,13 +70,15 @@ public abstract class Item implements Serializable {
 		this.unidade = unidade;
 		this.categoria = categoria;
 		this.codInterno = codInterno;
+		this.valorCompraMedio = valorCompraMedio;
+		this.outrasDespesa = outrasDespesa;
 		this.margemLucro = margemLucro;
-		this.dataCadastro = dataCadastro;
-		this.usuarioCadastro = usuarioCadastro;
-		this.dataUltimaModificacao = dataCadastro;
-		this.ultimaModificacao = usuarioCadastro;
-	}
+		this.comissaoVenda = comissaoVenda;
 
+	}
+	
+
+	public abstract String getTipo() ;
 	public Integer getId() {
 		return id;
 	}
@@ -178,14 +183,14 @@ public abstract class Item implements Serializable {
 		this.ultimaModificacao = ultimaModificacao;
 	}
 	
-	public BigDecimal precoVenda() {
+	public BigDecimal getPrecoVenda() {
 		return (getCustoTotal()).multiply(BigDecimal.valueOf(this.margemLucro + 1d));
 	}
-	public BigDecimal lucroEstimado() {
-		return precoVenda().multiply(BigDecimal.valueOf(this.margemLucro));
+	public BigDecimal getLucroEstimado() {
+		return getCustoTotal().multiply(BigDecimal.valueOf(this.margemLucro));
 	}
-	public BigDecimal comissaoEstimada() {
-		return precoVenda().multiply(BigDecimal.valueOf(comissaoVenda));
+	public BigDecimal getComissaoEstimada() {
+		return  getPrecoVenda().multiply(BigDecimal.valueOf(comissaoVenda));
 	}
 	
 	public double getComissaoVenda() {
@@ -197,7 +202,7 @@ public abstract class Item implements Serializable {
 	}
 	
 	public BigDecimal getCustoTotal() {
-		return this.valorCompraMedio.add(this.outrasDespesa);
+		return this.valorCompraMedio.add(Optional.ofNullable(this.outrasDespesa).orElse(BigDecimal.valueOf(0)));
 	}
 	
 
@@ -225,6 +230,9 @@ public abstract class Item implements Serializable {
 			return false;
 		return true;
 	}
+
+
+
 	
 	
 }
