@@ -11,12 +11,14 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import com.ebm.Utils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("P")
 public class Produto extends Item {
 	private static final long serialVersionUID = 1L;
 	
+
 	private Integer estoqueMinimo;
 	private Integer estoqueMax;
 	private Integer estoqueAtual;
@@ -24,6 +26,7 @@ public class Produto extends Item {
 	private Double altura;
 	private Double largura;
 	private Double comprimento;
+
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="id.produto")
@@ -44,6 +47,7 @@ public class Produto extends Item {
 	public Produto(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
 			String codInterno, BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro,
 			Double comissaoVenda, Integer estoqueMinimo, Integer estoqueAtual, Integer estoqueMaximo) {
+
 		super(id, nome, descricao, unidade, categoria, codInterno, valorCompraMedio, outrasDespesa, margemLucro, comissaoVenda);
 		this.estoqueMinimo = estoqueMinimo;
 		this.estoqueAtual = estoqueAtual;

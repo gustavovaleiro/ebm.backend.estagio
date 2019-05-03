@@ -1,7 +1,9 @@
 package com.ebm.estoque.service.interfaces;
 
 import java.util.Collection;
+
 import java.util.List;
+
 
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ public interface ItemService {
 
 	void deleteAll(boolean b);
 
+
 	Item save(Item item);
 	
 	Double calcularComissaoEstimada(Collection<Item> item, Double taxaComissao);
@@ -27,4 +30,5 @@ public interface ItemService {
 	Double calcularPrecoVendaTotal(Collection<Item> item);
 
 	Collection<Item> saveAll(List<Item> itens);
+
 }

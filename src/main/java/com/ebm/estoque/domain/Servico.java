@@ -21,7 +21,6 @@ public class Servico extends Item{
 		super(id, nome, descricao, unidade, categoria, codInterno, valorCompraMedio, outrasDespesa, margemLucro, comissaoVenda);
 	}
 
-
 	@Override
 	public String getTipo() {
 		// TODO Auto-generated method stub
@@ -32,6 +31,7 @@ public class Servico extends Item{
 	public static Servico of(String nome, Unidade unidade, CategoriaItem categoria) {
 		return new Servico(null, nome, nome, unidade, categoria, Utils.getRandomCodInterno(TipoItem.SERVICO, nome), null, null, null, null);
 	}
+
 	
 	
 	

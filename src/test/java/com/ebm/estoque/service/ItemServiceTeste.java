@@ -8,7 +8,9 @@ import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+
 import java.util.Collection;
+
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ebm.estoque.domain.CategoriaItem;
+
 import com.ebm.estoque.domain.Item;
+
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Servico;
 import com.ebm.estoque.domain.Unidade;
@@ -42,15 +46,18 @@ public class ItemServiceTeste {
 	private Produto p1;
 	private Servico s1;
 
+
 	private Collection<Item> allItens;
-	
+
 	@Before
 	public void setUp() {
 		deleteAll();
 		
 		un1 = new Unidade(null, "un", "Unidade");
 		un2 = new Unidade(null, "hrs", "Horas");
+
 		cat1 = new CategoriaItem(null, "Computadores");
+
 		cat2 = new CategoriaItem(null, "Manutenção em computadores");
 		
 		p1 = new Produto(null, "Computador", "Computador i5 8gbRam", un1, cat1, "COM01",BigDecimal.valueOf(100), null, 0.3, 0.01, 5, 0, 10);
@@ -156,7 +163,7 @@ public class ItemServiceTeste {
 		assertTrue(resultado -310 ==0);
 	}
 	
-	
+
 	
 	private void preparaTestParameterizado() {
 		CategoriaItem cat3 = new CategoriaItem(null, "Perifericos");
@@ -180,5 +187,6 @@ public class ItemServiceTeste {
 	// test find parameterizado com unidade e categoria
 	// test find parameterizado com unidade nome e tipo
 	// test find parameterizado com tudo
+
 	
 }
