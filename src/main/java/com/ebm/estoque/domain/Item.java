@@ -15,12 +15,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import com.ebm.auth.Usuario;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name  = "tipo", discriminatorType= DiscriminatorType.STRING, length=1)
+@DiscriminatorColumn(name  = "_tipo", discriminatorType= DiscriminatorType.STRING, length=1)
 public abstract class Item implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -54,8 +55,7 @@ public abstract class Item implements Serializable {
 	private LocalDateTime dataUltimaModificacao;
 	@ManyToOne
 	private Usuario ultimaModificacao;
-
-	private String tipo;
+	protected String tipo;
 	
 	public Item() {}
 
@@ -78,7 +78,9 @@ public abstract class Item implements Serializable {
 	}
 	
 
-	public abstract String getTipo() ;
+	public String getTipo() {
+		return tipo;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -143,11 +145,11 @@ public abstract class Item implements Serializable {
 		this.outrasDespesa = outrasDespesa;
 	}
 
-	public double getMargemLucro() {
+	public Double getMargemLucro() {
 		return margemLucro;
 	}
 
-	public void setMargemLucro(double margemLucro) {
+	public void setMargemLucro(Double margemLucro) {
 		this.margemLucro = margemLucro;
 	}
 
@@ -182,25 +184,27 @@ public abstract class Item implements Serializable {
 	public void setUltimaModificacao(Usuario ultimaModificacao) {
 		this.ultimaModificacao = ultimaModificacao;
 	}
-	
+	@Transient
 	public BigDecimal getPrecoVenda() {
 		return (getCustoTotal()).multiply(BigDecimal.valueOf(this.margemLucro + 1d));
 	}
+	@Transient
 	public BigDecimal getLucroEstimado() {
 		return getCustoTotal().multiply(BigDecimal.valueOf(this.margemLucro));
 	}
+	@Transient
 	public BigDecimal getComissaoEstimada() {
 		return  getPrecoVenda().multiply(BigDecimal.valueOf(comissaoVenda));
 	}
-	
-	public double getComissaoVenda() {
+	@Transient
+	public Double getComissaoVenda() {
 		return comissaoVenda;
 	}
 
-	public void setComissaoVenda(double comissaoVenda) {
+	public void setComissaoVenda(Double comissaoVenda) {
 		this.comissaoVenda = comissaoVenda;
 	}
-	
+	@Transient
 	public BigDecimal getCustoTotal() {
 		return this.valorCompraMedio.add(Optional.ofNullable(this.outrasDespesa).orElse(BigDecimal.valueOf(0)));
 	}
@@ -230,9 +234,5 @@ public abstract class Item implements Serializable {
 			return false;
 		return true;
 	}
-
-
-
-	
 	
 }

@@ -43,7 +43,7 @@ public class UnidadeServiceImpl implements UnidadeService{
 	
 
 	public Unidade findByAbrev(String abrev) {
-		return unidadeRepository.findByAbrev(abrev).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYABREV));
+		return unidadeRepository.findByAbrevIgnoreCaseLike(abrev).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYABREV));
 		
 	}
 

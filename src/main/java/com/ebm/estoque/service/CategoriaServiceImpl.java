@@ -40,8 +40,10 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 
 	
 
-	public CategoriaItem findByNome(String abrev) {
-		return categoriaRepository.findByNome(abrev).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYNOME));
+	public CategoriaItem findByNome(String nome) {
+		if(nome == null)
+			throw new DataIntegrityException(DATAINTEGRITY_NOMENULL);
+		return categoriaRepository.findByNomeIgnoreCaseLike(nome).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYNOME));
 		
 	}
 

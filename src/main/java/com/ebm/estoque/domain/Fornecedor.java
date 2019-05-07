@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import com.ebm.pessoal.domain.Pessoa;
@@ -22,6 +24,7 @@ public class Fornecedor implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@MapsId
 	@OneToOne
 	private Pessoa pessoa;
 	

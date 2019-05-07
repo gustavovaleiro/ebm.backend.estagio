@@ -10,6 +10,6 @@ import com.ebm.estoque.domain.Unidade;
 @Repository
 public interface UnidadeRepository extends JpaRepository<Unidade, Integer> {
 
-	Optional<Unidade> findByAbrev(String abrev);
+	Optional<Unidade> findByAbrevIgnoreCaseLike(String abrev);
 
 }

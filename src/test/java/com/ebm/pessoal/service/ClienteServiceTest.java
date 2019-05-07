@@ -151,8 +151,12 @@ public class ClienteServiceTest {
 		cf1.setDescricao("novadescricao");
 		cf1.setPessoa(pj1);
 		
-		assertThat(cf1.getDescricao(), equalTo("novadescricao"));
-		assertThat(cf1.getPessoa().getNome(), equalTo(pj1.getNome()));
+		try {
+			cf1 = clienteService.save(cf1);
+			fail();
+		}catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(ClienteService.DATAINTEGRITY_CHANCEPERSON));
+		}
 	}
 	@Test
 	public void testUpdateClienteComPessoaPertenceOutroCliente() {

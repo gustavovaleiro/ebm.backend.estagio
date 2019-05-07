@@ -30,6 +30,9 @@ public class ClienteService {
 	public static final String DATAINTEGRITY_DUPLICATEPERSON = DataIntegrityException.DEFAULT
 			+ ": Não é possivel salvar multiplos clientes para uma mesma pessoa";
 
+	public static final String DATAINTEGRITY_CHANCEPERSON = DataIntegrityException.DEFAULT
+			+ ": Não é possivel trocar a pessoa que um cliente esta associado.";
+
 	@Autowired
 	private ClienteRepository clienteRepository;
 
@@ -60,6 +63,9 @@ public class ClienteService {
 			} catch (ObjectNotFoundException ex) {
 			}
 		}
+		
+		if (cliente.getId() != null && cliente.getId() != cliente.getPessoa().getId())
+			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
 	}
 
 	public void delete(Integer id) {

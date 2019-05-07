@@ -20,4 +20,6 @@ public interface UnidadeService {
 
 	Unidade save(Unidade unidade);
 
+	Unidade findByAbrev(String unidade);
+
 }

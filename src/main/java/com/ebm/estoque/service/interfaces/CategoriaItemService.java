@@ -19,4 +19,6 @@ public interface CategoriaItemService {
 
 	CategoriaItem save(CategoriaItem categoria);
 
+	CategoriaItem findByNome(String categoria);
+
 }

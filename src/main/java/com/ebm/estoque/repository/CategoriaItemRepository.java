@@ -11,5 +11,5 @@ import com.ebm.estoque.domain.CategoriaItem;
 @Repository
 public interface CategoriaItemRepository extends JpaRepository<CategoriaItem, Integer> {
 	@Transactional(readOnly = true)
-	Optional <CategoriaItem> findByNome(String nome);
+	Optional <CategoriaItem> findByNomeIgnoreCaseLike(String nome);
 }

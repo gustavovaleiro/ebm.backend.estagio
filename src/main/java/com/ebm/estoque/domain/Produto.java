@@ -3,7 +3,6 @@ package com.ebm.estoque.domain;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
@@ -39,7 +38,8 @@ public class Produto extends Item {
 		return new Produto(null, nome, nome, un, categoria,  Utils.getRandomCodInterno(TipoItem.PRODUTO, nome), null, null, null, null, null, null, null);
 	}
 	
-	public Produto() {
+	public Produto() {	
+		super.tipo = TipoItem.PRODUTO.getDescricao();
 	}
 
 	
@@ -47,78 +47,69 @@ public class Produto extends Item {
 	public Produto(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
 			String codInterno, BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro,
 			Double comissaoVenda, Integer estoqueMinimo, Integer estoqueAtual, Integer estoqueMaximo) {
-
+	
 		super(id, nome, descricao, unidade, categoria, codInterno, valorCompraMedio, outrasDespesa, margemLucro, comissaoVenda);
+		super.tipo = TipoItem.PRODUTO.getDescricao();
 		this.estoqueMinimo = estoqueMinimo;
 		this.estoqueAtual = estoqueAtual;
 		this.estoqueMax = estoqueMaximo;
 	}
 
-
-
-	public int getEstoqueMinimo() {
+	public Integer getEstoqueMinimo() {
 		return estoqueMinimo;
 	}
 
-	public void setEstoqueMinimo(int estoqueMinimo) {
+	public void setEstoqueMinimo(Integer estoqueMinimo) {
 		this.estoqueMinimo = estoqueMinimo;
 	}
 
-	public int getEstoqueMax() {
+	public Integer getEstoqueMax() {
 		return estoqueMax;
 	}
 
-	public void setEstoqueMax(int estoqueMax) {
+	public void setEstoqueMax(Integer estoqueMax) {
 		this.estoqueMax = estoqueMax;
 	}
 
-	public int getEstoqueAtual() {
+	public Integer getEstoqueAtual() {
 		return estoqueAtual;
 	}
 
-	public void setEstoqueAtual(int estoqueAtual) {
+	public void setEstoqueAtual(Integer estoqueAtual) {
 		this.estoqueAtual = estoqueAtual;
 	}
 
-	public double getPeso() {
+	public Double getPeso() {
 		return peso;
 	}
 
-	public void setPeso(double peso) {
+	public void setPeso(Double peso) {
 		this.peso = peso;
 	}
 
-	public double getAltura() {
+	public Double getAltura() {
 		return altura;
 	}
 
-	public void setAltura(double altura) {
+	public void setAltura(Double altura) {
 		this.altura = altura;
 	}
 
-	public double getLargura() {
+	public Double getLargura() {
 		return largura;
 	}
 
-	public void setLargura(double largura) {
+	public void setLargura(Double largura) {
 		this.largura = largura;
 	}
 
-	public double getComprimento() {
+	public Double getComprimento() {
 		return comprimento;
 	}
 
-	public void setComprimento(double comprimento) {
+	public void setComprimento(Double comprimento) {
 		this.comprimento = comprimento;
 	}
 
-
-
-	@Override
-	public String getTipo() {
-		return TipoItem.PRODUTO.getDescricao();
-	}
-
-	
 	
 }

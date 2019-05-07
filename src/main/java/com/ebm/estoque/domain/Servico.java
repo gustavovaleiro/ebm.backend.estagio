@@ -12,20 +12,18 @@ public class Servico extends Item{
 	private static final long serialVersionUID = 1L;
 	
 	
-	public Servico() {}
+	public Servico() {
+		super.tipo = TipoItem.SERVICO.getDescricao();
+	}
 
 
 	public Servico(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria,
 			String codInterno, BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro,
 			Double comissaoVenda) {
 		super(id, nome, descricao, unidade, categoria, codInterno, valorCompraMedio, outrasDespesa, margemLucro, comissaoVenda);
+		super.tipo = TipoItem.SERVICO.getDescricao();
 	}
 
-	@Override
-	public String getTipo() {
-		// TODO Auto-generated method stub
-		return TipoItem.SERVICO.getDescricao();
-	}
 
 
 	public static Servico of(String nome, Unidade unidade, CategoriaItem categoria) {
