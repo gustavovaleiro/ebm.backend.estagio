@@ -1,5 +1,6 @@
 package com.ebm.estoque.service;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -95,22 +96,21 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 		Fornecedor fornecedor = new Fornecedor(null,  pessoa);
 		List<Fornecedor> fornecedores = new ArrayList<Fornecedor>();
-		if(  !(tipo!=null || nome != null || (categoriasId != null && !categoriasId.isEmpty()))) {
+		if(  (tipo!=null || nome != null || (categoriasId != null && !categoriasId.isEmpty()))) {
 			
 			if(tipo!=null || nome != null)
 				fornecedores = fornecedorRepository.findAll(Example.of(fornecedor, matcher));
 			
 			if(categoriasId != null && !categoriasId.isEmpty()) {
-				List<Fornecedor> fornecedoresCategoria = fornecedorRepository.findByCategoriasIn(categoriaService.findAllById(categoriasId));
+				Set<CategoriaItem> cats = categoriaService.findAllById(categoriasId);
 				
 				if(fornecedores.size() > 0) {
-					fornecedores.retainAll(fornecedoresCategoria);
+					fornecedores.retainAll(fornecedorRepository.findDistinctByCategoriasIn(cats));
 				}
-					
 				 else {
-					 fornecedores.addAll(fornecedoresCategoria);
+					 
+					 fornecedores =  fornecedorRepository.findDistinctByCategoriasIn(cats,  pageRequest).getContent();
 				 }
-					
 			}
 		}
 		else {
@@ -125,6 +125,19 @@ public class FornecedorServiceImpl implements FornecedorService {
 		return new PageImpl<>(fornecedorsDTO, pageRequest, fornecedorsDTO.size());
 	}
 
+	@Transactional
+	@Override
+	public void delete(Integer id) {
+		
+		if(id == null)
+			throw new DataIntegrityException(FornecedorService.DATAINTEGRITY_IDNULL);
+		Fornecedor result = findById(id);
+		if(!result.getCategorias().isEmpty()) {
+			throw new DataIntegrityException(FornecedorService.DATAINTEGRITY_FORNECEDORHASCATEGORIA);
+		}// verificar se existe alguma entra na movimentação associada a ele , caso existe nao deixar escluir
+		
+		fornecedorRepository.delete(result);
+	}
 	@Override
 	public void deleteAll() {
 		fornecedorRepository.deleteAll();

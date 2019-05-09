@@ -1,6 +1,7 @@
 package com.ebm.estoque.resouce;
 
 import java.net.URI;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,57 +19,64 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ebm.estoque.domain.Item;
-import com.ebm.estoque.dtos.ItemListDTO;
-import com.ebm.estoque.service.interfaces.ItemService;
+import com.ebm.estoque.domain.Fornecedor;
+import com.ebm.estoque.dtos.FornecedorListDTO;
+import com.ebm.estoque.service.interfaces.FornecedorService;
+import com.ebm.pessoal.domain.TipoPessoa;
 
 @RestController
-@RequestMapping(value = "/itens")
-public class ItemResource {
+@RequestMapping(value = "/fornecedors")
+public class FornecedorResource {
 	@Autowired
-	private ItemService itemService;
+	private FornecedorService fornecedorService;
 
 	@PostMapping
-	public ResponseEntity<Item> insert(@RequestBody Item item) {
-		Item itemS = itemService.save(item);
+	public ResponseEntity<Void> insert(@RequestBody Fornecedor fornecedor) {
+		Fornecedor obj = fornecedorService.save(fornecedor);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(itemS.getId()).toUri();
-		return ResponseEntity.created(uri).body(itemS);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Item> update(@RequestBody Item item, @PathVariable Integer id) {
-		item.setId(id);
-		item = itemService.save(item);
-		return ResponseEntity.ok(item);
+	public ResponseEntity<Void> update(@RequestBody Fornecedor fornecedor, @PathVariable Integer id) {
+		fornecedor.setId(id);
+		fornecedor = fornecedorService.save(fornecedor);
+		return ResponseEntity.noContent().build();
 
 	}
 
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		itemService.delete(id);
+		fornecedorService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Item> find(@PathVariable Integer id) {
-		Item obj = itemService.findById(id);
+	public ResponseEntity<Fornecedor> find(@PathVariable Integer id) {
+		Fornecedor obj = fornecedorService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
+	@GetMapping(value = "/documents")
+	public ResponseEntity<Fornecedor> findBy(@RequestParam(value = "value", required = true) final String document) {
+
+		return ResponseEntity.ok(fornecedorService.findByCpfOrCnpj(document));
+	}
+
 	@GetMapping(value = "/page")
-	public ResponseEntity<Page<ItemListDTO>> findAllBy(
-			@RequestParam(value = "codInterno", required = false) String codInterno,
+	public ResponseEntity<Page<FornecedorListDTO>> findAllBy(
 			@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "tipo", required = false) String tipo,
-			@RequestParam(value = "unidade", required = false) String unidade,
-			@RequestParam(value = "categoria", required = false) String categoria,
+			@RequestParam(value = "categorias", required = false) Set<Integer> categorias,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<ItemListDTO> rs = itemService.findBy(codInterno, tipo, nome, unidade, categoria, pageRequest);
+		Page<FornecedorListDTO> rs = fornecedorService.findBy(TipoPessoa.fromString(tipo), nome, categorias,
+				pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 

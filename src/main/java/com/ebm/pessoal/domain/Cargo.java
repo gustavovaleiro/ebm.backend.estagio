@@ -30,36 +30,30 @@ public class Cargo implements Serializable{
 		this.descricao = descricao;
 	}
 
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getNomeCargo() {
+		return nomeCargo;
+	}
+	public void setNomeCargo(String nomeCargo) {
+		this.nomeCargo = nomeCargo;
+	}
 	public String getDescricao() {
 		return descricao;
 	}
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNomeCargo() {
-		return nomeCargo;
-	}
-
-	public void setNomeCargo(String nomeCargo) {
-		this.nomeCargo = nomeCargo;
-	}
-
 	public BigDecimal getSalarioBase() {
 		return salarioBase;
 	}
-
 	public void setSalarioBase(BigDecimal salarioBase) {
 		this.salarioBase = salarioBase;
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -14,18 +14,22 @@ public class FuncionarioListDTO implements Serializable{
 	private String nome;
 	private String tipo;
 	private String cargo;
+	private String telefone;
+	private String email;
 	
 	public FuncionarioListDTO() {}
-	public FuncionarioListDTO(Integer id, String nome, TipoPessoa tipo, String matricula, String cargo) {
+	public FuncionarioListDTO(Integer id, String nome, TipoPessoa tipo, String matricula, String cargo, String telefone, String email) {
 		this.id=id;
 		this.nome=nome;
 		this.tipo = tipo.getDescricao();
 		this.matricula=matricula;
 		this.cargo = cargo;
+		this.telefone = telefone;
+		this.email = email;
 	}
 
 	public FuncionarioListDTO(Funcionario f ) {
-		this(f.getId(), f.getPessoa().getNome(), f.getPessoa().getTipo(), f.getMatricula(), f.getCargo().getNomeCargo());
+		this(f.getId(), f.getPessoa().getNome(), f.getPessoa().getTipo(), f.getMatricula(), f.getCargo().getNomeCargo(), f.getPessoa().getTelefonePrincipal().toString(), f.getPessoa().getEmailPrincipal().toString());
 	}
 	
 
@@ -59,4 +63,18 @@ public class FuncionarioListDTO implements Serializable{
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+	public String getTelefone() {
+		return telefone;
+	}
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	
 }

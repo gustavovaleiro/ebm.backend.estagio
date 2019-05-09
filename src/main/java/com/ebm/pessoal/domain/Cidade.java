@@ -2,7 +2,6 @@ package com.ebm.pessoal.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -82,5 +81,9 @@ public class Cidade implements Serializable {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return this.nome + " - "  +this.estado.getUF();
+	}
 
 }

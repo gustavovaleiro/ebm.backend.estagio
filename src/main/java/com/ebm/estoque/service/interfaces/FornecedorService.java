@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.domain.Fornecedor;
 import com.ebm.estoque.dtos.FornecedorListDTO;
 import com.ebm.exceptions.DataIntegrityException;
@@ -24,6 +23,7 @@ public interface FornecedorService {
 			+ ": Não é possivel trocar a pessoa que um fornecedor esta associado.";
 	String ONFE_BYID = ObjectNotFoundException.DEFAULT + " um fornecedor com o id: ";
 	String DATAINTEGRITY_IDNULL = DataIntegrityException.DEFAULT + ": o id passado é nulo.";
+	String DATAINTEGRITY_FORNECEDORHASCATEGORIA = DataIntegrityException.DEFAULT + ": não é possivel excluir um fornecedor com categoria associada.";
 
 	void deleteAll();
 
@@ -35,6 +35,8 @@ public interface FornecedorService {
 
 	List<Fornecedor> saveAll(List<Fornecedor> fornecedores);
 
-	Page<FornecedorListDTO> findBy(TipoPessoa pessoaFisica, String nome, Set<Integer> categorias,
+	Page<FornecedorListDTO> findBy(TipoPessoa tipo, String nome, Set<Integer> categorias,
 			PageRequest pageRequest);
+
+	void delete(Integer id);
 }

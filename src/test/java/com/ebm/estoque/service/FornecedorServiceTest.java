@@ -269,6 +269,18 @@ public class FornecedorServiceTest {
 					equalTo(PessoaService.NOT_FOUND_DOCUMENT + ((PessoaFisica) ff1.getPessoa()).getCpf()));
 		}
 	}
+	
+	
+	@Test
+	public void testaDeleteDevLancEx() {
+		fj1 = fornecedorService.save(fj1);
+		try {
+			fornecedorService.delete(fj1.getId());
+			fail();
+		} catch ( DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(FornecedorService.DATAINTEGRITY_FORNECEDORHASCATEGORIA));
+		}
+	}
 
 	private void cenarioParaBuscaParamiterizada() {
 		PessoaFisica pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30),
@@ -397,10 +409,11 @@ public class FornecedorServiceTest {
 		Page<FornecedorListDTO> result = fornecedorService.findBy(null, null, cats, pageRequest);
 
 		// verifica
-		assertThat(result.getNumberOfElements(), equalTo(3));
+		assertThat(result.getNumberOfElements(), equalTo(4));
 		assertTrue(result.get().anyMatch(f -> f.getId() == fj1.getId()));
-		assertTrue(result.get().anyMatch(f -> f.getId() == fj2.getId()));
+		assertTrue(result.get().anyMatch(f -> f.getId() == fj4.getId()));
 		assertTrue(result.get().anyMatch(f -> f.getId() == fj3.getId()));
+		assertTrue(result.get().anyMatch(f -> f.getId() == ff5.getId()));
 
 	}
 
@@ -413,9 +426,8 @@ public class FornecedorServiceTest {
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<FornecedorListDTO> result = fornecedorService.findBy(null, null, cats, pageRequest);
-
 		// verifica
-		assertThat(result.getNumberOfElements(), equalTo(1));
+		assertThat(result.getNumberOfElements(), equalTo(4));
 		assertTrue(result.get().anyMatch(f -> f.getId() == fj1.getId()));
 
 	}
@@ -429,7 +441,7 @@ public class FornecedorServiceTest {
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<FornecedorListDTO> result = fornecedorService.findBy(null, "JOAO", cats, pageRequest);
-
+	
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(1));
 		assertTrue(result.get().anyMatch(f -> f.getId() == fj3.getId()));
@@ -445,7 +457,7 @@ public class FornecedorServiceTest {
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<FornecedorListDTO> result = fornecedorService.findBy(TipoPessoa.PESSOA_FISICA, null, cats, pageRequest);
-
+	
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(1));
 		assertTrue(result.get().anyMatch(f -> f.getId() == ff5.getId()));

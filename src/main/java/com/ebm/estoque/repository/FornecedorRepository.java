@@ -1,8 +1,11 @@
 package com.ebm.estoque.repository;
 
+
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,9 @@ import com.ebm.estoque.domain.Fornecedor;
 public interface FornecedorRepository  extends JpaRepository<Fornecedor, Integer>{
 	
 	@Transactional(readOnly=true)
-	List<Fornecedor> findByCategoriasIn(Set<CategoriaItem> findAllById);
+	Page<Fornecedor> findDistinctByCategoriasIn(Set<CategoriaItem> categorias, Pageable page);
+	
+	@Transactional(readOnly=true)
+	List<Fornecedor> findDistinctByCategoriasIn(Set<CategoriaItem> categorias);
 
 }

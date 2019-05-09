@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +17,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -160,11 +160,21 @@ public abstract class Pessoa implements Serializable{
 		return endereco;
 	}
 
-
+	@Transient
+	public Email getEmailPrincipal() {
+		return email.stream().filter(e -> e.isPrincipal()).findAny().get();
+	}
+	@Transient
+	public Telefone getTelefonePrincipal() {
+		return telefone.stream().filter(e -> e.isPrincipal()).findAny().get();
+	}
+	@Transient
+	public Endereco getEnderecoPrincipal() {
+		return endereco.stream().filter(e -> e.isPrincipal()).findAny().get();
+	}
 	public void setEndereco(List<Endereco> endereco) {
 		this.endereco = endereco;
 	}
-
 
 
 	@Override
