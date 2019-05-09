@@ -63,7 +63,7 @@ public class ClienteService {
 			} catch (ObjectNotFoundException ex) {
 			}
 		}
-		
+
 		if (cliente.getId() != null && cliente.getId() != cliente.getPessoa().getId())
 			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
 	}
@@ -87,8 +87,8 @@ public class ClienteService {
 
 		ExampleMatcher matcher = PessoaService.ExampleMatcherDinamicFilterFor(true, tipo);
 
-		Pessoa pessoa = PessoaService.getPessoa(tipo,nome);
-	
+		Pessoa pessoa = PessoaService.getPessoa(tipo, nome);
+
 		Cliente cliente = new Cliente(null, pessoa, null, null);
 
 		Page<Cliente> clientes = clienteRepository.findAll(Example.of(cliente, matcher), pageRequest);

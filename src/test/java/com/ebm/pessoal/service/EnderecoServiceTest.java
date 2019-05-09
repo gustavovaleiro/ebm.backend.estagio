@@ -41,7 +41,7 @@ public class EnderecoServiceTest {
 		enderecoService.deleteAll();
 		cidadeService.deleteAll(true);
 		cidade = new Cidade(null, "Cuiaba", new Estado(null, "MT", "Mato Grosso"));
-		endereco = new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", "Comercial");
+		endereco = new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", "Comercial", true);
 		
 	}
 	
@@ -96,8 +96,8 @@ public class EnderecoServiceTest {
 		String tipo3 = "Residencial";
 		
 		enderecoService.save(endereco);
-		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", tipo2));
-		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", tipo3));
+		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", tipo2,true));
+		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", tipo3,true));
 	
 		List<String> tipos = enderecoService.getTipoEndereco();
 		

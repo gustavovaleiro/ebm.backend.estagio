@@ -1,5 +1,9 @@
 package com.ebm.estoque.service;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,12 +55,26 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 		return categoriaRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID));
 		
 	}
+	
+	@Override
+	public Set<CategoriaItem> findAllById(Set<Integer> ids) {
+		return categoriaRepository.findAllById(ids).stream().collect(Collectors.toSet());
+	}
+	
 
 	@Override
 	public void deleteAll() {
 		categoriaRepository.deleteAll();
 		
 	}
+
+	@Override
+	public List<CategoriaItem> saveAll(List<CategoriaItem> categorias) {
+		// TODO Auto-generated method stub
+		return categorias.stream().map(c -> this.save(c)).collect(Collectors.toList());
+	}
+
+	
 
 	
 

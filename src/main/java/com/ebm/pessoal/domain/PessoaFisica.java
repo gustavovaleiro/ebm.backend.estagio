@@ -79,7 +79,10 @@ public class PessoaFisica extends Pessoa {
 	public void setNaturalidade(Cidade naturalidade) {
 		this.naturalidade = naturalidade;
 	}
-
+	
+	public String getDocument() {
+		return this.getCpf();
+	}
 	public Pessoa withNome(String nome) {
 		// TODO Auto-generated method stub
 		super.nome = nome;

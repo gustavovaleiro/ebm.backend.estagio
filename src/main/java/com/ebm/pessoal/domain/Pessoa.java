@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.ebm.auth.Usuario;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -43,12 +47,15 @@ public abstract class Pessoa implements Serializable{
 	private Usuario ultimaModificacao;
 	@OneToMany
 	@JoinColumn(name = "pessoa_id")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Email> email = new ArrayList<Email>();
 	@OneToMany
 	@JoinColumn(name = "pessoa_id")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Telefone> telefone = new ArrayList<Telefone>();
 	@OneToMany
 	@JoinColumn(name = "pessoa_id")
+	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Endereco> endereco = new ArrayList<Endereco>();
 	@Enumerated(EnumType.STRING )
 	private TipoPessoa tipo;
@@ -183,6 +190,9 @@ public abstract class Pessoa implements Serializable{
 			return false;
 		return true;
 	}
+
+
+	public abstract String getDocument();
 
 
 	

@@ -66,17 +66,18 @@ public class FuncionarioServiceTest {
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
 		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678",
-				"Endereco residencial");
+				"Endereco residencial", true);
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "02142627668", LocalDate.of(1990, 4, 30),
 				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
 		pj1 = new PessoaJuridica(null, "Lanches", "64935609000135", "Lanches ME", "inscricaoEstadual1",
 				"inscricaoMunicipal1");
 
 		pf1.getEndereco().add(endereco1);
-		pf1.getTelefone().add(Utils.getRandomTelefone());
+		pf1.getTelefone().add(Utils.getRandomTelefone(true));
 		pj1.getEndereco().add(endereco1);
-		pj1.getTelefone().add(Utils.getRandomTelefone());
-
+		pj1.getTelefone().add(Utils.getRandomTelefone(true));
+		pj1.getEmail().add(Utils.getRandomEmail(pj1, true));
+		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
 		cDesenvolvedor = new Cargo(null, "Desenvolvedor", BigDecimal.valueOf(2000), "rsats");
 		cAdministrador = new Cargo(null, "Administrador", BigDecimal.valueOf(5000), "tes");
 		ff1 = new Funcionario(null, pf1, "dev-432", cDesenvolvedor, LocalDate.now().minusWeeks(1), 0.,
@@ -250,7 +251,8 @@ public class FuncionarioServiceTest {
 				"inscricaoEstadual4", "inscricaoMunicipal4");
 		Arrays.asList(pf2, pf3, pf4, pj2, pj3, pj4).forEach(p -> {
 			p.getEndereco().add(endereco1);
-			p.getTelefone().add(Utils.getRandomTelefone());
+			p.getTelefone().add(Utils.getRandomTelefone(true));
+			p.getEmail().add(Utils.getRandomEmail(p,true));
 		});
 
 		Funcionario ff2 = new Funcionario(null, pf2, "dev-02", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
@@ -409,7 +411,8 @@ public class FuncionarioServiceTest {
 		cenarioParaBuscaParamiterizada();
 		PessoaJuridica pj = new PessoaJuridica(null, "Dev Me", "93811961000167", "DevME", null, null);
 		pj.getEndereco().add(endereco1);
-		pj.getTelefone().add(Utils.getRandomTelefone());
+		pj.getTelefone().add(Utils.getRandomTelefone(true));
+		pj.getEmail().add(Utils.getRandomEmail(pj, true));
 		Funcionario f = new Funcionario(null, pj, "Dev-06", cDesenvolvedor, LocalDate.now(), 0.,
 				cDesenvolvedor.getSalarioBase());
 		funcionarioService.save(f);

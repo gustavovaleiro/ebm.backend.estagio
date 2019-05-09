@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Email implements Serializable {
+public class Email implements Serializable, Principalizar{
 	
 	private static final long serialVersionUID = 1L;
 
@@ -22,12 +22,13 @@ public class Email implements Serializable {
 	
 	@Column(length = 140, name = "email_descricao")
 	private String tipo;	
-	
+	private boolean principal;
 	public Email(){}
-	public Email(String email, String tipo) {
-	
+	public Email(Integer id,String email, String tipo,boolean principal) {
+		this.id = id;
 		this.email = email;
 		this.tipo = tipo;
+		this.principal = principal;
 	}
 	
 	public Integer getId() {
@@ -75,6 +76,12 @@ public class Email implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	public boolean isPrincipal() {
+		return principal;
+	}
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
 	}
 	
 

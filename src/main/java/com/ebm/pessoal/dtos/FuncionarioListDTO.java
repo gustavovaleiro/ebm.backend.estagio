@@ -1,9 +1,13 @@
 package com.ebm.pessoal.dtos;
 
+import java.io.Serializable;
+
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.TipoPessoa;
 
-public class FuncionarioListDTO {
+public class FuncionarioListDTO implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private Integer id;
 	private String matricula;

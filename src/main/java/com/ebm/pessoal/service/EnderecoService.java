@@ -1,22 +1,16 @@
 package com.ebm.pessoal.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
-import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
-import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.Pessoa;
-import com.ebm.pessoal.repository.CidadeRepository;
 import com.ebm.pessoal.repository.EnderecoRepository;
-import com.ebm.pessoal.repository.EstadoRepository;
 
 @Service
 public class EnderecoService {

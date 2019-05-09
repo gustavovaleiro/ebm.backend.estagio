@@ -1,10 +1,14 @@
 package com.ebm.estoque.dtos;
 
+import java.io.Serializable;
+
 import com.ebm.estoque.domain.Item;
 
 
 
-public class ItemListDTO {
+public class ItemListDTO implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
 	private String codInterno;

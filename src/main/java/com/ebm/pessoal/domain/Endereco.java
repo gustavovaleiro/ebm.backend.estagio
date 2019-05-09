@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Endereco implements Serializable {
+public class Endereco implements Serializable, Principalizar {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -29,12 +29,12 @@ public class Endereco implements Serializable {
 	private String complemento;
 	@Column(nullable = false, length = 8)
 	private String CEP;
-
+	private boolean principal;
 	private String tipo;
 
 	public Endereco() {}
 
-	public Endereco(Integer id, String rua, String bairro, Cidade cidade, String numero, String complemento, String cEP,String tipo) {
+	public Endereco(Integer id, String rua, String bairro, Cidade cidade, String numero, String complemento, String cEP,String tipo, boolean principal) {
 		this.id = id;
 		this.rua = rua;
 		this.bairro = bairro;
@@ -43,6 +43,7 @@ public class Endereco implements Serializable {
 		this.complemento = complemento;
 		this.CEP = cEP;
 		this.tipo = tipo;
+		this.principal = principal;
 	}
 
 	public Integer getId() {
@@ -132,6 +133,14 @@ public class Endereco implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
 	}
 	
 	

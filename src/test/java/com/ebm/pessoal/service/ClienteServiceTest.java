@@ -63,17 +63,19 @@ public class ClienteServiceTest {
 		
 		
 		
-
+		
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
-		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678", "Endereco residencial");
+		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678", "Endereco residencial",true);
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "02142627668", LocalDate.of(1990, 4, 30), new RG("23123", "SSP", estadoGO ), "Brasileira", goiania);	
 		pj1 = new PessoaJuridica(null, "Lanches", "64935609000135", "Lanches ME", "inscricaoEstadual1", "inscricaoMunicipal1");
 	
 		pf1.getEndereco().add(endereco1);
-		pf1.getTelefone().add(Utils.getRandomTelefone());
+		pf1.getTelefone().add(Utils.getRandomTelefone(true));
 		pj1.getEndereco().add(endereco1);
-		pj1.getTelefone().add(Utils.getRandomTelefone());
+		pj1.getTelefone().add(Utils.getRandomTelefone(true));
+		pj1.getEmail().add(Utils.getRandomEmail(pj1, true));
+		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
 		
 		
 		cf1 = new Cliente(null, pf1, BigDecimal.valueOf(3000), "Cliente tal");
@@ -210,7 +212,8 @@ public class ClienteServiceTest {
 		PessoaJuridica pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4", "inscricaoMunicipal4");
 		Arrays.asList(pf2,pf3,pf4,pj2,pj3,pj4).forEach( p -> {
 			p.getEndereco().add(endereco1);
-			p.getTelefone().add(Utils.getRandomTelefone());
+			p.getTelefone().add(Utils.getRandomTelefone(true));
+			p.getEmail().add(Utils.getRandomEmail(p, true));
 		});
 		
 		
@@ -226,7 +229,7 @@ public class ClienteServiceTest {
 	}
 	
 	
-	@Transactional
+	 @Transactional
 	@Test
 	public void testaBuscaParamiterizadaPessoaFisica() {
 

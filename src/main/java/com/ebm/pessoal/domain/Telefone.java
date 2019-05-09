@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Telefone implements Serializable {
+public class Telefone implements Serializable, Principalizar {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -24,14 +24,16 @@ public class Telefone implements Serializable {
 	
 	private String tipo;
 	
+	private boolean principal;
 	public Telefone() {}
 	
-	public Telefone(Integer id, String dDD, String numero, String tipo) {
+	public Telefone(Integer id, String dDD, String numero, String tipo, boolean principal) {
 		super();
 		this.id = id;
 		this.dDD = dDD;
 		this.numero = numero;
 		this.tipo = tipo;
+		this.principal = principal;
 	}
 	public Integer getId() {
 		return id;
@@ -62,6 +64,14 @@ public class Telefone implements Serializable {
 		this.tipo = tipo;
 	}
 
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -89,6 +99,6 @@ public class Telefone implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "("+dDD+")"+ numero;
+		return this.tipo + ": ("+dDD+")"+ numero;
 	}
 }

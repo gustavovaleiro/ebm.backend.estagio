@@ -31,7 +31,7 @@ public Telefone save(Telefone telefone) {
 	public Telefone findByDDDAndNumero(String ddd, String numero) {
 	// TODO Auto-generated method stub
 	return telefoneRepository.findByDDDAndNumero(ddd,numero).orElseThrow(
-			() -> new ObjectNotFoundException(ObjectNotFoundException.DEFAULT + "telefone "+ (new Telefone(null, ddd, numero, null).toString())));
+			() -> new ObjectNotFoundException  (ObjectNotFoundException.DEFAULT + "telefone "+ (new Telefone(null, ddd, numero, null, false)).toString() )    );
 }
 
 

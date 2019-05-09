@@ -1,10 +1,13 @@
 package com.ebm.pessoal.dtos;
 
+import java.io.Serializable;
+
 import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.TipoPessoa;
 
-public class ClienteListDTO {
-	
+public class ClienteListDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String nome;
 	private String tipo;

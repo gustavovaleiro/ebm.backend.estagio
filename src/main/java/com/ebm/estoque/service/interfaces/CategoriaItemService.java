@@ -1,5 +1,8 @@
 package com.ebm.estoque.service.interfaces;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.CategoriaItem;
@@ -20,5 +23,11 @@ public interface CategoriaItemService {
 	CategoriaItem save(CategoriaItem categoria);
 
 	CategoriaItem findByNome(String categoria);
+
+	Set<CategoriaItem> findAllById(Set<Integer> ids);
+
+	CategoriaItem findById(Integer id);
+
+	List<CategoriaItem> saveAll(List<CategoriaItem> categorias);
 
 }

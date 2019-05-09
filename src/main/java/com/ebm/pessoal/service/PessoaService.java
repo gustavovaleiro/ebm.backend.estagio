@@ -4,6 +4,7 @@ package com.ebm.pessoal.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -21,6 +22,7 @@ import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
+import com.ebm.pessoal.domain.Principalizar;
 import com.ebm.pessoal.domain.RG;
 import com.ebm.pessoal.domain.Telefone;
 import com.ebm.pessoal.domain.TipoPessoa;
@@ -44,7 +46,11 @@ public class PessoaService {
 			+ ": É necessario pelo menos um endereco para cadastrar uma pessoa.";
 	public static final String NEED_PHONE = DataIntegrityException.DEFAULT
 			+ ": É necessario pelo menos um telefone para cadastrar uma pessoa.";
-	public static final String NOT_FOUND_DOCUMENT = "Não foi possivel encontrar uma pessoa com o documento nº: ";;
+	public static final String NOT_FOUND_DOCUMENT = "Não foi possivel encontrar uma pessoa com o documento nº: ";
+	public static final String NEED_EMAIL =  DataIntegrityException.DEFAULT
+			+ ": É necessario pelo menos um email para cadastrar uma pessoa.";
+	public static final String MOREONEPRINCIPAL = DataIntegrityException.DEFAULT
+	+ ": Uma pessoa só pode possuir um atributo principal do tipo ";
 
 	@Autowired
 	private PessoaFisicaRepository pessoaFisicaRepository;
@@ -129,9 +135,9 @@ public class PessoaService {
 	}
 
 	private void deleteAssociations(Pessoa p) {
-		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
 		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
-		Optional<List<Telefone>> telefones = Optional.ofNullable(p.getTelefone());
+		Optional<List<Telefone>> telefones= Optional.ofNullable(p.getTelefone());
+		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
 		enderecos.ifPresent(o -> enderecoService.deleteAll(o));
 		emails.ifPresent(o -> emailService.deleteAll(o));
 		telefones.ifPresent(o -> telefoneService.deleteAll(o));
@@ -216,19 +222,38 @@ public class PessoaService {
 
 	// aux
 	// --------------------------------------------------------------------------------------------------------
+	
+
 	private void saveAssociations(Pessoa p) {
 		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
 		Optional<List<Telefone>> telefones = Optional.ofNullable(p.getTelefone());
-
+		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
+		
 		if (!enderecos.isPresent() || enderecos.get().size() == 0)
 			throw new DataIntegrityException(NEED_ADDRESS);
 		if (!telefones.isPresent() || telefones.get().size() == 0)
 			throw new DataIntegrityException(NEED_PHONE);
-
+		if (!emails.isPresent() || emails.get().size() == 0)
+			throw new DataIntegrityException(NEED_EMAIL);
+		
+		integridadeAssociacaoEPrincipal(enderecos.get());
+		integridadeAssociacaoEPrincipal(telefones.get());
+		integridadeAssociacaoEPrincipal(emails.get());
+		
+		
+		
 		p.setEndereco(enderecoService.salveAll(p.getEndereco()));
 		p.setEmail(emailService.saveAll(p.getEmail()));
 		p.setTelefone(telefoneService.saveAll(p.getTelefone()));
 
+	}
+	
+	private void integridadeAssociacaoEPrincipal(List<? extends Principalizar> entidade) {
+		if(entidade.size() == 1)
+			entidade.iterator().next().setPrincipal(true);
+		else
+			if(entidade.stream().filter(e -> e.isPrincipal()).count() > 1)
+				throw new DataIntegrityException(MOREONEPRINCIPAL + entidade.get(0).getClass().getSimpleName());
 	}
 
 	public void validateCPF(String cpf) {
@@ -256,6 +281,7 @@ public class PessoaService {
 			
 			enderecoService.deleteAll();
 			telefoneService.deleteAll();
+			emailService.deleteAll();
 		}
 
 	}
