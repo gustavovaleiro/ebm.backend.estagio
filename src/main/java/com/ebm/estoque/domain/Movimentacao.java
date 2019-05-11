@@ -1,25 +1,30 @@
 package com.ebm.estoque.domain;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.ebm.auth.Usuario;
+import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.estoque.domain.interfaces.ProdutoVendas;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name  = "tipo", discriminatorType= DiscriminatorType.STRING, length=1)
 public  class Movimentacao implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -32,7 +37,7 @@ public  class Movimentacao implements Serializable{
 	@Column(length = 400)
 	private String descricao;
 	
-	private LocalDate dataMovimentacao;
+	private LocalDateTime dataMovimentacao;
 	
 	private LocalDateTime  dataCadastro;
 	@ManyToOne
@@ -41,35 +46,38 @@ public  class Movimentacao implements Serializable{
 	@ManyToOne
 	private Usuario ultimaModificacao;
 	
-	public Movimentacao() {
-		this.dataCadastro =  LocalDateTime.now();
-	}
+	@Enumerated(EnumType.STRING)
+	private TipoMovimentacao tipoMovimentacao;
 	
-	public Movimentacao(Integer id, String documento, String descricao, LocalDate dataMovimentacao) {
+	@ManyToMany
+	private Set<Fornecedor> fornecedores = new HashSet<>();
+	
+	@OneToMany(mappedBy="id.movimentacao")
+	private Set<ProdutoMovimentacao> produtoMovimentacao = new HashSet<>();
+	
+	public Movimentacao() {
+	}
+
+	public Movimentacao(TipoMovimentacao tipoMovimentacao) {
+		this.tipoMovimentacao = tipoMovimentacao;
+	}
+	public Movimentacao(Integer id, String documento, String descricao, LocalDateTime dataMovimentacao) {
 		super();
 		this.id = id;
 		this.documento = documento;
 		this.descricao = descricao;
 		this.dataMovimentacao = dataMovimentacao;
 	}
-
+	
+	
+	public static Movimentacao deEntrada() {
+		return new Movimentacao(TipoMovimentacao.ENTRADA);
+	}
+	public static Movimentacao deSaida() {
+		return new Movimentacao(TipoMovimentacao.SAIDA);
+	}
 	public Integer getId() {
 		return id;
-	}
-	public LocalDateTime getDataUltimaModificacao() {
-		return dataUltimaModificacao;
-	}
-
-	public void setDataUltimaModificacao(LocalDateTime dataUltimaModificacao) {
-		this.dataUltimaModificacao = dataUltimaModificacao;
-	}
-
-	public Usuario getUltimaModificacao() {
-		return ultimaModificacao;
-	}
-
-	public void setUltimaModificacao(Usuario ultimaModificacao) {
-		this.ultimaModificacao = ultimaModificacao;
 	}
 
 	public void setId(Integer id) {
@@ -92,11 +100,11 @@ public  class Movimentacao implements Serializable{
 		this.descricao = descricao;
 	}
 
-	public LocalDate getDataMovimentacao() {
+	public LocalDateTime getDataMovimentacao() {
 		return dataMovimentacao;
 	}
 
-	public void setDataMovimentacao(LocalDate dataMovimentacao) {
+	public void setDataMovimentacao(LocalDateTime dataMovimentacao) {
 		this.dataMovimentacao = dataMovimentacao;
 	}
 
@@ -114,6 +122,46 @@ public  class Movimentacao implements Serializable{
 
 	public void setUsuarioCadastro(Usuario usuarioCadastro) {
 		this.usuarioCadastro = usuarioCadastro;
+	}
+
+	public LocalDateTime getDataUltimaModificacao() {
+		return dataUltimaModificacao;
+	}
+
+	public void setDataUltimaModificacao(LocalDateTime dataUltimaModificacao) {
+		this.dataUltimaModificacao = dataUltimaModificacao;
+	}
+
+	public Usuario getUltimaModificacao() {
+		return ultimaModificacao;
+	}
+
+	public void setUltimaModificacao(Usuario ultimaModificacao) {
+		this.ultimaModificacao = ultimaModificacao;
+	}
+
+	public TipoMovimentacao getTipoMovimentacao() {
+		return tipoMovimentacao;
+	}
+
+	public void setTipoMovimentacao(TipoMovimentacao tipoMovimentacao) {
+		this.tipoMovimentacao = tipoMovimentacao;
+	}
+
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
+	}
+
+	public Set<ProdutoMovimentacao> getProdutosMovimentacao() {
+		return produtoMovimentacao;
+	}
+
+	public void setProdutosMovimentacao(Set<ProdutoMovimentacao> produtos) {
+		this.produtoMovimentacao = produtos;
 	}
 
 	@Override
@@ -140,6 +188,8 @@ public  class Movimentacao implements Serializable{
 			return false;
 		return true;
 	}
+
+	
 	
 	
 	

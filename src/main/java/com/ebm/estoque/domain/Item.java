@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
@@ -36,10 +37,12 @@ public abstract class Item implements Serializable {
 	@Column(nullable = false, length = 400)
 	private String descricao;
 	
-	@Column(nullable = false)
+	@ManyToOne()
+	@JoinColumn(nullable = false)
 	private Unidade unidade;
 	
-	@Column(nullable = false)
+	@ManyToOne()
+	@JoinColumn(nullable = false)
 	private CategoriaItem categoria;
 	
 	@Column(length = 60)

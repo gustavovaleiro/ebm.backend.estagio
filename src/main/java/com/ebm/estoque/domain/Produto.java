@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import com.ebm.Utils;
-
+import com.ebm.estoque.domain.enums.TipoItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("P")
@@ -29,10 +29,10 @@ public class Produto extends Item {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="id.produto")
-	private Set<ProdutoEntrada> entradas = new HashSet<>();
+	private Set<ProdutoMovimentacao> entradas = new HashSet<>();
 	@JsonIgnore
 	@OneToMany(mappedBy="id.produto")
-	private Set<ProdutoSaida> saidas = new HashSet<>();
+	private Set<ProdutoMovimentacao> saidas = new HashSet<>();
 	
 	public static Produto of(String nome, Unidade un, CategoriaItem categoria) {
 		return new Produto(null, nome, nome, un, categoria,  Utils.getRandomCodInterno(TipoItem.PRODUTO, nome), null, null, null, null, null, null, null);
@@ -109,6 +109,12 @@ public class Produto extends Item {
 
 	public void setComprimento(Double comprimento) {
 		this.comprimento = comprimento;
+	}
+
+	public void setEstoque(int min, int atual, int max) {
+		this.estoqueMinimo = min;
+		this.estoqueAtual = atual;
+		this.estoqueMax = max;
 	}
 
 	

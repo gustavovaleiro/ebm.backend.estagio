@@ -89,11 +89,14 @@ public class FornecedorServiceTest {
 				"Endereco residencial", true);
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "02142627668", LocalDate.of(1990, 4, 30),
 				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
+		
+		pf1.getEndereco().add(endereco1);
+		pf1.getTelefone().add(Utils.getRandomTelefone(true));
+		
 		pj1 = new PessoaJuridica(null, "Lanches", "64935609000135", "Lanches ME", "inscricaoEstadual1",
 				"inscricaoMunicipal1");
 
-		pf1.getEndereco().add(endereco1);
-		pf1.getTelefone().add(Utils.getRandomTelefone(true));
+
 		pj1.getEndereco().add(endereco1);
 		pj1.getTelefone().add(Utils.getRandomTelefone(true));
 		pj1.getEmail().add(Utils.getRandomEmail(pj1, true));

@@ -1,9 +1,10 @@
-package com.ebm.estoque.domain;
+package com.ebm.estoque.domain.interfaces;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import com.ebm.auth.Usuario;
+import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.pessoal.domain.Cliente;
 
 public interface OrigemMovimentacao {

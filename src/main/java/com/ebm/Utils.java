@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.springframework.data.domain.ExampleMatcher;
 
-import com.ebm.estoque.domain.TipoItem;
+import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.pessoal.domain.Email;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.Telefone;

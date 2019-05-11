@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
 import com.ebm.estoque.domain.Item;
-import com.ebm.estoque.domain.TipoItem;
+import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.estoque.dtos.ItemListDTO;
 import com.ebm.estoque.repository.ItemRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
@@ -166,7 +166,7 @@ public class ItemServiceImpl implements ItemService {
 	
 	@Transactional
 	@Override
-	public List<Item> saveAll(List<Item> itens){
+	public Collection<Item> saveAll(Collection<Item> itens){
 		return itens.stream().map( i -> this.save(i)).collect(Collectors.toList());
 	}
 	

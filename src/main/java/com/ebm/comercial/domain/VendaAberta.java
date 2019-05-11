@@ -17,8 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.ebm.auth.Usuario;
-import com.ebm.estoque.domain.OrigemMovimentacao;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
+import com.ebm.estoque.domain.interfaces.OrigemMovimentacao;
 import com.ebm.pessoal.domain.Cliente;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

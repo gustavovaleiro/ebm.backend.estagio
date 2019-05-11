@@ -6,6 +6,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import com.ebm.Utils;
+import com.ebm.estoque.domain.enums.TipoItem;
 @Entity
 @DiscriminatorValue("S")
 public class Servico extends Item{

@@ -6,20 +6,20 @@ import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 
 @Embeddable
-public class ProdutoSaidaPK implements Serializable{
+public class ProdutoMovimentacaoPK implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToOne
 	private Produto produto;
 	@ManyToOne
-	private Saida saida;
-	public ProdutoSaidaPK(Produto produto, Saida saida) {
+	private Movimentacao movimentacao;
+	public ProdutoMovimentacaoPK(Produto produto, Movimentacao movimentacao) {
 		this.produto = produto;
-		this.saida = saida;
+		this.movimentacao = movimentacao;
 	}
 	
-	public ProdutoSaidaPK() {}
+	public ProdutoMovimentacaoPK() {}
 
 	public Produto getProduto() {
 		return produto;
@@ -29,19 +29,19 @@ public class ProdutoSaidaPK implements Serializable{
 		this.produto = produto;
 	}
 
-	public Saida getSaida() {
-		return saida;
+	public Movimentacao getMovimentacao() {
+		return movimentacao;
 	}
 
-	public void setSaida(Saida saida) {
-		this.saida = saida;
+	public void setMovimentacao(Movimentacao movimentacao) {
+		this.movimentacao = movimentacao;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((saida == null) ? 0 : saida.hashCode());
+		result = prime * result + ((movimentacao == null) ? 0 : movimentacao.hashCode());
 		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
 		return result;
 	}
@@ -54,11 +54,11 @@ public class ProdutoSaidaPK implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProdutoSaidaPK other = (ProdutoSaidaPK) obj;
-		if (saida == null) {
-			if (other.saida != null)
+		ProdutoMovimentacaoPK other = (ProdutoMovimentacaoPK) obj;
+		if (movimentacao == null) {
+			if (other.movimentacao != null)
 				return false;
-		} else if (!saida.equals(other.saida))
+		} else if (!movimentacao.equals(other.movimentacao))
 			return false;
 		if (produto == null) {
 			if (other.produto != null)

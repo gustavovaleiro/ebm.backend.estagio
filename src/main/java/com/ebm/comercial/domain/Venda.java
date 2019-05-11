@@ -24,9 +24,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.ebm.auth.Usuario;
-import com.ebm.estoque.domain.OrigemMovimentacao;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
+import com.ebm.estoque.domain.interfaces.OrigemMovimentacao;
 import com.ebm.pessoal.domain.Cliente;
 
 @Entity

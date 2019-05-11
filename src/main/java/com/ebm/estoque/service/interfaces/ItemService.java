@@ -23,7 +23,7 @@ public interface ItemService {
 
 
 	Item save(Item item);
-	Collection<Item> saveAll(List<Item> itens);
+	Collection<Item> saveAll(Collection<Item> itens);
 	Item findById(Integer id);
 	void deleteAll(boolean propaga);
 	void delete(Integer id);
