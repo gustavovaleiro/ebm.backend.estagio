@@ -1,6 +1,7 @@
 package com.ebm.estoque.service;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -11,12 +12,15 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;import org.aspectj.weaver.NewParentTypeMunger;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +35,11 @@ import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.estoque.domain.ProdutoMovimentacaoPK;
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.estoque.service.interfaces.FornecedorService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
@@ -71,6 +75,7 @@ public class MovimentacaoServiceTest {
 	private Movimentacao e3;
 	private Movimentacao s2;
 	private Movimentacao s3;
+	private Fornecedor ff1;
 
 	
 	@Before
@@ -265,19 +270,22 @@ public class MovimentacaoServiceTest {
 		e3 = Movimentacao.novaEntrada();
 		s2 = Movimentacao.novaSaida();
 		s3 = Movimentacao.novaSaida();
-		
+
 		e2.setDocumento("notafiscal-01");
 		e3.setDocumento("notafiscal-01");
 		s2.setDocumento("Venda01");
 		s3.setDocumento("Venda02");
 		
+		ff1 = fornecedorService.save(fornecedor());
+		
 		Arrays.asList(e2,e3,s2,s3).forEach(m ->m.getProdutosMovimentacao()
 			.add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p4, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 10))
 		); 
 		
-		Arrays.asList(e2,s2).forEach(m ->m.getProdutosMovimentacao()
-				.add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5))
-		); 
+		Arrays.asList(e2,s2).forEach(m -> { 
+			m.getProdutosMovimentacao().add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5));
+			m.getFornecedores().add(ff1);
+		}); 
 		
 		Arrays.asList(e3,s3).forEach(m -> m.getProdutosMovimentacao()
 				.addAll( Arrays.asList(p6,p7).stream().map( p -> new ProdutoMovimentacao
@@ -287,12 +295,88 @@ public class MovimentacaoServiceTest {
 	}
 	
 	//test find por tipo E
+	@Transactional
+	@Test
+	public void testFindParameterizadoEntrada() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.ENTRADA, null, null,null, PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(3));
+		assertTrue(result.stream().allMatch(m -> m.getTipo()== TipoMovimentacao.ENTRADA.getDesc()));
+		assertFalse(result.stream().anyMatch(m -> m.getTipo()== TipoMovimentacao.SAIDA.getDesc()));
+	}
+	
 	//test find por tipo S
-	//tes find por document
-	//test find por fornecedor
-	//test find por produto
-	//test find tipo e produto
+	
+	public void testFindParameterizadoSaida() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.SAIDA, null, null,null, PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(3));
+		assertTrue(result.stream().allMatch(m -> m.getTipo()== TipoMovimentacao.SAIDA.getDesc()));
+		assertFalse(result.stream().anyMatch(m -> m.getTipo()== TipoMovimentacao.ENTRADA.getDesc()));
+	}
+	//tes find por document return e2 e e3
+	
+	public void testFindParameterizadoDocumento() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, "notafiscal", null,null, PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(2));
+		assertTrue(result.stream().allMatch(m -> m.getTipo()== TipoMovimentacao.ENTRADA.getDesc()));
+		assertFalse(result.stream().anyMatch(m -> m.getTipo()== TipoMovimentacao.SAIDA.getDesc()));
+		assertTrue(result.stream().allMatch(m -> m.getDocumento().toLowerCase().contains("notafiscal")));
+	}
+	//test find por fornecedor e2 s2
+	public void testFindParameterizadoFornecedor() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, Arrays.asList(ff1.getId()),null, PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(2));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e2.getId())));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(s2.getId())));
+	}
+	
+	//test find por produto S3 E3
+	public void testFindParameterizadoProduto() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, null,Arrays.asList(p4.getId(), p5.getId()), PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(2));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e3.getId())));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(s3.getId())));
+	}
+	
+	//test find tipo e produto E3
+	public void testFindParameterizadoProdutoETipo() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.ENTRADA, null, null,Arrays.asList(p4.getId(), p5.getId()), PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(1));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e3.getId())));
+	}
 	//test find tipo e fornecedor
+	public void testFindParameterizadoFornecedorEtipo() {
+		preparaCenarioBuscaParamiterizada();
+
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.SAIDA, null, Arrays.asList(ff1.getId()),null, PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(1));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(s2.getId())));
+	}
 	
 	
 }

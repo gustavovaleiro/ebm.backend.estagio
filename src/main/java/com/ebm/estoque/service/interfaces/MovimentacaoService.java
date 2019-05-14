@@ -2,9 +2,13 @@ package com.ebm.estoque.service.interfaces;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.Movimentacao;
+import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 
@@ -19,5 +23,7 @@ public interface MovimentacaoService {
 	Movimentacao save(Movimentacao movimentacao);
 	List<Movimentacao> saveAll(List<Movimentacao> asList);
 	Movimentacao findById(Integer id);
+	Page<MovimentacaoListDTO> findBy(TipoMovimentacao tipo, String documento, List<Integer> fornecedores,
+			List<Integer> produtos, PageRequest page);
 
 }

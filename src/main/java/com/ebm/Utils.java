@@ -1,5 +1,6 @@
 package com.ebm;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 import org.springframework.data.domain.ExampleMatcher;
@@ -12,6 +13,7 @@ import com.ebm.pessoal.domain.Telefone;
 public class Utils {
 		
 	private static Random gerador = new Random(System.currentTimeMillis());
+	private static DateTimeFormatter brFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 	
 	public static Telefone getRandomTelefone(boolean principal) {
 		return new Telefone(null, String.valueOf(gerador.nextInt(89)+10), String.valueOf(900000000 + gerador.nextInt(99999999)), "GeradoAutomaticamente", principal);
@@ -37,6 +39,12 @@ public class Utils {
 	public static Email getRandomEmail(Pessoa pf1, boolean principal) {
 		// TODO Auto-generated method stub
 		return new Email(null,pf1.getNome() + 100+ gerador.nextInt(899), "geradoAutomatico", principal);
+	}
+
+
+	public static DateTimeFormatter getBrDateTimeFormatter() {
+		// TODO Auto-generated method stub
+		return brFormat ;
 	}
 
 

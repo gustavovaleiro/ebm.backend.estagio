@@ -183,9 +183,4 @@ public  class Movimentacao implements Serializable{
 			return false;
 		return true;
 	}
-
-	
-	
-	
-	
 }
