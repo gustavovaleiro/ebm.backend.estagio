@@ -2,6 +2,7 @@ package com.ebm.estoque.service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +54,9 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 			pM.setMovimentacao(movimentacao);
 			pM.setProduto((Produto) itemService.findById(pM.getProduto().getId()));
 			if(movimentacao.getTipoMovimentacao() == TipoMovimentacao.ENTRADA) {
-				
 				//Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade maxima de estoque
 				pM.getProduto().setEstoqueAtual( pM.getProduto().getEstoqueAtual() + pM.getQuantidade() );
-				
 			} else {
-				
 				//Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade minima de estoque
 				pM.getProduto().setEstoqueAtual( pM.getProduto().getEstoqueAtual() - pM.getQuantidade() );
 			}
@@ -86,5 +84,9 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 			throw new DataIntegrityException(DATAINTEGRITY_NOTIPO);
 		if(movimentacao.getTipoMovimentacao() == TipoMovimentacao.SAIDA &&  (movimentacao.getFornecedores() != null && movimentacao.getFornecedores().size() > 0 )  )
 			throw new DataIntegrityException(DATAINTEGRITY_SAIDAWITHFORNECEDOR);
+	}
+	@Override
+	public List<Movimentacao> saveAll(List<Movimentacao> movimentacoes) {
+		return movimentacoes.stream().map( m -> this.save(m)).collect(Collectors.toList());
 	}
 }

@@ -1,7 +1,6 @@
 package com.ebm.pessoal.service;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +9,7 @@ import static org.junit.Assert.fail;
 import java.time.LocalDate;
 import java.util.Arrays;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,7 +73,10 @@ public class PessoaServiceTest extends DevApplicationTests {
 		pj1.getEmail().add(Utils.getRandomEmail(pj1, true));
 		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
 	}
-
+	@After
+	public void setDown() {
+		pessoaService.deleteAll(true);
+	}
 	// teste de inserção com endereco, telefone e email, deve passar
 	@Test
 	public void testInsercaoPessoaFisica() {

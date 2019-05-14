@@ -20,7 +20,7 @@ public Telefone save(Telefone telefone) {
 		
 		try {
 			Telefone result = findByDDDAndNumero(telefone.getDDD(), telefone.getNumero());
-			if(result.getId() != telefone.getId())
+			if(!result.getId().equals(telefone.getId()))
 				throw new DataIntegrityException("O telefone: " + telefone.toString() + " ja existe.");		
 		}catch(ObjectNotFoundException e) {}
 		
