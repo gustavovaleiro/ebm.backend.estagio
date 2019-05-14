@@ -73,9 +73,10 @@ public class PessoaService {
 	private PessoaFisica save(PessoaFisica pf) {
 		validateCPF(pf.getCpf());
 		Boolean update = false;
+		
 		try {
 			PessoaFisica result = findbyCPF(pf.getCpf());
-			if (result.getId() != pf.getId())
+			if (!result.getId().equals(pf.getId()))
 				throw new DataIntegrityException(DUPLICATE_CPF);
 			else
 				update = true;
@@ -101,7 +102,7 @@ public class PessoaService {
 		Boolean update = false;
 		try {
 			PessoaJuridica result= findByCPNJ(pj.getCnpj());
-			if(result.getId() != pj.getId())
+			if(!result.getId().equals(pj.getId()))
 				throw new DataIntegrityException(DUPLICATE_CNPJ);
 			else
 				update = true;

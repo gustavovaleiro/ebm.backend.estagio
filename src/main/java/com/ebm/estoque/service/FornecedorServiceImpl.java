@@ -66,12 +66,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 		if (fornecedor.getPessoa().getId() != null) {
 			try {
 				Fornecedor result = findById(fornecedor.getPessoa().getId());
-				if (result.getId() != fornecedor.getId())
+				if (!result.getId().equals(fornecedor.getId()))
 					throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEPERSON);
 			} catch (ObjectNotFoundException ex) {}
 		}
 
-		if (fornecedor.getId() != null && fornecedor.getId() != fornecedor.getPessoa().getId())
+		if (fornecedor.getId() != null && !fornecedor.getId().equals(fornecedor.getPessoa().getId()))
 			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
 	}
 

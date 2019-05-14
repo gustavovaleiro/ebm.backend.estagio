@@ -75,7 +75,7 @@ public class FuncionarioService {
 		Optional<Funcionario> funcionarioByMatricula = funcionarioRepository
 				.findOneByMatricula(funcionario.getMatricula());
 		if (!(funcionario.getMatricula().isEmpty() || funcionario.getMatricula() == null)
-				&& (funcionarioByMatricula.isPresent() && funcionarioByMatricula.get().getId() != funcionario.getId()))
+				&& (funcionarioByMatricula.isPresent() && !funcionarioByMatricula.get().getId().equals(funcionario.getId())  ))
 			throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEMATRICULA);
 	}
 
@@ -86,13 +86,13 @@ public class FuncionarioService {
 		if (funcionario.getPessoa().getId() != null) {
 			try {
 				Funcionario result = findById(funcionario.getPessoa().getId());
-				if (result.getId() != funcionario.getId())
+				if (!result.getId().equals(funcionario.getId()))
 					throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEPERSON);
 			} catch (ObjectNotFoundException ex) {
 			}
 		}
 
-		if (funcionario.getId() != null && funcionario.getId() != funcionario.getPessoa().getId())
+		if (funcionario.getId() != null && !funcionario.getId().equals(funcionario.getPessoa().getId()) )
 			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
 	}
 

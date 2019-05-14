@@ -58,13 +58,13 @@ public class ClienteService {
 		if (cliente.getPessoa().getId() != null) {// garantir que nao exista outra cliente salvado com a mesma pessoa
 			try {
 				Cliente result = findById(cliente.getPessoa().getId());
-				if (result.getId() != cliente.getId())
+				if (!result.getId().equals(cliente.getId()) )
 					throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEPERSON);
 			} catch (ObjectNotFoundException ex) {
 			}
 		}
 
-		if (cliente.getId() != null && cliente.getId() != cliente.getPessoa().getId())
+		if (cliente.getId() != null && !cliente.getId().equals( cliente.getPessoa().getId()))
 			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
 	}
 

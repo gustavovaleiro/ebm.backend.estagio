@@ -34,7 +34,7 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 		
 		try {
 			CategoriaItem un = findByNome(categoria.getNome());
-			if(un.getId() != categoria.getId())
+			if(!un.getId().equals(categoria.getId()))
 				throw new DataIntegrityException(DATAINTEGRITY_DUPLICATENOME);
 			}catch(ObjectNotFoundException ex) {}
 		

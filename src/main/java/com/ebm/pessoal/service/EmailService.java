@@ -25,7 +25,7 @@ public class EmailService {
 		
 		try {
 			Email result = findByEmail(email.getEmail());
-			if(result.getId() != email.getId())
+			if(!result.getId().equals(email.getId()))
 				throw new DataIntegrityException("O email: "+ email.getEmail() + " ja existe.");		
 		}catch(ObjectNotFoundException e) {}
 		

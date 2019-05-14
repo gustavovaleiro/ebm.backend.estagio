@@ -11,8 +11,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import java.util.stream.Collectors;import org.aspectj.weaver.NewParentTypeMunger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +35,7 @@ import com.ebm.estoque.service.interfaces.FornecedorService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
@@ -62,24 +62,33 @@ public class MovimentacaoServiceTest {
 	private Movimentacao s1;
 	private List<Item> produtos;
 	private CategoriaItem cat1;
+	private Unidade un1;
+	private Produto p4;
+	private Produto p5;
+	private Produto p6;
+	private Produto p7;
+	private Movimentacao e2;
+	private Movimentacao e3;
+	private Movimentacao s2;
+	private Movimentacao s3;
 
 	
 	@Before
 	public void setUp() {
 	
-		Unidade un1 = new Unidade(null, "un", "Unidade");
+		 un1 = new Unidade(null, "un", "Unidade");
 		cat1 = new CategoriaItem(null, "Informatica");
 
-		 p1 = Produto.of("Computador", un1, cat1);
-		 p2 = Produto.of("Processador", un1, cat1);
-		 p3 = Produto.of("Memoria", un1, cat1);
+		 p1 = Produto.of("Computador I3 4gb RAM", un1, cat1);
+		 p2 = Produto.of("Processador I3", un1, cat1);
+		 p3 = Produto.of("Memoria ram 4GB", un1, cat1);
 		 
 		 
 		
 		 produtos = Arrays.asList(p1,p2,p3);
 		 produtos.forEach( p -> ((Produto) p).setEstoque(5,0,10) );
-		 e1 = Movimentacao.deEntrada();
-		 s1  = Movimentacao.deSaida();
+		 e1 = Movimentacao.novaEntrada();
+		 s1  = Movimentacao.novaSaida();
 		 
 		 Arrays.asList(e1,s1).forEach( m -> m.getProdutosMovimentacao().addAll( produtos.stream()
 				 .map( p -> new ProdutoMovimentacao( new ProdutoMovimentacaoPK((Produto) p, e1), BigDecimal.valueOf(10), BigDecimal.valueOf(100), 5)).collect(Collectors.toSet())  ));
@@ -180,43 +189,110 @@ public class MovimentacaoServiceTest {
 	
 	}
 
+	@Transactional
+	@Test
+	public void testQuantidadeEmEstoque()
+	{
+		produtos = (List<Item>) itemService.saveAll(produtos);
+		
+		Movimentacao en = Movimentacao.novaEntrada(); 
+		en.getProdutosMovimentacao().add( new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) produtos.get(0), en), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4));
+		movimentacaoService.save(en);
+		int estoqPosEntrada = ((Produto) itemService.findById(produtos.get(0).getId())).getEstoqueAtual();
+	
+		Movimentacao sa = Movimentacao.novaSaida();
+		sa.getProdutosMovimentacao().add(  new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) produtos.get(0), en), BigDecimal.valueOf(0), BigDecimal.valueOf(10),2));
+		movimentacaoService.save(sa);
+		
+		
+	    Produto p = (Produto) itemService.findById(produtos.get(0).getId());
+		assertThat(p.getEstoqueAtual(), equalTo(2));
+		assertThat(estoqPosEntrada, equalTo(4));
+	}
+	
+	@Transactional
+	@Test
+	public void testFindById() {
+		produtos = (List<Item>) itemService.saveAll(produtos);
+		
+		e1 = movimentacaoService.save(e1);
+		
+		Movimentacao result = movimentacaoService.findById(e1.getId());
+		
+		assertThat(e1.getId(), equalTo(result.getId()));
+	}
+	@Transactional
+	@Test
+	public void testFindByIdExNull() {
 
-//	@Test
-//	public void testaAdicionarCategoriaSemNomeEx() {
-//		cat1.setNome(null);
-//		try {
-//			cat1 = movimentacaoService.save(cat1);
-//			fail();
-//		}catch(DataIntegrityException ex) {
-//			assertThat(ex.getMessage(), equalTo(CategoriaItemService.DATAINTEGRITY_NOMENULL));
-//		}
-//		
-//	}
-//	@Test
-//	public void testaAdicionarCategoriaNomeRepetido() {
-//		CategoriaItem un2 = new CategoriaItem(null, cat1.getNome());
-//		movimentacaoService.save(cat1);
-//		try {
-//			un2 = movimentacaoService.save(un2);
-//			fail();
-//		}catch(DataIntegrityException ex) {
-//			assertThat(ex.getMessage(), equalTo(CategoriaItemService.DATAINTEGRITY_DUPLICATENOME));
-//		}
-//		
-//	}
-//	
-//	@Test
-//	public void testeUpdate() {
-//		cat1 = movimentacaoService.save(cat1);
-//		cat1.setNome("outronome");
-//		CategoriaItem un2 = movimentacaoService.save(cat1);
-//		
-//		assertNotNull(cat1.getId());
-//		assertThat(un2.getId(), equalTo(cat1.getId()));
-//		assertThat(un2.getNome(), equalTo("outronome"));
-//	}
+		try {
+			Movimentacao result = movimentacaoService.findById(null);
+			fail();
+		}catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(MovimentacaoService.DATAINTEGRITY_IDNULL));
+		}
+	}
 	
+	@Transactional
+	@Test
+	public void testFindByIdExNotFound() {
+
+		try {
+			Movimentacao result = movimentacaoService.findById(1);
+			fail();
+		}catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(MovimentacaoService.ONFE_NOTFOUNDBYID + 1));
+		}
+	}
 	
+	//E1 -> P1 P2 P3;
+	//S1 -> P1 P2 P3;
+	//e2 -> P4 P5
+	//E3 -> P4 P6 P7
+	//S2 -> P4 P5;
+	//S3 -> P4 P6P7
+	private void preparaCenarioBuscaParamiterizada() {
+		p4 = Produto.of("Computador i5 8GB", un1, cat1);
+		p5 = Produto.of("Mouse", un1, cat1);
+		p6 = Produto.of("Teclado", un1, cat1);
+		p7 = Produto.of("Processador i5", un1, cat1);
+		
+		produtos.addAll(Arrays.asList(p4,p5,p5,p7));
+		produtos = (List<Item>) itemService.saveAll(produtos);
+		
+		
+		e2 = Movimentacao.novaEntrada();
+		e3 = Movimentacao.novaEntrada();
+		s2 = Movimentacao.novaSaida();
+		s3 = Movimentacao.novaSaida();
+		
+		e2.setDocumento("notafiscal-01");
+		e3.setDocumento("notafiscal-01");
+		s2.setDocumento("Venda01");
+		s3.setDocumento("Venda02");
+		
+		Arrays.asList(e2,e3,s2,s3).forEach(m ->m.getProdutosMovimentacao()
+			.add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p4, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 10))
+		); 
+		
+		Arrays.asList(e2,s2).forEach(m ->m.getProdutosMovimentacao()
+				.add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5))
+		); 
+		
+		Arrays.asList(e3,s3).forEach(m -> m.getProdutosMovimentacao()
+				.addAll( Arrays.asList(p6,p7).stream().map( p -> new ProdutoMovimentacao
+						(new ProdutoMovimentacaoPK(((Produto)p), m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4)).collect(Collectors.toSet())));
+	
+		movimentacaoService.saveAll(Arrays.asList(e1,e2,e3,s1,s2,s3));
+	}
+	
+	//test find por tipo E
+	//test find por tipo S
+	//tes find por document
+	//test find por fornecedor
+	//test find por produto
+	//test find tipo e produto
+	//test find tipo e fornecedor
 	
 	
 }

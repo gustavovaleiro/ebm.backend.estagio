@@ -65,10 +65,10 @@ public  class Movimentacao implements Serializable{
 	}
 	
 	
-	public static Movimentacao deEntrada() {
+	public static Movimentacao novaEntrada() {
 		return new Movimentacao(TipoMovimentacao.ENTRADA);
 	}
-	public static Movimentacao deSaida() {
+	public static Movimentacao novaSaida() {
 		return new Movimentacao(TipoMovimentacao.SAIDA);
 	}
 	public Integer getId() {

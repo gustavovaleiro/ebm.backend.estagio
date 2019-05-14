@@ -32,7 +32,7 @@ public class UnidadeServiceImpl implements UnidadeService{
 		
 		try {
 			Unidade un = findByAbrev(unidade.getAbrev());
-			if(un.getId() != unidade.getId())
+			if(!un.getId().equals(unidade.getId()))
 				throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEABRE);
 			}catch(ObjectNotFoundException ex) {}
 		
