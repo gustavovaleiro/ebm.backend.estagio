@@ -9,6 +9,8 @@ import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +42,7 @@ import com.ebm.estoque.service.interfaces.FornecedorService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
@@ -245,7 +248,7 @@ public class MovimentacaoServiceTest {
 		try {
 			Movimentacao result = movimentacaoService.findById(1);
 			fail();
-		}catch(DataIntegrityException ex) {
+		}catch(ObjectNotFoundException ex) {
 			assertThat(ex.getMessage(), equalTo(MovimentacaoService.ONFE_NOTFOUNDBYID + 1));
 		}
 	}
@@ -262,9 +265,9 @@ public class MovimentacaoServiceTest {
 		p6 = Produto.of("Teclado", un1, cat1);
 		p7 = Produto.of("Processador i5", un1, cat1);
 		
-		produtos.addAll(Arrays.asList(p4,p5,p5,p7));
+	
 		produtos = (List<Item>) itemService.saveAll(produtos);
-		
+		itemService.saveAll(Arrays.asList(p4,p5,p6,p7));
 		
 		e2 = Movimentacao.novaEntrada();
 		e3 = Movimentacao.novaEntrada();
@@ -284,13 +287,12 @@ public class MovimentacaoServiceTest {
 		
 		Arrays.asList(e2,s2).forEach(m -> { 
 			m.getProdutosMovimentacao().add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5));
-			m.getFornecedores().add(ff1);
 		}); 
-		
+		e2.getFornecedores().add(ff1);
 		Arrays.asList(e3,s3).forEach(m -> m.getProdutosMovimentacao()
 				.addAll( Arrays.asList(p6,p7).stream().map( p -> new ProdutoMovimentacao
 						(new ProdutoMovimentacaoPK(((Produto)p), m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4)).collect(Collectors.toSet())));
-	
+
 		movimentacaoService.saveAll(Arrays.asList(e1,e2,e3,s1,s2,s3));
 	}
 	
@@ -300,7 +302,6 @@ public class MovimentacaoServiceTest {
 	public void testFindParameterizadoEntrada() {
 		preparaCenarioBuscaParamiterizada();
 
-		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.ENTRADA, null, null,null, PageRequest.of(0, 8));
 		
 		assertThat(result.getNumberOfElements(), equalTo(3));
@@ -309,11 +310,11 @@ public class MovimentacaoServiceTest {
 	}
 	
 	//test find por tipo S
-	
+	@Transactional
+	@Test
 	public void testFindParameterizadoSaida() {
 		preparaCenarioBuscaParamiterizada();
 
-		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.SAIDA, null, null,null, PageRequest.of(0, 8));
 		
 		assertThat(result.getNumberOfElements(), equalTo(3));
@@ -321,10 +322,10 @@ public class MovimentacaoServiceTest {
 		assertFalse(result.stream().anyMatch(m -> m.getTipo()== TipoMovimentacao.ENTRADA.getDesc()));
 	}
 	//tes find por document return e2 e e3
-	
+	@Transactional
+	@Test
 	public void testFindParameterizadoDocumento() {
 		preparaCenarioBuscaParamiterizada();
-
 		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, "notafiscal", null,null, PageRequest.of(0, 8));
 		
@@ -334,48 +335,63 @@ public class MovimentacaoServiceTest {
 		assertTrue(result.stream().allMatch(m -> m.getDocumento().toLowerCase().contains("notafiscal")));
 	}
 	//test find por fornecedor e2 s2
+	@Transactional
+	@Test
 	public void testFindParameterizadoFornecedor() {
 		preparaCenarioBuscaParamiterizada();
-
 		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, Arrays.asList(ff1.getId()),null, PageRequest.of(0, 8));
 		
-		assertThat(result.getNumberOfElements(), equalTo(2));
+		assertThat(result.getNumberOfElements(), equalTo(1));
 		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e2.getId())));
-		assertTrue(result.stream().anyMatch(m -> m.getId().equals(s2.getId())));
 	}
 	
-	//test find por produto S3 E3
+	//test find por produto e2 s2 S3 E3
+	@Transactional
+	@Test
 	public void testFindParameterizadoProduto() {
 		preparaCenarioBuscaParamiterizada();
-
 		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, null,Arrays.asList(p4.getId(), p5.getId()), PageRequest.of(0, 8));
 		
-		assertThat(result.getNumberOfElements(), equalTo(2));
-		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e3.getId())));
-		assertTrue(result.stream().anyMatch(m -> m.getId().equals(s3.getId())));
+		assertThat(result.getNumberOfElements(), equalTo(4));
+		
+		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e2,s2,e3,s3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
+
 	}
 	
 	//test find tipo e produto E3
+	@Transactional
+	@Test
 	public void testFindParameterizadoProdutoETipo() {
 		preparaCenarioBuscaParamiterizada();
-
 		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.ENTRADA, null, null,Arrays.asList(p4.getId(), p5.getId()), PageRequest.of(0, 8));
 		
-		assertThat(result.getNumberOfElements(), equalTo(1));
-		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e3.getId())));
+		assertThat(result.getNumberOfElements(), equalTo(2));
+		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e2,e3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
 	}
 	//test find tipo e fornecedor
+	@Transactional
+	@Test
 	public void testFindParameterizadoFornecedorEtipo() {
 		preparaCenarioBuscaParamiterizada();
-
 		
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.SAIDA, null, Arrays.asList(ff1.getId()),null, PageRequest.of(0, 8));
 		
-		assertThat(result.getNumberOfElements(), equalTo(1));
-		assertTrue(result.stream().anyMatch(m -> m.getId().equals(s2.getId())));
+		assertThat(result.getNumberOfElements(), equalTo(0));
+	}
+	
+	//testFindAllNull
+	@Transactional
+	@Test
+	public void testFindParamiterizadoAllNull() {
+	preparaCenarioBuscaParamiterizada();
+		
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, new ArrayList<>(), new ArrayList<>(), PageRequest.of(0, 8));
+		
+		assertThat(result.getNumberOfElements(), equalTo(6));
+		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e1,e2,e3,s1,s2,s3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
 	}
 	
 	

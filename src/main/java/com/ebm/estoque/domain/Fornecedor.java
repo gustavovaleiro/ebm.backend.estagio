@@ -86,6 +86,12 @@ public class Fornecedor implements Serializable {
 			return false;
 		return true;
 	}
+
+	public static Fornecedor ofId(Integer id) {
+		Fornecedor fornecedor = new Fornecedor();
+		fornecedor.setId(id);
+		return fornecedor;
+	}
 	
 	
 	

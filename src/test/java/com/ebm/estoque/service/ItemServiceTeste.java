@@ -192,6 +192,7 @@ public class ItemServiceTeste {
 
 		itemService.saveAll(Arrays.asList(p1, p2, p3, p4, s1, s2, s3, s4));
 	}
+
 	@Test
 	public void testaFindById() {
 		itemService.save(p1);
@@ -201,22 +202,24 @@ public class ItemServiceTeste {
 		assertThat(result.getNome(), equalTo(p1.getNome()));
 
 	}
+
 	@Test
 	public void testaFindByIdEx() {
-		try{
+		try {
 			Produto result = (Produto) itemService.findById(4);
 			fail();
-		}catch(ObjectNotFoundException ex) {
+		} catch (ObjectNotFoundException ex) {
 			assertThat(ex.getMessage(), equalTo(ItemService.ONFE_BYID));
 		}
 	}
+
 	@Test
 	public void testaFindByIdExNUll() {
-		try{
+		try {
 			Produto result = (Produto) itemService.findById(null);
 			fail();
-		}catch(DataIntegrityException ex) {
-			
+		} catch (DataIntegrityException ex) {
+
 			assertThat(ex.getMessage(), equalTo(ItemService.DATAINTEGRITY_IDNULL));
 		}
 	}
@@ -290,12 +293,12 @@ public class ItemServiceTeste {
 		preparaTestParameterizado();
 
 		Page<ItemListDTO> results = itemService.findBy(null, null, null, null, cat3.getNome(), PageRequest.of(0, 8));
-		
 
 		assertThat(results.getNumberOfElements(), equalTo(3));
 		assertTrue(results.get().allMatch(i -> i.getCategoria().equals(cat3.getNome())));
 
 	}
+
 	// test find parameterizado cod interno
 	@Test
 	public void testFindParameterizadoCodInterno() {
@@ -308,24 +311,27 @@ public class ItemServiceTeste {
 
 	}
 	// test find parameterizado com unidade e categoria
-	
+
 	@Test
 	public void testFindParameterizadoUnidadeECategoria() {
 		preparaTestParameterizado();
 
-		Page<ItemListDTO> results = itemService.findBy(null, null, null, un1.getAbrev(), cat2.getNome(), PageRequest.of(0, 8));
+		Page<ItemListDTO> results = itemService.findBy(null, null, null, un1.getAbrev(), cat2.getNome(),
+				PageRequest.of(0, 8));
 
 		assertThat(results.getNumberOfElements(), equalTo(2));
 		assertTrue(results.get().allMatch(i -> i.getUnidade().equals(un1.getAbrev())));
 		assertTrue(results.get().allMatch(i -> i.getCategoria().equals(cat2.getNome())));
 
 	}
-	// test find parameterizado com tudo	s4 = Servico.of("Formatacao", un1, cat2);
+
+	// test find parameterizado com tudo s4 = Servico.of("Formatacao", un1, cat2);
 	@Test
 	public void testFindParameterizadoTodosOsParametros() {
 		preparaTestParameterizado();
 
-		Page<ItemListDTO> results = itemService.findBy(null, TipoItem.SERVICO.getDescricao(), "FoRmAtAcao", un1.getAbrev(), cat2.getNome(), PageRequest.of(0, 8));
+		Page<ItemListDTO> results = itemService.findBy(null, TipoItem.SERVICO.getDescricao(), "FoRmAtAcao",
+				un1.getAbrev(), cat2.getNome(), PageRequest.of(0, 8));
 
 		assertThat(results.getNumberOfElements(), equalTo(1));
 		assertTrue(results.get().allMatch(i -> i.getUnidade().equals(un1.getAbrev())));

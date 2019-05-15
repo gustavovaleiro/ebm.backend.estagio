@@ -117,5 +117,11 @@ public class Produto extends Item {
 		this.estoqueMax = max;
 	}
 
+	public static Produto ofId(Integer id) {
+		Produto produto = new Produto();
+		produto.setId(id);
+		return produto;
+	}
+
 	
 }
