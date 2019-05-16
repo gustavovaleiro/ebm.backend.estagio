@@ -25,5 +25,6 @@ public interface MovimentacaoService {
 	Movimentacao findById(Integer id);
 	Page<MovimentacaoListDTO> findBy(TipoMovimentacao tipo, String documento, List<Integer> fornecedores,
 			List<Integer> produtos, PageRequest page);
+	void deleteById(Integer id);
 
 }

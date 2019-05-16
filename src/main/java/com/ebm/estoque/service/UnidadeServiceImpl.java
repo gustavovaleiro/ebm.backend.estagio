@@ -1,10 +1,13 @@
 package com.ebm.estoque.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.repository.UnidadeRepository;
+import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
@@ -14,7 +17,8 @@ public class UnidadeServiceImpl implements UnidadeService{
 
 	@Autowired
 	private UnidadeRepository unidadeRepository;
-	
+	@Autowired
+	private ItemService itens;
 	
 	@Override
 	public Unidade save(Unidade unidade) {
@@ -48,13 +52,25 @@ public class UnidadeServiceImpl implements UnidadeService{
 	}
 
 	public Unidade findById(Integer id) {
-		return unidadeRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID));
+		if(!Optional.ofNullable(id).isPresent())
+			throw new DataIntegrityException(DATAINTEGRITY_IDNULL);
+		return unidadeRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID + id));
 		
 	}
 
 	@Override
 	public void deleteAll() {
 		unidadeRepository.deleteAll();
+		
+	}
+
+	@Override
+	public void deleteById(Integer id) {
+		Unidade un = findById(id);
+		if(!itens.findBy(null, null, null, un.getAbrev(), null).isEmpty()){
+			throw new DataIntegrityException(DATAINTEGRITY_UNITHASITEM);
+		}
+		unidadeRepository.deleteById(id);
 		
 	}
 

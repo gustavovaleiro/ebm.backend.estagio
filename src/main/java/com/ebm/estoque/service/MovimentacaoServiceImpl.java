@@ -163,4 +163,11 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 		} else
 			base.addAll(toRetain);
 	}
+
+	@Override
+	public void deleteById(Integer id) {
+		findById(id);
+		movimentacaoRepository.deleteById(id);
+		
+	}
 }

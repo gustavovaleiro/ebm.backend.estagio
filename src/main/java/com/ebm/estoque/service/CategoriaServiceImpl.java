@@ -1,15 +1,19 @@
 package com.ebm.estoque.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.repository.CategoriaItemRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
+import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 
@@ -18,7 +22,8 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 
 	@Autowired
 	private CategoriaItemRepository categoriaRepository;
-	
+	@Autowired
+	private ItemService itens;
 	
 	@Override
 	public CategoriaItem save(CategoriaItem categoria) {
@@ -52,7 +57,9 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 	}
 
 	public CategoriaItem findById(Integer id) {
-		return categoriaRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID));
+		if(!Optional.ofNullable(id).isPresent())
+			throw new DataIntegrityException(DATAINTEGRITY_IDNULL);
+		return categoriaRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID + id));
 		
 	}
 	
@@ -72,6 +79,22 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 	public List<CategoriaItem> saveAll(List<CategoriaItem> categorias) {
 		// TODO Auto-generated method stub
 		return categorias.stream().map(c -> this.save(c)).collect(Collectors.toList());
+	}
+
+	@Override
+	public void deleteById(Integer id) {
+		CategoriaItem cat = findById(id);
+		
+		if(!itens.findBy(null, null, null, null, cat.getNome()).isEmpty()){
+			throw new DataIntegrityException(DATAINTEGRITY_CATTHASITEM);
+		}
+		categoriaRepository.deleteById(id);
+		
+	}
+
+	@Override
+	public Page<CategoriaItem> findByNome(String nome, PageRequest page) {
+		return categoriaRepository.findByNomeIgnoreCaseLike(nome,page);
 	}
 
 	

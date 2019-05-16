@@ -1,0 +1,70 @@
+package com.ebm.estoque.resouce;
+
+import java.net.URI;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.ebm.estoque.domain.CategoriaItem;
+import com.ebm.estoque.service.interfaces.CategoriaItemService;
+
+@RestController
+@RequestMapping(value = "/categorias")
+public class CategoriaResource {
+	@Autowired
+	private CategoriaItemService categoriaService;
+
+	@PostMapping
+	public ResponseEntity<CategoriaItem> insert(@RequestBody CategoriaItem categoria) {
+		CategoriaItem categoriaS = categoriaService.save(categoria);
+
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoriaS.getId()).toUri();
+		return ResponseEntity.created(uri).body(categoriaS);
+	}
+
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<CategoriaItem> update(@RequestBody CategoriaItem categoria, @PathVariable Integer id) {
+		categoria.setId(id);
+		categoria = categoriaService.save(categoria);
+		return ResponseEntity.ok(categoria);
+
+	}
+
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Integer id) {
+		categoriaService.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<CategoriaItem> find(@PathVariable Integer id) {
+		CategoriaItem obj = categoriaService.findById(id);
+		return ResponseEntity.ok(obj);
+	}
+
+	@GetMapping(value = "/find")
+	public ResponseEntity<Page<CategoriaItem>> findAllBy(
+			@RequestParam(value = "nome", required = false) String nome,
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Page<CategoriaItem> rs = categoriaService.findByNome(nome, pageRequest);
+		return ResponseEntity.ok().body(rs);
+	}
+
+}

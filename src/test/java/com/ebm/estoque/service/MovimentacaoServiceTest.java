@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -394,5 +393,41 @@ public class MovimentacaoServiceTest {
 		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e1,e2,e3,s1,s2,s3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
 	}
 	
+	@Transactional
+	@Test
+	public void testDeleteNotFound() {
+		try {
+			movimentacaoService.deleteById(2);
+			fail();
+		}catch(ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(MovimentacaoService.ONFE_NOTFOUNDBYID+2));
+		}
+	}
+	
+	@Transactional
+	@Test
+	public void testDeleteExIdNull() {
+		try {
+			movimentacaoService.deleteById(null);
+			fail();
+		}catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(MovimentacaoService.DATAINTEGRITY_IDNULL));
+		}
+	}
+	
+	@Transactional
+	@Test
+	public void testDelete() {
+		itemService.saveAll(produtos);
+		e1 = movimentacaoService.save(e1);
+		int id = e1.getId();
+		movimentacaoService.deleteById(id);
+		try {
+			movimentacaoService.findById(id);
+			fail();
+		}catch(ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(MovimentacaoService.ONFE_NOTFOUNDBYID+id));
+		}
+	}
 	
 }

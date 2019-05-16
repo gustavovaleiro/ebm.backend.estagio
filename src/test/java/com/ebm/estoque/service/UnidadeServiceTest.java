@@ -13,10 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.estoque.domain.CategoriaItem;
+import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Unidade;
+import com.ebm.estoque.service.interfaces.CategoriaItemService;
+import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.exceptions.ObjectNotFoundException;
 
 
 @ActiveProfiles("test")
@@ -27,6 +33,10 @@ public class UnidadeServiceTest {
 	
 	@Autowired
 	private UnidadeService unidadeService;
+	@Autowired
+	private CategoriaItemService categorias;
+	@Autowired
+	private ItemService itens;
 	private Unidade un1;
 	
 	@Before
@@ -94,7 +104,62 @@ public class UnidadeServiceTest {
 		assertThat(un2.getNome(), equalTo("outronome"));
 	}
 	
+	@Transactional
+	@Test
+	public void testDeleteNotFound() {
+		try {
+			unidadeService.deleteById(2);
+			fail();
+		}catch(ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(UnidadeService.ONFE_NOTFOUNDBYID+2));
+		}
+	}
+	
+	@Transactional
+	@Test
+	public void testDeleteExIdNull() {
+		try {
+			unidadeService.deleteById(null);
+			fail();
+		}catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(UnidadeService.DATAINTEGRITY_IDNULL));
+		}
+	}
+	
+	@Transactional
+	@Test
+	public void testDelete() {
+	
+		un1 = unidadeService.save(un1);
+		int id = un1.getId();
+		unidadeService.deleteById(id);
+		try {
+			unidadeService.findById(id);
+			fail();
+		}catch(ObjectNotFoundException ex) {
+			assertThat(ex.getMessage(), equalTo(UnidadeService.ONFE_NOTFOUNDBYID+id));
+		}
+	}
 	
 	
+	@Transactional
+	@Test
+	public void testDeleteComItem() {
+		CategoriaItem cat1 = new CategoriaItem(null, "t");
+		cat1 = categorias.save(cat1);
+		un1 = unidadeService.save(un1);
+		Produto p = Produto.of("tal", un1,cat1);
+		itens.save(p);
+		
+		
+		int id = un1.getId();
+		
+		try {
+			unidadeService.deleteById(id);
+			fail();
+		}catch(DataIntegrityException ex) {
+			assertThat(ex.getMessage(), equalTo(UnidadeService.DATAINTEGRITY_UNITHASITEM));
+		}
+	}
 	
 }
