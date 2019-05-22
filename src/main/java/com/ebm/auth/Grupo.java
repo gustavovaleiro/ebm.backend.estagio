@@ -3,10 +3,14 @@ package com.ebm.auth;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,8 +32,8 @@ public class Grupo implements Serializable{
 	@JoinColumn(name = "usuario_id")
 	private List<Usuario>  usuarios = new ArrayList<Usuario>();
 	
-	@OneToMany(mappedBy="id.grupo")
-	private List<GrupoPermissao> permissoes = new ArrayList<GrupoPermissao>();
+	@ElementCollection(fetch=FetchType.EAGER)
+	private Set<PermissaoE> permissoes = new HashSet<>();
 	
 	public Grupo() {}
 
@@ -63,12 +67,12 @@ public class Grupo implements Serializable{
 		this.usuarios.add(usuario);
 	}
 
-	public List<GrupoPermissao> getPermissoes() {
-		return Collections.unmodifiableList(permissoes);
+	public Set<PermissaoE> getPermissoes() {
+		return Collections.unmodifiableSet(permissoes);
 	}
 
-	public void addPermissao(GrupoPermissao permissao) {
-		permissoes.add(permissao);
+	public void setPermissao(Set<PermissaoE> permissao) {
+		this.permissoes = permissao;
 	}
 	public void setUsuarios(List<Usuario> usersPersist) {
 		this.usuarios = usersPersist;

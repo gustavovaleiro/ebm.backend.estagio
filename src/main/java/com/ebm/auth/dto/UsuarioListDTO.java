@@ -25,7 +25,7 @@ public class UsuarioListDTO implements Serializable{
 	}
 	
 	public UsuarioListDTO(Usuario user) {
-		this(user.getId(), user.getGrupo().getNome(), user.getFuncionario().getPessoa().getNome(), user.getLogin(), user.getEmailRecovery());
+		this(user.getId(), user.getGrupo().getNome(), user.getFuncionario().getPessoa().getNome(), user.getLogin(), user.getEmail());
 	}
 
 	public Integer getId() {

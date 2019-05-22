@@ -11,14 +11,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.auth.Grupo;
 import com.ebm.auth.Usuario;
 import com.ebm.auth.dto.UsuarioListDTO;
 import com.ebm.auth.repository.UsuarioRepository;
+import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.service.EmailService;
 import com.ebm.pessoal.service.FuncionarioService;
 
 @Service
@@ -27,7 +31,12 @@ public class UsuarioService {// implements UserDetailsService {
 	private UsuarioRepository userRepository;
 	@Autowired
 	private FuncionarioService funcionarioService;
-
+	@Autowired
+	private EmailService emailService;
+	@Autowired
+	private GrupoService grupoService;
+	@Autowired
+	private BCryptPasswordEncoder pEncoder;
 	public UsuarioService() {
 	}
 
@@ -48,24 +57,38 @@ public class UsuarioService {// implements UserDetailsService {
 	/////
 	/// crud do usuario
 
+	
 	// INSERT
-	public Usuario insert(Usuario user) {
-		user.setId(null);
-		Funcionario func = funcionarioService.findById(user.getFuncionario().getId());
-		userRepository.save(user);
-		func.setUsuario(user);
+	@Transactional
+	public Usuario save(Usuario user) {
+		garantirIntegridade(user);
+		
+		user.setSenha(pEncoder.encode(user.getSenha()));
 		return userRepository.save(user);
 	}
 
-	// UPDATE
-	public Usuario update(Usuario newUser) {
-		@SuppressWarnings("unused")
-		Usuario old = this.find(newUser.getId());
-		return userRepository.save(newUser);
+	private void garantirIntegridade(Usuario user) {
+		if(user.getGrupo()==null)
+			throw new DataIntegrityException("Um usuario precisa de um grupo de permissões");
+		else
+			user.setGrupo(grupoService.find(user.getGrupo().getId()));
+		
+		if(user.getFuncionario().getId() == null)
+			throw new DataIntegrityException("Um usuario precisa de um funcionario associado");
+		else {
+			if(user.getId() != null) {
+				Usuario userR = userRepository.findById(user.getId()).get();
+				if(!userR.getFuncionario().equals(user.getFuncionario())) {
+					throw new DataIntegrityException("Você nao pode trocar o funcionario de um usuario");
+				}
+			}	
+			user.setFuncionario(funcionarioService.findById(user.getFuncionario().getId()));
+		}
 	}
 
-	public void updateAll(List<Usuario> usuarios) {
-		userRepository.saveAll(usuarios);
+
+	public List<Usuario> saveAll(List<Usuario> usuarios) {
+		return usuarios.stream().map(f -> this.save(f)).collect(Collectors.toList());
 	}
 
 	// DELETE
@@ -92,14 +115,14 @@ public class UsuarioService {// implements UserDetailsService {
 		return userRepository.findAll();
 	}
 
-	public Page<UsuarioListDTO> findByGrupo(Grupo grupo, Integer page, Integer linesPerPage, String orderBy,
-			String direction) {
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return null;// userRepository.findByGrupo(grupo, pageRequest);
+
+	public Usuario findByCpfOrCnpj(String document) {
+		return findByFuncionario(funcionarioService.findByCpfOrCnpj(document));
 	}
 
-	public Usuario findByCpfOrCnpj(String cpf, String cnpj) {
-		return findByFuncionario(funcionarioService.findByCpfOrCnpj(cpf, cnpj));
+	public List<Usuario> findAllById(List<Integer> ids) {
+		
+		return userRepository.findAllById(ids);
 	}
 
 	public Page<UsuarioListDTO> findBy(String nome, Integer grupo_id, String login, String email,
@@ -107,16 +130,16 @@ public class UsuarioService {// implements UserDetailsService {
 		Set<Integer> ids = new HashSet<>();
 
 		ids = userRepository.findAllId();
-		if (!nome.equals(nome))
+		if (nome != null)
 			ids.retainAll(userRepository.findAllIdOfFuncionarios(funcionarioService.findAllIdByNome(nome)));
 
-		if (grupo_id >= 0)
+		if (grupo_id != null)
 			ids.retainAll(userRepository.findAllIdByGrupo(grupo_id));
 
-		if (!login.equals(""))
+		if (login != null)
 			ids.retainAll(userRepository.findAllIdByLogin(login));
 
-		if (!email.equals(""))
+		if (email != null)
 			ids.retainAll(userRepository.findAllIdByEmail(email));
 
 		List<UsuarioListDTO> usuarios = userRepository.findAllById(ids).stream().map(u -> new UsuarioListDTO(u))

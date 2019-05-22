@@ -6,9 +6,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import com.ebm.pessoal.domain.Funcionario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Usuario {
@@ -20,23 +23,22 @@ public class Usuario {
 	@Column(nullable = false, length = 30)
 	private String login;
 	
-	@Column(nullable = false)
-	private String emailRecovery;
 	
+	@JsonIgnore
 	@Column(nullable = false)
 	private String senha;
 	
 	@ManyToOne
 	private Grupo grupo;
-	@OneToOne(mappedBy = "usuario")
+	@MapsId
+	@OneToOne
 	private Funcionario funcionario;
 
 	public Usuario() {}
 	
-	public Usuario(Integer id, String login, String emailRecovery, String senha, Grupo grupo) {
+	public Usuario(Integer id, String login, String senha, Grupo grupo) {
 		this.id = id;
 		this.login = login;
-		this.emailRecovery = emailRecovery;
 		this.senha = senha;
 		this.grupo = grupo;
 	}
@@ -57,13 +59,6 @@ public class Usuario {
 		this.login = login;
 	}
 
-	public String getEmailRecovery() {
-		return emailRecovery;
-	}
-
-	public void setEmailRecovery(String emailRecovery) {
-		this.emailRecovery = emailRecovery;
-	}
 
 	public String getSenha() {
 		return senha;
@@ -88,6 +83,11 @@ public class Usuario {
 	public void setFuncionario(Funcionario funcionario) {
 		this.funcionario = funcionario;
 	}
+	
+	public String getEmail() {
+		return this.funcionario.getPessoa().getEmailPrincipal().getEmail();
+	}
+	
 
 	@Override
 	public int hashCode() {
@@ -113,7 +113,8 @@ public class Usuario {
 			return false;
 		return true;
 	}
-	
+
+
 	
 
 }

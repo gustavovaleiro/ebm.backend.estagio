@@ -21,7 +21,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.ebm.auth.Usuario;
 import com.ebm.auth.dto.UsuarioListDTO;
 import com.ebm.auth.service.UsuarioService;
-import com.ebm.exceptions.DataIntegrityException;
 
 
 @RestController
@@ -32,7 +31,7 @@ public class UsuarioResource {
 	
 	@PostMapping
 	public ResponseEntity<Void> insert( @RequestBody Usuario usuario){
-		Usuario obj = usuarioService.insert(usuario);
+		Usuario obj = usuarioService.save(usuario);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(obj.getId()).toUri();
@@ -42,7 +41,7 @@ public class UsuarioResource {
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Usuario usuario, @PathVariable Integer id){
 		usuario.setId(id);
-		usuario = usuarioService.update(usuario);
+		usuario = usuarioService.save(usuario);
 		return ResponseEntity.noContent().build();
 		
 	}
@@ -61,28 +60,25 @@ public class UsuarioResource {
 	
 	@GetMapping
 	public ResponseEntity<Usuario> findBy( 
-			@RequestParam(value ="cpf", defaultValue="", required = false) final String cpf,
-			@RequestParam(value = "cnpj", defaultValue="", required = false) final String cnpj){
+			@RequestParam(value ="document", required = true) final String document){
 		
-		Usuario cli;
-		if(!cpf.equals("") || !cnpj.equals("")) 
-			cli = usuarioService.findByCpfOrCnpj(cpf, cnpj);
-		 else 
-			throw new DataIntegrityException("Não foi passado dados");
+		
+		Usuario cli = usuarioService.findByCpfOrCnpj(document);
+	
 		
 		return ResponseEntity.ok(cli);
 	}
 
 	@GetMapping(value="/page")
 	public ResponseEntity<Page<UsuarioListDTO>> findAllBy(
-			@RequestParam(value ="nome", defaultValue="") String nome,
-			@RequestParam(value ="grupo", defaultValue="-1") Integer grupo,
-			@RequestParam(value ="login", defaultValue="") String login,
-			@RequestParam(value ="email", defaultValue="") String email,
-			@RequestParam(value ="page", defaultValue="0") Integer page,
-			@RequestParam(value ="linesPerPage", defaultValue="10")Integer linesPerPage,
-			@RequestParam(value ="orderBy", defaultValue="nome")String orderBy,
-			@RequestParam(value ="direction", defaultValue="ASC")String direction ) {
+			@RequestParam(value ="nome", required=false) String nome,
+			@RequestParam(value ="grupo", required=false) Integer grupo,
+			@RequestParam(value ="login", required=false) String login,
+			@RequestParam(value ="email", required=false) String email,
+			@RequestParam(value ="page", required=false) Integer page,
+			@RequestParam(value ="linesPerPage", required=false)Integer linesPerPage,
+			@RequestParam(value ="orderBy", required=false)String orderBy,
+			@RequestParam(value ="direction", required=false)String direction ) {
 		
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		Page<UsuarioListDTO> rs = usuarioService.findBy(nome, grupo, login, email, pageRequest);

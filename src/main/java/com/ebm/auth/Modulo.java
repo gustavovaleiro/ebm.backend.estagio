@@ -2,7 +2,8 @@ package com.ebm.auth;
 
 public enum Modulo {
 	PESSOAL(1,"Pessoal", "Cadastro de pessoal, clientes, colaboradores, usuarios e permissoes."),
-	ESTOQUE(2,"Estoque", "Cadastro de estoque, produtos e serviços, entradas e saidas e as movimentações");
+	ESTOQUE(2,"Estoque", "Cadastro de estoque, produtos e serviços, entradas e saidas e as movimentações"),
+	AUTH(3, "Usuarios", "Cadastro de usuarios, bem como grupos e suas permissões");
 	
 	private int id;
 	private String nome;
@@ -48,6 +49,19 @@ public enum Modulo {
 		}
 		
 		throw new IllegalArgumentException("id invalido: " + modulo);
+		
+	}
+	
+	public static Modulo toEnum(String nome) {
+		if(nome == null) {
+			return null;
+		}
+		for(Modulo x: Modulo.values()) {
+			if(x.getNome().toLowerCase().contains(nome.toLowerCase()));
+				return x;
+		}
+		
+		throw new IllegalArgumentException("nome " + nome);
 		
 	}
 	

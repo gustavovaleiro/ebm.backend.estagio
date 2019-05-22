@@ -53,7 +53,7 @@ public class CargoResource {
 	public ResponseEntity<Cargo> find(@PathVariable Integer id) {
 		Cargo obj = cargoService.findById(id);
 		return ResponseEntity.ok(obj);
-	}
+	} 
 
 
 	@GetMapping(value = "/page")
