@@ -1,5 +1,6 @@
 package com.ebm.pessoal.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -145,5 +146,14 @@ public class FuncionarioService {
 	// aux
 	public boolean existWith(Cargo cargo) {
 		return funcionarioRepository.countByCargo(cargo) == 0 ? false : true;
+	}
+
+	public List<Integer> findIdByNomeLike(String nome) {
+		return funcionarioRepository.findAllIdByNomeLike(nome);
+	}
+
+	public List<Integer> findIdByEmailPrincipalLike(String email) {
+		
+		return funcionarioRepository.findAllIdByEmailPrincipalLike(email);
 	}
 }

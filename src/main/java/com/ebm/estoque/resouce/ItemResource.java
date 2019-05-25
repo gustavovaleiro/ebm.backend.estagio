@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class ItemResource {
 	@Autowired
 	private ItemService itemService;
 
+	@PreAuthorize("hasAuthority('ITEM_POST')")
 	@PostMapping
 	public ResponseEntity<Item> insert(@RequestBody Item item) {
 		Item itemS = itemService.save(item);
@@ -36,6 +38,7 @@ public class ItemResource {
 		return ResponseEntity.created(uri).body(itemS);
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_PUT')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Item> update(@RequestBody Item item, @PathVariable Integer id) {
 		item.setId(id);
@@ -44,18 +47,21 @@ public class ItemResource {
 
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_DELETE')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		itemService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_GET')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Item> find(@PathVariable Integer id) {
 		Item obj = itemService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_GET')")
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<ItemListDTO>> findAllBy(
 			@RequestParam(value = "codInterno", required = false) String codInterno,

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ public class CargoResource {
 	@Autowired
 	private CargoService cargoService;
 
+	@PreAuthorize("hasAuthority('CARGO_POST')")
 	@PostMapping
 	public ResponseEntity<Void> insert(@RequestBody Cargo cargo) {
 		Cargo obj = cargoService.save(cargo);
@@ -35,6 +37,7 @@ public class CargoResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAuthority('CARGO_PUT')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Cargo cargo, @PathVariable Integer id) {
 		cargo.setId(id);
@@ -43,19 +46,21 @@ public class CargoResource {
 
 	}
 
+	@PreAuthorize("hasAuthority('CARGO_DELETE')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		cargoService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAuthority('CARGO_GET')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Cargo> find(@PathVariable Integer id) {
 		Cargo obj = cargoService.findById(id);
 		return ResponseEntity.ok(obj);
-	} 
+	}
 
-
+	@PreAuthorize("hasAuthority('CARGO_GET')")
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<Cargo>> findAllBy(@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -64,7 +69,7 @@ public class CargoResource {
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<Cargo> rs = cargoService.findByName(nome,pageRequest);
+		Page<Cargo> rs = cargoService.findByName(nome, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 

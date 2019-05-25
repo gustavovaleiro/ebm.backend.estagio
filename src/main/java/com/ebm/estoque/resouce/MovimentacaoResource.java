@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class MovimentacaoResource {
 	@Autowired
 	private MovimentacaoService movimentacaoService;
 
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_POST')")
 	@PostMapping
 	public ResponseEntity<Void> insert(@RequestBody Movimentacao movimentacao) {
 		Movimentacao obj = movimentacaoService.save(movimentacao);
@@ -38,6 +40,7 @@ public class MovimentacaoResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_PUT')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Movimentacao movimentacao, @PathVariable Integer id) {
 		movimentacao.setId(id);
@@ -46,18 +49,21 @@ public class MovimentacaoResource {
 
 	}
 
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_DELETE')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		movimentacaoService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_GET')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Movimentacao> find(@PathVariable Integer id) {
 		Movimentacao obj = movimentacaoService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_GET')")
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<MovimentacaoListDTO>> findAllBy(
 			@RequestParam(value = "documento", required = false) String documento,

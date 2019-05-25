@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,14 +28,17 @@ public class CategoriaResource {
 	@Autowired
 	private CategoriaItemService categoriaService;
 
+	@PreAuthorize("hasAuthority('ITEM_AUX_POST')")
 	@PostMapping
 	public ResponseEntity<CategoriaItem> insert(@RequestBody CategoriaItem categoria) {
 		CategoriaItem categoriaS = categoriaService.save(categoria);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoriaS.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoriaS.getId())
+				.toUri();
 		return ResponseEntity.created(uri).body(categoriaS);
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_AUX_PUT')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<CategoriaItem> update(@RequestBody CategoriaItem categoria, @PathVariable Integer id) {
 		categoria.setId(id);
@@ -43,21 +47,23 @@ public class CategoriaResource {
 
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_AUX_DELETE')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		categoriaService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_AUX_GET')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<CategoriaItem> find(@PathVariable Integer id) {
 		CategoriaItem obj = categoriaService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
+	@PreAuthorize("hasAuthority('ITEM_AUX_GET')")
 	@GetMapping(value = "/find")
-	public ResponseEntity<Page<CategoriaItem>> findAllBy(
-			@RequestParam(value = "nome", required = false) String nome,
+	public ResponseEntity<Page<CategoriaItem>> findAllBy(@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,

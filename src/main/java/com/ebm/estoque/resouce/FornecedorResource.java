@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class FornecedorResource {
 	@Autowired
 	private FornecedorService fornecedorService;
 
+	@PreAuthorize("hasAuthority('FORNECEDOR_POST')")
 	@PostMapping
 	public ResponseEntity<Void> insert(@RequestBody Fornecedor fornecedor) {
 		Fornecedor obj = fornecedorService.save(fornecedor);
@@ -38,6 +40,7 @@ public class FornecedorResource {
 		return ResponseEntity.created(uri).build();
 	}
 
+	@PreAuthorize("hasAuthority('FORNECEDOR_PUT')")
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Fornecedor fornecedor, @PathVariable Integer id) {
 		fornecedor.setId(id);
@@ -46,24 +49,28 @@ public class FornecedorResource {
 
 	}
 
+	@PreAuthorize("hasAuthority('FORNECEDOR_DELETE')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		fornecedorService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@PreAuthorize("hasAuthority('FORNECEDOR_GET')")
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Fornecedor> find(@PathVariable Integer id) {
 		Fornecedor obj = fornecedorService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
+	@PreAuthorize("hasAuthority('FORNECEDOR_GET')")
 	@GetMapping(value = "/documents")
 	public ResponseEntity<Fornecedor> findBy(@RequestParam(value = "value", required = true) final String document) {
 
 		return ResponseEntity.ok(fornecedorService.findByCpfOrCnpj(document));
 	}
 
+	@PreAuthorize("hasAuthority('FORNECEDOR_GET')")
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<FornecedorListDTO>> findAllBy(
 			@RequestParam(value = "nome", required = false) String nome,

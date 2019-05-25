@@ -1,5 +1,6 @@
 package com.ebm.security.repository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,5 +47,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
 	@Transactional(readOnly = true)
 	Optional<Usuario> findByUserName(String username);
+
+	@Transactional(readOnly = true)
+	@Query("SELECT distinct p.id FROM Pessoa p WHERE LOWER (p.nome) LIKE LOWER(?1)")
+	Set<Integer> findAllIdOfFuncionariosByNome(String nome);
 
 }

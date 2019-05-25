@@ -29,7 +29,7 @@ import com.ebm.security.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService implements UserDetailsService {
-	public static final String ONFE_BYUSERNAME = ObjectNotFoundException.DEFAULT + "um usuario com o login passado.";
+	public static final String ONFE_BYUSERNAME = ObjectNotFoundException.DEFAULT + " um usuario com o login passado.";
 	@Autowired
 	private UsuarioRepository userRepository;
 	@Autowired
@@ -125,13 +125,14 @@ public class UsuarioService implements UserDetailsService {
 		return userRepository.findAllById(ids);
 	}
 
+	//metodo nenhum pouco perfomatico
 	public Page<UsuarioListDTO> findBy(String nome, Integer grupo_id, String login, String email,
 			PageRequest pageRequest) {
 		Set<Integer> ids = new HashSet<>();
 
 		ids = userRepository.findAllId();
 		if (nome != null)
-			ids.retainAll(userRepository.findAllIdOfFuncionarios(funcionarioService.findAllIdByNome(nome)));
+			ids.retainAll(funcionarioService.findIdByNomeLike(nome));
 
 		if (grupo_id != null)
 			ids.retainAll(userRepository.findAllIdByGrupo(grupo_id));
@@ -140,7 +141,7 @@ public class UsuarioService implements UserDetailsService {
 			ids.retainAll(userRepository.findAllIdByLogin(login));
 
 		if (email != null)
-			ids.retainAll(userRepository.findAllIdByEmail(email));
+			ids.retainAll(funcionarioService.findIdByEmailPrincipalLike(email));
 
 		List<UsuarioListDTO> usuarios = userRepository.findAllById(ids).stream().map(u -> new UsuarioListDTO(u))
 				.collect(Collectors.toList());

@@ -1,6 +1,7 @@
 package com.ebm.pessoal.repository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Example;
@@ -43,5 +44,10 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
 	@Transactional(readOnly=true)
 	@Query("Select f FROM Funcionario f WHERE LOWER(f.cargo.nomeCargo) LIKE LOWER(?1)")
 	Collection<? extends Funcionario> findByCargoName(String cargo);
+
+	List<Integer> findAllIdByNomeLike(String nome);
+	
+	@Query("Select f.id FROM Funcionario f JOIN f.pessoa.email e WHERE LOWER(e.email) LIKE LOWER (?1)  AND e.principal = true ")
+	List<Integer> findAllIdByEmailPrincipalLike(String email);
 
 }
