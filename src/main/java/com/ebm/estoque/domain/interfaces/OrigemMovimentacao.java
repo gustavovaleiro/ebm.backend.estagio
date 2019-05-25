@@ -3,9 +3,9 @@ package com.ebm.estoque.domain.interfaces;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.ebm.auth.Usuario;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.pessoal.domain.Cliente;
+import com.ebm.security.Usuario;
 
 public interface OrigemMovimentacao {
 	public Integer getId();

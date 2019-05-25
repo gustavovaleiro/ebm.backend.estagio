@@ -13,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import com.ebm.auth.Usuario;
+import com.ebm.security.Usuario;
 
 @Entity
 public class Funcionario implements Serializable {

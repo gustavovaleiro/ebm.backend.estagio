@@ -22,7 +22,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import com.ebm.auth.Usuario;
+import com.ebm.security.Usuario;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity

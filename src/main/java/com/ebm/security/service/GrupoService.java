@@ -1,4 +1,4 @@
-package com.ebm.auth.service;
+package com.ebm.security.service;
 
 import java.util.HashSet;
 import java.util.List;
@@ -14,11 +14,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ebm.auth.Grupo;
-import com.ebm.auth.Usuario;
-import com.ebm.auth.dto.GrupoDTO;
-import com.ebm.auth.repository.GrupoRepository;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.security.Grupo;
+import com.ebm.security.Usuario;
+import com.ebm.security.dto.GrupoDTO;
+import com.ebm.security.repository.GrupoRepository;
 
 @Service
 public class GrupoService {

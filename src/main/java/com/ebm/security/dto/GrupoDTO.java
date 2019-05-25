@@ -1,8 +1,8 @@
-package com.ebm.auth.dto;
+package com.ebm.security.dto;
 
 import java.io.Serializable;
 
-import com.ebm.auth.Grupo;
+import com.ebm.security.Grupo;
 
 public class GrupoDTO implements Serializable{
 

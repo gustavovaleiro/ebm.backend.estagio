@@ -16,8 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import com.ebm.auth.Usuario;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.security.Usuario;
 
 @Entity
 public  class Movimentacao implements Serializable{

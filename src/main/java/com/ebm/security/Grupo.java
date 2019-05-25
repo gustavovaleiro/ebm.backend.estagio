@@ -1,4 +1,4 @@
-package com.ebm.auth;
+package com.ebm.security;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -33,7 +34,7 @@ public class Grupo implements Serializable{
 	private List<Usuario>  usuarios = new ArrayList<Usuario>();
 	
 	@ElementCollection(fetch=FetchType.EAGER)
-	private Set<PermissaoE> permissoes = new HashSet<>();
+	private Set<Integer> permissoes = new HashSet<>();
 	
 	public Grupo() {}
 
@@ -68,11 +69,17 @@ public class Grupo implements Serializable{
 	}
 
 	public Set<PermissaoE> getPermissoes() {
-		return Collections.unmodifiableSet(permissoes);
+		return permissoes.stream().map(p -> PermissaoE.toEnum(p)).collect(Collectors.toSet());
 	}
-
+	
+	public void addPermissao(PermissaoE permissao) {
+		this.permissoes.add(permissao.getId());
+	}
+	public void removePermissao(PermissaoE permissao) {
+		this.permissoes.remove(permissao.getId());
+	}
 	public void setPermissao(Set<PermissaoE> permissao) {
-		this.permissoes = permissao;
+		this.permissoes = permissao.stream().map(p ->p.getId()).collect(Collectors.toSet());
 	}
 	public void setUsuarios(List<Usuario> usersPersist) {
 		this.usuarios = usersPersist;

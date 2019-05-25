@@ -1,4 +1,4 @@
-package com.ebm.auth.repository;
+package com.ebm.security.repository;
 
 import java.util.Collection;
 
@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.auth.Grupo;
-import com.ebm.auth.dto.GrupoDTO;
+import com.ebm.security.Grupo;
+import com.ebm.security.dto.GrupoDTO;
 
 public interface GrupoRepository extends JpaRepository<Grupo, Integer> {
 	@Transactional(readOnly = true)

@@ -1,4 +1,4 @@
-package com.ebm.auth;
+package com.ebm.security;
 
 public enum Modulo {
 	PESSOAL(1,"Pessoal", "Cadastro de pessoal, clientes, colaboradores, usuarios e permissoes."),

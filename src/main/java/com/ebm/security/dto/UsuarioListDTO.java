@@ -1,8 +1,8 @@
-package com.ebm.auth.dto;
+package com.ebm.security.dto;
 
 import java.io.Serializable;
 
-import com.ebm.auth.Usuario;
+import com.ebm.security.Usuario;
 
 
 public class UsuarioListDTO implements Serializable{

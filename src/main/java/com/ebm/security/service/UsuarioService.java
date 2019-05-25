@@ -1,4 +1,4 @@
-package com.ebm.auth.service;
+package com.ebm.security.service;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,23 +10,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.auth.Grupo;
-import com.ebm.auth.Usuario;
-import com.ebm.auth.dto.UsuarioListDTO;
-import com.ebm.auth.repository.UsuarioRepository;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.service.EmailService;
 import com.ebm.pessoal.service.FuncionarioService;
+import com.ebm.security.UserSS;
+import com.ebm.security.Usuario;
+import com.ebm.security.dto.UsuarioListDTO;
+import com.ebm.security.repository.UsuarioRepository;
 
 @Service
-public class UsuarioService {// implements UserDetailsService {
+public class UsuarioService implements UserDetailsService {
+	public static final String ONFE_BYUSERNAME = ObjectNotFoundException.DEFAULT + "um usuario com o login passado.";
 	@Autowired
 	private UsuarioRepository userRepository;
 	@Autowired
@@ -40,24 +43,21 @@ public class UsuarioService {// implements UserDetailsService {
 	public UsuarioService() {
 	}
 
-	// method userdetailsservice
-//	@Override
-//	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//		Optional<Usuario> user = userRepository.findOneByLogin(username);
-//		return new UserSS(user.orElseThrow(() -> new UsernameNotFoundException(username)));
-//	}
-//
-//	public static UserSS authenticated() {
-//		try {
-//			return (UserSS) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		} catch (Exception e) {
-//			return null;
-//		}
-//	}
-	/////
-	/// crud do usuario
-
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		try {
+			return new UserSS(this.findByUserName(username));
+		} catch (ObjectNotFoundException ex) {
+			throw new UsernameNotFoundException(ex.getMessage() + username);
+		} 
+		
+	}
 	
+	private Usuario findByUserName(String username) {
+		Optional<Usuario> user = userRepository.findByUserName(username);
+		return user.orElseThrow( () -> new ObjectNotFoundException(ONFE_BYUSERNAME));
+	}
+
 	// INSERT
 	@Transactional
 	public Usuario save(Usuario user) {
@@ -147,5 +147,9 @@ public class UsuarioService {// implements UserDetailsService {
 
 		return new PageImpl<>(usuarios, pageRequest, usuarios.size());
 	}
+
+
+
+	
 
 }

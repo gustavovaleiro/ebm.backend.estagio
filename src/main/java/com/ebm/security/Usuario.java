@@ -1,4 +1,4 @@
-package com.ebm.auth;
+package com.ebm.security;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

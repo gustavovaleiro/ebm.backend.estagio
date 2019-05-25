@@ -1,4 +1,4 @@
-package com.ebm.auth.resource;
+package com.ebm.security.resource;
 
 import java.net.URI;
 
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ebm.auth.Usuario;
-import com.ebm.auth.dto.UsuarioListDTO;
-import com.ebm.auth.service.UsuarioService;
+import com.ebm.security.Usuario;
+import com.ebm.security.dto.UsuarioListDTO;
+import com.ebm.security.service.UsuarioService;
 
 
 @RestController

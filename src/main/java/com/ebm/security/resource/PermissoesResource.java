@@ -1,4 +1,4 @@
-package com.ebm.auth.resource;
+package com.ebm.security.resource;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ebm.auth.Modulo;
-import com.ebm.auth.PermissaoE;
+import com.ebm.security.Modulo;
+import com.ebm.security.PermissaoE;
 
 
 @RestController
