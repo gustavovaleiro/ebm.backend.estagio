@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Funcionario;
-import com.ebm.pessoal.service.EmailService;
 import com.ebm.pessoal.service.FuncionarioService;
 import com.ebm.security.UserSS;
 import com.ebm.security.Usuario;
@@ -34,8 +33,6 @@ public class UsuarioService implements UserDetailsService {
 	private UsuarioRepository userRepository;
 	@Autowired
 	private FuncionarioService funcionarioService;
-	@Autowired
-	private EmailService emailService;
 	@Autowired
 	private GrupoService grupoService;
 	@Autowired
@@ -54,7 +51,7 @@ public class UsuarioService implements UserDetailsService {
 	}
 	
 	private Usuario findByUserName(String username) {
-		Optional<Usuario> user = userRepository.findByUserName(username);
+		Optional<Usuario> user = userRepository.findByLogin(username);
 		return user.orElseThrow( () -> new ObjectNotFoundException(ONFE_BYUSERNAME));
 	}
 

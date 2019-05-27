@@ -47,185 +47,145 @@ public class ClienteServiceTest {
 	private ClienteService clienteService;
 	@Autowired
 	private PessoaService pessoaService;
-
-	private Estado estadoGO;
-	private Cidade goiania;
-	private Endereco endereco1;
-	private PessoaFisica pf1;
-	private PessoaJuridica pj1;
-	private Cliente cf1;
-	private Cliente cj1;
+	@Autowired
+	private PessoalPopulaBD	 bd;
 	
 	@Before
 	public void setUp() {
-		clienteService.deleteAll();
-		pessoaService.deleteAll(true);
-		
-		
-		
-		
-		estadoGO = new Estado(null, "GO", "Goias");
-		goiania = new Cidade(null, "Goiania", estadoGO);
-		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678", "Endereco residencial",true);
-		pf1 = new PessoaFisica(null, "Joao Da Silva", "02142627668", LocalDate.of(1990, 4, 30), new RG("23123", "SSP", estadoGO ), "Brasileira", goiania);	
-		pj1 = new PessoaJuridica(null, "Lanches", "64935609000135", "Lanches ME", "inscricaoEstadual1", "inscricaoMunicipal1");
 	
-		pf1.getEndereco().add(endereco1);
-		pf1.getTelefone().add(Utils.getRandomTelefone(true));
-		pj1.getEndereco().add(endereco1);
-		pj1.getTelefone().add(Utils.getRandomTelefone(true));
-		pj1.getEmail().add(Utils.getRandomEmail(pj1, true));
-		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
-		
-		
-		cf1 = new Cliente(null, pf1, BigDecimal.valueOf(3000), "Cliente tal");
-		cj1 = new Cliente(null, pj1, BigDecimal.valueOf(20000), "Empresa tal, cliente desde 1231");
+		bd.instanciaCliente(true);
+		pessoaService.saveAll(Arrays.asList(bd.pj1,bd.pf1));
 	}
-	@After
-	public void setDown() {
-		clienteService.deleteAll();
-		pessoaService.deleteAll(true);
-			}
+
+	@Transactional
 	@Test
 	public void testInsercaoSemPessoaDevLancarException() {
 		
 		try {
-			cf1.setPessoa(null);
-			clienteService.save(cf1);
+			bd.cf1.setPessoa(null);
+			clienteService.save(bd.cf1);
 			fail("Falha tentando inserir cliente sem pessoa associada, era esperado Data Integration Exception");
 			
 		}catch(DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(ClienteService.DATAINTEGRITY_CLIENTWITHOUTPERSON));
 		}
 	}
-	
+	@Transactional
 	@Test
-	public void testInsercaoComPessoaNaoPersistida() {
+	public void testInsercaoComPessoa() {
 		
-		clienteService.save(cf1);
+		clienteService.save(bd.cf1);
 		
-		assertNotNull(cf1.getId());
-		assertNotNull(cf1.getPessoa().getId());
-		assertThat(cf1.getId(), equalTo(cf1.getPessoa().getId()));
+		assertNotNull(bd.cf1.getId());
+		assertNotNull(bd.cf1.getPessoa().getId());
+		assertThat(bd.cf1.getId(), equalTo(bd.cf1.getPessoa().getId()));
+	}
+
+	@Test
+	public void testInsercaoComPessoaApenasId() {
+		bd.cf1.setPessoa(null);
+		PessoaFisica pf = new PessoaFisica();
+		pf.setId(bd.pf1.getId());
+		bd.cf1.setPessoa(pf);
+		clienteService.save(bd.cf1);
+		
+		assertNotNull(bd.cf1.getId());
+		assertNotNull(bd.cf1.getPessoa().getId());
+		assertNotNull(bd.pf1.getNacionalidade());
+		assertNotNull(bd.pf1.getNome());
+		assertThat(bd.cf1.getPessoa().getNome(), equalTo(bd.pf1.getNome()));
+		assertThat(bd.cf1.getId(), equalTo(bd.cf1.getPessoa().getId()));
+		clienteService.delete(bd.cf1.getId());
+		pessoaService.deleteAll(true);
 	}
 	
-	
-	@Test
-	public void testInsercaoComPessoaJaPersistida() {
-		
-		pf1 = (PessoaFisica) pessoaService.save(pf1);
-		
-		cf1.setPessoa(pf1);
-		cf1 = clienteService.save(cf1);
-		
-		assertNotNull(cf1.getId());
-		assertNotNull(cf1.getPessoa().getId());
-		assertThat(cf1.getId(), equalTo(cf1.getPessoa().getId()));
-	}
-	
+	@Transactional
 	@Test
 	public void testInsercaoClienteComPessoaQueJaPertenceAOutroCliente() {
-		cj1.setPessoa(cf1.getPessoa());
-		cf1 = clienteService.save(cf1);
+		bd.cj1.setPessoa(bd.cf1.getPessoa());
+		bd.cf1 = clienteService.save(bd.cf1);
 		
 		try {
-			cj1 = clienteService.save(cj1);
+			bd.cj1 = clienteService.save(bd.cj1);
 			fail("Falha insercao de cliente com pessoa que ja pertence a outro cliente, deve lançar DataIntegratyExcpetion");
 		} catch(DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(ClienteService.DATAINTEGRITY_DUPLICATEPERSON));
 		}
 		
 	}
-	
+	@Transactional
 	@Test
 	public void testUpdateSemMudarPessoa() {
-		cf1 = clienteService.save(cf1);
-		cf1.setDescricao("novadescricao");
-		cf1.getPessoa().setNome("novonome");
-		cf1 = clienteService.save(cf1);
+		bd.cf1 = clienteService.save(bd.cf1);
+		bd.cf1.setDescricao("novadescricao");
+		bd.cf1.getPessoa().setNome("novonome");
+		bd.cf1 = clienteService.save(bd.cf1);
 		
-		assertThat(cf1.getDescricao(), equalTo("novadescricao"));
-		assertThat(cf1.getPessoa().getNome(), equalTo("novonome"));
+		assertThat(bd.cf1.getDescricao(), equalTo("novadescricao"));
+		assertThat(bd.cf1.getPessoa().getNome(), equalTo("novonome"));
 	}
+	@Transactional
 	@Test
 	public void testUpdateMudarPessoa() {
-		cf1 = clienteService.save(cf1);
-		cf1.setDescricao("novadescricao");
-		cf1.setPessoa(pj1);
+		bd.cf1 = clienteService.save(bd.cf1);
+		bd.cf1.setDescricao("novadescricao");
+		bd.cf1.setPessoa(bd.pj1);
 		
 		try {
-			cf1 = clienteService.save(cf1);
+			bd.cf1 = clienteService.save(bd.cf1);
 			fail();
 		}catch(DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(ClienteService.DATAINTEGRITY_CHANCEPERSON));
 		}
 	}
+	@Transactional
 	@Test
 	public void testUpdateClienteComPessoaPertenceOutroCliente() {
-		cf1 = clienteService.save(cf1);
-		cj1 = clienteService.save(cj1);
+		bd.cf1 = clienteService.save(bd.cf1);
+		bd.cj1 = clienteService.save(bd.cj1);
 		
-		cf1.setPessoa(cj1.getPessoa());
+		bd.cf1.setPessoa(bd.cj1.getPessoa());
 		try {
-			cf1 = clienteService.save(cf1);
+			bd.cf1 = clienteService.save(bd.cf1);
 			fail("Falha insercao de cliente com pessoa que ja pertence a outro cliente, deve lançar DataIntegratyExcpetion");
 		}catch(DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(ClienteService.DATAINTEGRITY_DUPLICATEPERSON));
 		}
 	}
-	
+	@Transactional
 	@Test
 	public void testFindCnpj() {
-		clienteService.save(cj1);
+		clienteService.save(bd.cj1);
 		
-		Cliente result = clienteService.findByCpfOrCnpj(((PessoaJuridica) cj1.getPessoa()).getCnpj());
+		Cliente result = clienteService.findByCpfOrCnpj(((PessoaJuridica) bd.cj1.getPessoa()).getCnpj());
 		
 		assertNotNull(result.getId());
-		assertThat(((PessoaJuridica) result.getPessoa()).getCnpj(), equalTo(((PessoaJuridica) cj1.getPessoa()).getCnpj()));
+		assertThat(((PessoaJuridica) result.getPessoa()).getCnpj(), equalTo(((PessoaJuridica) bd.cj1.getPessoa()).getCnpj()));
 	}
+	@Transactional
 	@Test
 	public void testFindCPF() {
-		clienteService.save(cf1);
+		clienteService.save(bd.cf1);
 		
-		Cliente result = clienteService.findByCpfOrCnpj(((PessoaFisica) cf1.getPessoa()).getCpf());
+		Cliente result = clienteService.findByCpfOrCnpj(((PessoaFisica) bd.cf1.getPessoa()).getCpf());
 		
 		assertNotNull(result.getId());
 		assertThat(((PessoaFisica) result.getPessoa()).getCpf(), equalTo(((PessoaFisica) result.getPessoa()).getCpf()));
 	}
-	
+	@Transactional
 	@Test
 	public void testFindCPFEx() {
 	
 		try {
-			 clienteService.findByCpfOrCnpj(((PessoaFisica) cf1.getPessoa()).getCpf());
+			 clienteService.findByCpfOrCnpj("05909561162");
 			fail();
 		}catch(ObjectNotFoundException ex) {
-			assertThat(ex.getMessage(), equalTo(PessoaService.NOT_FOUND_DOCUMENT + ((PessoaFisica) cf1.getPessoa()).getCpf())  );
+			assertThat(ex.getMessage(), equalTo(PessoaService.NOT_FOUND_DOCUMENT + "05909561162")  );
 		}
 	}
 	private void cenarioParaBuscaParamiterizada() {
-		PessoaFisica pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30), new RG("3234", "SSP", estadoGO ), "Brasileira", goiania);
-		PessoaFisica pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30), new RG("54345", "SSP", estadoGO ), "Brasileira", goiania);
-		PessoaFisica pf4 = new PessoaFisica(null, "Maria Carvalho", "58522943060", LocalDate.of(1990, 1, 30), new RG("4523", "SSP", estadoGO ), "Brasileira", goiania);
-		PessoaJuridica pj2 = new PessoaJuridica(null, "Juniscleids ME", "18038642000145", "Juniscleids ME", "inscricaoEstadual2", "inscricaoMunicipal2");
-		PessoaJuridica pj3 = new PessoaJuridica(null, "Joao Dev", "46530490000139", "Profissionais ME", "inscricaoEstadual3", "inscricaoEstadual3");
-		PessoaJuridica pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4", "inscricaoMunicipal4");
-		Arrays.asList(pf2,pf3,pf4,pj2,pj3,pj4).forEach( p -> {
-			p.getEndereco().add(endereco1);
-			p.getTelefone().add(Utils.getRandomTelefone(true));
-			p.getEmail().add(Utils.getRandomEmail(p, true));
-		});
-		
-		
-		Cliente cf2 = new Cliente(null, pf2, BigDecimal.valueOf(1233), "12312");
-		Cliente cf3 = new Cliente(null, pf3, BigDecimal.valueOf(1233), "12312");
-		Cliente cf4 = new Cliente(null, pf4, BigDecimal.valueOf(2412), "descricao");
-		Cliente cj2 = new Cliente(null, pj2, new BigDecimal(2133), "sdaf");
-		Cliente cj3 = new Cliente(null, pj3, BigDecimal.valueOf(1233), "12312");
-		Cliente cj4 = new Cliente(null, pj4, BigDecimal.valueOf(1233), "12312");
-
-		
-		clienteService.saveAll(Arrays.asList(cf1,cf2,cf3,cf4,cj1,cj2,cj3,cj4));
+		pessoaService.saveAll(Arrays.asList(bd.pf2,bd.pf3,bd.pf4,bd.pj2,bd.pj3,bd.pj4));
+		clienteService.saveAll(Arrays.asList(bd.cf1,bd.cf2,bd.cf3,bd.cf4,bd.cj1,bd.cj2,bd.cj3,bd.cj4));
 	}
 	
 	

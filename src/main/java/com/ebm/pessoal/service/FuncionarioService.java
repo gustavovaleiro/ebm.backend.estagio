@@ -1,6 +1,5 @@
 package com.ebm.pessoal.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,8 +56,8 @@ public class FuncionarioService {
 	}
 
 	private void saveAssociations(Funcionario funcionario) {
-		funcionario.setPessoa(pessoaService.save(funcionario.getPessoa()));
-		funcionario.setCargo(cargoService.save(funcionario.getCargo()));
+		funcionario.setPessoa(pessoaService.findById(funcionario.getPessoa().getId()));
+		funcionario.setCargo(cargoService.findById(funcionario.getCargo().getId()));
 	}
 
 	private void garantaIntegridade(Funcionario funcionario) {
@@ -68,7 +67,7 @@ public class FuncionarioService {
 	}
 
 	private void garantaIntegridadeQuantoCargo(Funcionario funcionario) {
-		if (funcionario.getCargo() == null)
+		if (funcionario.getCargo() == null || funcionario.getCargo().getId() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_EMPLOYEWITHOUTOFFICE);
 	}
 

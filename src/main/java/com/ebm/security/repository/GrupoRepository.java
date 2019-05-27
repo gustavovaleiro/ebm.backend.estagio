@@ -16,7 +16,7 @@ public interface GrupoRepository extends JpaRepository<Grupo, Integer> {
 	Page<Grupo> findByNomeLikeIgnoreCase(String nome, Pageable page);
 
 	@Transactional(readOnly = true)
-	@Query("SELECT new com.ebm.auth.dto.GrupoDTO(g.id, g.nome) FROM Grupo g")
+	@Query("SELECT new com.ebm.security.dto.GrupoDTO(g.id, g.nome) FROM Grupo g")
 	Page<GrupoDTO> findAllResumido(Pageable page);
 	
 	@Transactional(readOnly = true)

@@ -48,7 +48,7 @@ public class ClienteService {
 	}
 
 	private void saveAssociations(Cliente cliente) {
-		cliente.setPessoa(pessoaService.save(cliente.getPessoa()));
+		cliente.setPessoa(pessoaService.findById(cliente.getPessoa().getId()));
 	}
 
 	private void garantaIntegridade(Cliente cliente) {

@@ -44,10 +44,11 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
 	@Transactional(readOnly=true)
 	@Query("Select f FROM Funcionario f WHERE LOWER(f.cargo.nomeCargo) LIKE LOWER(?1)")
 	Collection<? extends Funcionario> findByCargoName(String cargo);
-
+	
+	@Query("Select f.id FROM Funcionario f WHERE LOWER(f.pessoa.nome) LIKE LOWER (?1) ")
 	List<Integer> findAllIdByNomeLike(String nome);
 	
-	@Query("Select f.id FROM Funcionario f JOIN f.pessoa.email e WHERE LOWER(e.email) LIKE LOWER (?1)  AND e.principal = true ")
+	@Query("Select f.id FROM Funcionario f join f.pessoa.email e WHERE LOWER(e) LIKE LOWER (?1)  AND e.principal = true ")
 	List<Integer> findAllIdByEmailPrincipalLike(String email);
 
 }

@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 import java.time.LocalDate;
 import java.util.Arrays;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,12 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Email;
-import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.PessoaFisica;
@@ -39,121 +38,100 @@ public class PessoaServiceTest extends DevApplicationTests {
 
 	@Autowired
 	private PessoaService pessoaService;
-
-	private Telefone telefone1;
-
-	private Endereco endereco1;
-	private Estado estadoGO;
-	private Cidade goiania;
-	private PessoaFisica pf1;
-	private PessoaJuridica pj1;
-
-	private Telefone telefone2;
+	@Autowired
+	private CidadeService cidadeService;
+	@Autowired
+	private PessoalPopulaBD bp;
 
 	@Before
 	public void set_up() {
-		pessoaService.deleteAll(true);
+		bp.instanciaPessoa();
 
-		telefone1 = new Telefone(null, "66", "43423423", "Celular", true);
-		telefone2 = new Telefone(null, "65", "434223423", "Celular", true);
-		estadoGO = new Estado(null, "GO", "Goias");
-		goiania = new Cidade(null, "Goiania", estadoGO);
-		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678",
-				"Endereco residencial", true);
-		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30),
-				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
-		pj1 = new PessoaJuridica(null, "Lanches", "99787331000180", "Lanches ME", "inscricaoEstadual1",
-				"inscricaoMunicipal1");
-
-		pf1.getEndereco().add(endereco1);
-		pf1.getTelefone().add(telefone1);
-
-		pj1.getEndereco().add(endereco1);
-		pj1.getTelefone().add(telefone2);
-		pj1.getEmail().add(Utils.getRandomEmail(pj1, true));
-		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
 	}
-	@After
-	public void setDown() {
-		pessoaService.deleteAll(true);
-	}
+
 	// teste de inserção com endereco, telefone e email, deve passar
+	@Transactional
 	@Test
 	public void testInsercaoPessoaFisica() {
 		// preparando o cenario
 
 		// executando teste
-		Pessoa result = pessoaService.save(pf1);
+		Pessoa result = pessoaService.save(bp.pf1);
 
 		// VALIDANDO
 		assertNotNull(result.getId());
-		assertThat(result.getEmail().iterator().next().getEmail(), equalTo(pf1.getEmail().iterator().next().getEmail()));
+		assertThat(result.getEmail().iterator().next().getEmail(),
+				equalTo(bp.pf1.getEmail().iterator().next().getEmail()));
 		assertNotNull(result.getEndereco().iterator().next().getId());
 		assertThat(result.getTelefone().size(), equalTo(1));
 	}
 
 	// teste inserção de pessoa fisica com cpf invalido
+	@Transactional
 	@Test
 	public void testInsercaoPessoaFisicaCPFInvalido() {
 		// cenario
-		pf1.setCpf("1233232323");
+		bp.pf1.setCpf("1233232323");
 		// executando
 		try {
-			pessoaService.save(pf1);
+			pessoaService.save(bp.pf1);
 			fail("Falha. Uma exceção deve ser lançada!");
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(PessoaService.INVALID_CPF));
 		}
 
 	}
-	
+
+	@Transactional
 	@Test
 	public void testInsercaoPessoaSemEmail() {
-		pf1.getEmail().clear();
-		
+		bp.pf1.getEmail().clear();
+
 		try {
-			pessoaService.save(pf1);
+			pessoaService.save(bp.pf1);
 			fail();
-		}catch(DataIntegrityException ex) {
+		} catch (DataIntegrityException ex) {
 			assertTrue(ex.getMessage().equals(PessoaService.NEED_EMAIL));
 		}
 	}
-	
+
+	@Transactional
 	@Test
 	public void testInsercaoPessoaTwoEmailMain() {
-		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
-		System.out.println(pf1.getEmail().size());
-	    pf1.getEmail().stream().filter(e -> e.isPrincipal()).forEach(e -> System.out.println(e.getEmail()));
+		bp.pf1.getEmail().add(Utils.getRandomEmail(bp.pf1, true));
+
 		try {
-			pessoaService.save(pf1);
+			pessoaService.save(bp.pf1);
 			fail();
-		}catch(DataIntegrityException ex) {
+		} catch (DataIntegrityException ex) {
 			assertTrue(ex.getMessage().equals(PessoaService.MOREONEPRINCIPAL + Email.class.getSimpleName()));
-	
+
 		}
 	}
-	
+
+	@Transactional
 	@Test
 	public void testInsercaoPessoaTwoTelefoneMain() {
-		pf1.getTelefone().add(Utils.getRandomTelefone(true));
-		
+		bp.pf1.getTelefone().add(Utils.getRandomTelefone(true));
+
 		try {
-			pessoaService.save(pf1);
+			pessoaService.save(bp.pf1);
 			fail();
-		}catch(DataIntegrityException ex) {
+		} catch (DataIntegrityException ex) {
 			assertTrue(ex.getMessage().equals(PessoaService.MOREONEPRINCIPAL + Telefone.class.getSimpleName()));
 		}
 	}
 
 	// test inserção de pessoa fisica com cpf ja cadastrado
+	@Transactional
 	@Test
 	public void testInsercaoPessoaFisicaCpfDuplicado() {
-		PessoaFisica pf2 = new PessoaFisica(null, "Test", pf1.getCpf(), LocalDate.of(1990, 4, 30),
-				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
-		pf2.getEndereco().add(endereco1);
-		pf2.getTelefone().add(telefone2);
+		PessoaFisica pf2 = new PessoaFisica(null, "Test", bp.pf1.getCpf(), LocalDate.of(1990, 4, 30),
+				new RG("23123", "SSP", bp.estadoGO), "Brasileira", bp.goiania);
+		pf2.getEndereco().add(bp.endereco1);
+		pf2.getTelefone().add(Utils.getRandomTelefone(true));
 		// executando
-		pessoaService.save(pf1);
+		pessoaService.save(bp.pf1);
 
 		// validando
 		try {
@@ -165,31 +143,34 @@ public class PessoaServiceTest extends DevApplicationTests {
 
 	}
 
+	@Transactional
 	@Test
 	public void testInsercaoList() {
-		pessoaService.saveAll(Arrays.asList(pf1, pj1)).forEach(p -> assertNotNull(p.getId()));
+		pessoaService.saveAll(Arrays.asList(bp.pf1, bp.pj1)).forEach(p -> assertNotNull(p.getId()));
 		;
 	}
 
 	// Test de inserção de pj;
+	@Transactional
 	@Test
 	public void testaInsercaoPessoaJuridica() {
 
-		PessoaJuridica retorno = (PessoaJuridica) pessoaService.save(pj1);
+		PessoaJuridica retorno = (PessoaJuridica) pessoaService.save(bp.pj1);
 
 		// validando
-		assertThat(retorno.getCnpj(), equalTo(pj1.getCnpj()));
+		assertThat(retorno.getCnpj(), equalTo(bp.pj1.getCnpj()));
 
 	}
 
 	// test de inserção de pj com cnpj invalido
+	@Transactional
 	@Test
 	public void testInsercaoPessoaJuridicaCnpjInvalido() {
 		// cenario
-		pj1.setCnpj("2312412312");
+		bp.pj1.setCnpj("2312412312");
 		// executando
 		try {
-			pessoaService.save(pj1);
+			pessoaService.save(bp.pj1);
 			fail("Falha. Uma exceção deve ser lançada!");
 		} catch (DataIntegrityException ex) {
 			// validando
@@ -199,14 +180,15 @@ public class PessoaServiceTest extends DevApplicationTests {
 	}
 
 	// teste de pj com cnpj duplicado
+	@Transactional
 	@Test
 	public void testInsercaoPessoaJuridicaCnpjDuplicado() {
 		// cenario
-		PessoaJuridica pj2 = new PessoaJuridica(null, "TEST", pj1.getCnpj(), "AADFAS", "DFS", "ADSFA");
+		PessoaJuridica pj2 = new PessoaJuridica(null, "TEST", bp.pj1.getCnpj(), "AADFAS", "DFS", "ADSFA");
 
 		// executando
 
-		pessoaService.save(pj1);
+		pessoaService.save(bp.pj1);
 
 		// validando
 		try {
@@ -218,31 +200,35 @@ public class PessoaServiceTest extends DevApplicationTests {
 	}
 
 	// testes de alteraçoes
+	@Transactional
 	@Test
 	public void testUpdateCidade() {
-		this.pf1 = (PessoaFisica) pessoaService.save(pf1);
+		this.bp.pf1 = (PessoaFisica) pessoaService.save(bp.pf1);
 
-		pf1.setNaturalidade(new Cidade(null, "Mineiros", new Estado(null, "GO", "gOAS")));
-		pf1.setNome("Gustavo");
-		pf1.setRG(null);
-		pf1 = (PessoaFisica) pessoaService.save(pf1);
+		Cidade naturalidade = new Cidade(null, "Mineiros", new Estado(null, "GO", "gOAS"));
+		cidadeService.save(naturalidade);
+		bp.pf1.setNaturalidade(naturalidade);
+		bp.pf1.setNome("Gustavo");
+		bp.pf1.setRG(null);
+		bp.pf1 = (PessoaFisica) pessoaService.save(bp.pf1);
 
 		// validando
-		assertThat(pf1.getNaturalidade().getEstado().getNome(), equalTo("gOAS"));
-		assertThat(pf1.getNome(), equalTo("Gustavo"));
+		assertThat(bp.pf1.getNaturalidade().getEstado().getNome(), equalTo("gOAS"));
+		assertThat(bp.pf1.getNome(), equalTo("Gustavo"));
 
 	}
 
 	// testes de alteraçoes
+	@Transactional
 	@Test
-	public void testUpdateCidadePJ() {
-		this.pj1 = (PessoaJuridica) pessoaService.save(pj1);
+	public void testUpdatePJ() {
+		this.bp.pj1 = (PessoaJuridica) pessoaService.save(bp.pj1);
 
-		pj1.setNome("Gustavo ME");
-		pj1 = (PessoaJuridica) pessoaService.save(pj1);
+		bp.pj1.setNome("Gustavo ME");
+		bp.pj1 = (PessoaJuridica) pessoaService.save(bp.pj1);
 
 		// validando
-		assertThat(pj1.getNome(), equalTo("Gustavo ME"));
+		assertThat(bp.pj1.getNome(), equalTo("Gustavo ME"));
 
 	}
 
