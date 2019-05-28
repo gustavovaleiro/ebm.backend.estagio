@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.security.Usuario;
 
 @Entity

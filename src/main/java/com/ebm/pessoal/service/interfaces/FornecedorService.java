@@ -1,4 +1,4 @@
-package com.ebm.estoque.service.interfaces;
+package com.ebm.pessoal.service.interfaces;
 
 import java.util.List;
 import java.util.Set;
@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ebm.estoque.domain.Fornecedor;
-import com.ebm.estoque.dtos.FornecedorListDTO;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.TipoPessoa;
+import com.ebm.pessoal.dtos.FornecedorListDTO;
 
 @Service
 public interface FornecedorService {

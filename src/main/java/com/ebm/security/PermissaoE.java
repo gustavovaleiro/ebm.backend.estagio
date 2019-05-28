@@ -1,6 +1,5 @@
 package com.ebm.security;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +29,10 @@ public enum PermissaoE  {
 	CLIENTE_POST(22, Modulo.PESSOAL,"CLIENTE_POST", "Cadastro de clientes cargos."),
 	CLIENTE_DELETE(23, Modulo.PESSOAL,"CLIENTE_DELETE", "Deletar clientes."),
 	
+	FORNECEDOR_GET(30, Modulo.PESSOAL, "FORNECEDOR_GET","Vizualização de entradas/saidas já cadastrados." ),
+	FORNECEDOR_PUT(31, Modulo.PESSOAL, "FORNECEDOR_PUT", "Atualização de  entradas/saidas  já cadastrados." ),
+	FORNECEDOR_POST(32, Modulo.PESSOAL, "FORNECEDOR_POST", "Cadastro de entradas/saidas."),
+	FORNECEDOR_DELETE(33, Modulo.PESSOAL, "FORNECEDOR_DELETE", "Deletar entradas/saidas."),
 	
 	
 	ITEM_GET(100, Modulo.ESTOQUE,"ITEM_GET",  "Vizualização de produtos e serviços já cadastrados." ),
@@ -46,12 +49,6 @@ public enum PermissaoE  {
 	MOVIMENTACAO_PUT(121, Modulo.ESTOQUE, "MOVIMENTACAO_PUT", "Atualização de  entradas/saidas  já cadastrados." ),
 	MOVIMENTACAO_POST(122, Modulo.ESTOQUE, "MOVIMENTACAO_POST", "Cadastro de entradas/saidas."),
 	MOVIMENTACAO_DELETE(123, Modulo.ESTOQUE, "MOVIMENTACAO_DELETE", "Deletar entradas/saidas."),
-	
-	FORNECEDOR_GET(130, Modulo.ESTOQUE, "FORNECEDOR_GET","Vizualização de entradas/saidas já cadastrados." ),
-	FORNECEDOR_PUT(131, Modulo.ESTOQUE, "FORNECEDOR_PUT", "Atualização de  entradas/saidas  já cadastrados." ),
-	FORNECEDOR_POST(132, Modulo.ESTOQUE, "FORNECEDOR_POST", "Cadastro de entradas/saidas."),
-	FORNECEDOR_DELETE(133, Modulo.ESTOQUE, "FORNECEDOR_DELETE", "Deletar entradas/saidas."),
-	
 	
 	
 	USUARIO_GET(200, Modulo.AUTH, "USUARIO_GET", "Vizualização de usuarios já cadastrados." ),

@@ -46,6 +46,7 @@ public class PessoaServiceTest extends DevApplicationTests {
 	@Before
 	public void set_up() {
 		bp.instanciaPessoa();
+		bp.associaPessoa();
 
 	}
 

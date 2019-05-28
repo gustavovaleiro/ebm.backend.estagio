@@ -1,4 +1,4 @@
-package com.ebm.estoque.service;
+package com.ebm.pessoal.service;
 
 
 import java.util.ArrayList;
@@ -17,16 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.estoque.domain.CategoriaItem;
-import com.ebm.estoque.domain.Fornecedor;
-import com.ebm.estoque.dtos.FornecedorListDTO;
-import com.ebm.estoque.repository.FornecedorRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
-import com.ebm.estoque.service.interfaces.FornecedorService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.TipoPessoa;
-import com.ebm.pessoal.service.PessoaService;
+import com.ebm.pessoal.dtos.FornecedorListDTO;
+import com.ebm.pessoal.repository.FornecedorRepository;
+import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 @Service
 public class FornecedorServiceImpl implements FornecedorService {
@@ -47,7 +46,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	}
 
 	private void saveAssociations(Fornecedor fornecedor) {
-		fornecedor.setPessoa(pessoaService.save(fornecedor.getPessoa()));
+		fornecedor.setPessoa(pessoaService.findById(fornecedor.getPessoa().getId()));
 		Set<CategoriaItem> categorias = fornecedor.getCategorias();
 		
 		if(!categorias.isEmpty() && Optional.ofNullable(categorias).isPresent() )
@@ -83,8 +82,12 @@ public class FornecedorServiceImpl implements FornecedorService {
 
 	@Override
 	public Fornecedor findByCpfOrCnpj(String document) {
-
-		return findById(pessoaService.findByCpfOrCnpj(document).getId());
+		try {
+			return findById(pessoaService.findByCpfOrCnpj(document).getId());
+		} catch(ObjectNotFoundException ex) {
+			throw new ObjectNotFoundException(PessoaService.NOT_FOUND_DOCUMENT + document);
+		}
+		
 	}
 	
 	@Override
@@ -132,9 +135,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 		if(id == null)
 			throw new DataIntegrityException(FornecedorService.DATAINTEGRITY_IDNULL);
 		Fornecedor result = findById(id);
-		if(!result.getCategorias().isEmpty()) {
-			throw new DataIntegrityException(FornecedorService.DATAINTEGRITY_FORNECEDORHASCATEGORIA);
-		}// verificar se existe alguma entra na movimentação associada a ele , caso existe nao deixar escluir
+		// verificar se existe alguma entra na movimentação associada a ele , caso existe nao deixar escluir
 		
 		fornecedorRepository.delete(result);
 	}

@@ -1,6 +1,7 @@
-package com.ebm.estoque.resouce;
+package com.ebm.estoque.resource;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,62 +20,64 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ebm.estoque.domain.Item;
-import com.ebm.estoque.dtos.ItemListDTO;
-import com.ebm.estoque.service.interfaces.ItemService;
+import com.ebm.estoque.domain.Movimentacao;
+import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.estoque.dtos.MovimentacaoListDTO;
+import com.ebm.estoque.service.interfaces.MovimentacaoService;
 
 @RestController
-@RequestMapping(value = "/itens")
-public class ItemResource {
+@RequestMapping(value = "/movimentacaos")
+public class MovimentacaoResource {
 	@Autowired
-	private ItemService itemService;
+	private MovimentacaoService movimentacaoService;
 
-	@PreAuthorize("hasAuthority('ITEM_POST')")
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_POST')")
 	@PostMapping
-	public ResponseEntity<Item> insert(@RequestBody Item item) {
-		Item itemS = itemService.save(item);
+	public ResponseEntity<Void> insert(@RequestBody Movimentacao movimentacao) {
+		Movimentacao obj = movimentacaoService.save(movimentacao);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(itemS.getId()).toUri();
-		return ResponseEntity.created(uri).body(itemS);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+		return ResponseEntity.created(uri).build();
 	}
 
-	@PreAuthorize("hasAuthority('ITEM_PUT')")
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Item> update(@RequestBody Item item, @PathVariable Integer id) {
-		item.setId(id);
-		item = itemService.save(item);
-		return ResponseEntity.ok(item);
+	public ResponseEntity<Void> update(@RequestBody Movimentacao movimentacao, @PathVariable Integer id) {
+		movimentacao.setId(id);
+		movimentacao = movimentacaoService.save(movimentacao);
+		return ResponseEntity.noContent().build();
 
 	}
 
-	@PreAuthorize("hasAuthority('ITEM_DELETE')")
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_DELETE')")
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		itemService.delete(id);
+		movimentacaoService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
-	@PreAuthorize("hasAuthority('ITEM_GET')")
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_GET')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Item> find(@PathVariable Integer id) {
-		Item obj = itemService.findById(id);
+	public ResponseEntity<Movimentacao> find(@PathVariable Integer id) {
+		Movimentacao obj = movimentacaoService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
-	@PreAuthorize("hasAuthority('ITEM_GET')")
+	@PreAuthorize("hasAuthority('MOVIMENTACAO_GET')")
 	@GetMapping(value = "/page")
-	public ResponseEntity<Page<ItemListDTO>> findAllBy(
-			@RequestParam(value = "codInterno", required = false) String codInterno,
-			@RequestParam(value = "nome", required = false) String nome,
+	public ResponseEntity<Page<MovimentacaoListDTO>> findAllBy(
+			@RequestParam(value = "documento", required = false) String documento,
 			@RequestParam(value = "tipo", required = false) String tipo,
-			@RequestParam(value = "unidade", required = false) String unidade,
-			@RequestParam(value = "categoria", required = false) String categoria,
+			@RequestParam(value = "fornecedores", required = false) List<Integer> fornecedores,
+			@RequestParam(value = "produtos", required = false) List<Integer> produtos,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<ItemListDTO> rs = itemService.findBy(codInterno, tipo, nome, unidade, categoria, pageRequest);
+		Page<MovimentacaoListDTO> rs = movimentacaoService.findBy(TipoMovimentacao.fromString(tipo), documento,
+				fornecedores, produtos, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 

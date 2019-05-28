@@ -1,4 +1,4 @@
-package com.ebm.estoque.domain;
+package com.ebm.pessoal.domain;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -9,11 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import com.ebm.pessoal.domain.Pessoa;
+import com.ebm.estoque.domain.CategoriaItem;
 
 @Entity
 public class Fornecedor implements Serializable {

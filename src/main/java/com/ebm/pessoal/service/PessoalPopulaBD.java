@@ -3,15 +3,18 @@ package com.ebm.pessoal.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.springframework.stereotype.Service;
 
 import com.ebm.Utils;
+import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
+import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
@@ -27,20 +30,20 @@ public class PessoalPopulaBD {
 	public PessoaJuridica pj1;
 	public Cargo cDesenvolvedor;
 	public Cargo cAdministrador;
-	public Funcionario ff1;
-	public Funcionario fj1;
+	public Funcionario funf1;
+	public Funcionario funj1;
 	public PessoaFisica pf2;
 	public PessoaFisica pf3;
 	public PessoaFisica pf4;
 	public PessoaJuridica pj2;
 	public PessoaJuridica pj3;
 	public PessoaJuridica pj4;
-	public Funcionario ff2;
-	public Funcionario ff3;
-	public Funcionario ff4;
-	public Funcionario fj2;
-	public Funcionario fj3;
-	public Funcionario fj4;
+	public Funcionario funf2;
+	public Funcionario funf3;
+	public Funcionario funf4;
+	public Funcionario funj2;
+	public Funcionario funj3;
+	public Funcionario funj4;
 	public Cliente cf1;
 	public Cliente cj1;
 	public Cliente cf2;
@@ -49,6 +52,20 @@ public class PessoalPopulaBD {
 	public Cliente cj2;
 	public Cliente cj3;
 	public Cliente cj4;
+	public CategoriaItem cat1;
+	public CategoriaItem cat3;
+	public CategoriaItem cat2;
+	public CategoriaItem cat4;
+	public Fornecedor forf1;
+	public Fornecedor forj1;
+	public Fornecedor forf2;
+	public Fornecedor forf3;
+	public Fornecedor forf4;
+	public Fornecedor forj2;
+	public Fornecedor forj3;
+	public Fornecedor forj4;
+	public Fornecedor forf5;
+	public PessoaFisica pf5;
 
 	public void instanciaPessoa(){	
 		estadoGO = new Estado(null, "GO", "Goias");
@@ -72,10 +89,11 @@ public class PessoalPopulaBD {
 	    pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME",
 				"inscricaoEstadual4", "inscricaoMunicipal4");
 		
-
+	     pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30),
+				new RG("34", "ssp", estadoGO), "Brasileira", goiania);
 	}
 	public void associaPessoa() {
-		Arrays.asList(pf1,pj1,pf2, pf3, pf4, pj2, pj3, pj4).forEach(p -> {
+		Arrays.asList(pf1,pj1,pf2, pf3, pf4, pf5, pj2, pj3, pj4).forEach(p -> {
 			p.getEndereco().add(endereco1);
 			p.getTelefone().add(Utils.getRandomTelefone(true));
 			p.getEmail().add(Utils.getRandomEmail(p,true));
@@ -88,22 +106,22 @@ public class PessoalPopulaBD {
 		}
 		cDesenvolvedor = new Cargo(null, "Desenvolvedor", BigDecimal.valueOf(2000), "rsats");
 		cAdministrador = new Cargo(null, "Administrador", BigDecimal.valueOf(5000), "tes");
-		ff1 = new Funcionario(null, pf1, "dev-432", cDesenvolvedor, LocalDate.now().minusWeeks(1), 0.,
+		funf1 = new Funcionario(null, pf1, "dev-432", cDesenvolvedor, LocalDate.now().minusWeeks(1), 0.,
 				cDesenvolvedor.getSalarioBase());
-		fj1 = new Funcionario(null, pj1, "adm-01", cAdministrador, LocalDate.now().minusDays(2), 0.1,
+		funj1 = new Funcionario(null, pj1, "adm-01", cAdministrador, LocalDate.now().minusDays(2), 0.1,
 				cAdministrador.getSalarioBase());
-		ff2 = new Funcionario(null, pf2, "dev-02", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
+		funf2 = new Funcionario(null, pf2, "dev-02", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
-	    ff3 = new Funcionario(null, pf3, "dev-03", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
+	    funf3 = new Funcionario(null, pf3, "dev-03", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
-		ff4 = new Funcionario(null, pf4, "dev-04", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
+		funf4 = new Funcionario(null, pf4, "dev-04", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
 
-		fj2 = new Funcionario(null, pj2, "adm-02", cAdministrador, LocalDate.now().minusYears(1), 0.,
+		funj2 = new Funcionario(null, pj2, "adm-02", cAdministrador, LocalDate.now().minusYears(1), 0.,
 				cAdministrador.getSalarioBase());
-		fj3 = new Funcionario(null, pj3, "adm-03", cAdministrador, LocalDate.now().minusYears(1), 0.,
+		funj3 = new Funcionario(null, pj3, "adm-03", cAdministrador, LocalDate.now().minusYears(1), 0.,
 				cAdministrador.getSalarioBase());
-		fj4 = new Funcionario(null, pj4, "adm-04", cAdministrador, LocalDate.now().minusYears(1), 0.,
+		funj4 = new Funcionario(null, pj4, "adm-04", cAdministrador, LocalDate.now().minusYears(1), 0.,
 				cAdministrador.getSalarioBase());
 	}
 	
@@ -120,5 +138,28 @@ public class PessoalPopulaBD {
 		 cj2 = new Cliente(null, pj2, new BigDecimal(2133), "sdaf");
 		 cj3 = new Cliente(null, pj3, BigDecimal.valueOf(1233), "12312");
 		 cj4 = new Cliente(null, pj4, BigDecimal.valueOf(1233), "12312");
+	}
+	public void instanciaFornecedores(boolean instanciaAssocia) {
+		if(instanciaAssocia) {
+			instanciaPessoa();
+			associaPessoa();
+		}
+		cat1 = new CategoriaItem(null, "Informatica");
+		cat3 = new CategoriaItem(null, "Cama");
+		cat2 = new CategoriaItem(null, "Eletrodomesticos");
+		cat4 = new CategoriaItem(null, "Banho");
+		forf1 = new Fornecedor(null, pf1);
+		forf1.getCategorias().addAll(new HashSet<>(Arrays.asList(cat3, cat4)));
+		forj1 = new Fornecedor(null, pj1);
+		forj1.getCategorias().addAll(new HashSet<>(Arrays.asList(cat1, cat2)));
+		forf2 = new Fornecedor(null, pf2);
+		forf3 = new Fornecedor(null, pf3);
+		forf4 = new Fornecedor(null, pf4);
+		forj2 = new Fornecedor(null, pj2);
+		forj3 = new Fornecedor(null, pj3);
+		forj4 = new Fornecedor(null, pj4);
+		forf5 = new Fornecedor(null, pf5);
+		Arrays.asList(forf3, forf4).forEach(f -> f.getCategorias().addAll(Arrays.asList(cat3)));
+		Arrays.asList(forj3, forj4, forf5).forEach(f -> f.getCategorias().addAll(Arrays.asList(cat1)));
 	}
 }

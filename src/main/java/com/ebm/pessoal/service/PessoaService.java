@@ -133,7 +133,13 @@ public class PessoaService {
 		pessoaFisicaRepository.delete(pf);
 
 	}
+	public void delete(Pessoa p) {
+		if(p instanceof PessoaFisica)
+			delete((PessoaFisica) p);
+		else
+			delete((PessoaJuridica) p);
 
+	}
 	private void deleteAssociations(Pessoa p) {
 		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
 		Optional<List<Telefone>> telefones= Optional.ofNullable(p.getTelefone());

@@ -1,8 +1,8 @@
-package com.ebm.estoque.dtos;
+package com.ebm.pessoal.dtos;
 
 import java.io.Serializable;
 
-import com.ebm.estoque.domain.Fornecedor;
+import com.ebm.pessoal.domain.Fornecedor;
 
 public class FornecedorListDTO implements Serializable{
 

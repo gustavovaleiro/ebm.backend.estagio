@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
 import com.ebm.estoque.domain.CategoriaItem;
-import com.ebm.estoque.domain.Fornecedor;
 import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
@@ -37,7 +36,6 @@ import com.ebm.estoque.domain.ProdutoMovimentacaoPK;
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
 import com.ebm.estoque.dtos.MovimentacaoListDTO;
-import com.ebm.estoque.service.interfaces.FornecedorService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.exceptions.DataIntegrityException;
@@ -45,8 +43,10 @@ import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
+import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.RG;
+import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 
 @ActiveProfiles("test")

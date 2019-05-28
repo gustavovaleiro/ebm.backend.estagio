@@ -1,4 +1,4 @@
-package com.ebm.estoque.repository;
+package com.ebm.pessoal.repository;
 
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.estoque.domain.CategoriaItem;
-import com.ebm.estoque.domain.Fornecedor;
+import com.ebm.pessoal.domain.Fornecedor;
 
 @Repository	
 public interface FornecedorRepository  extends JpaRepository<Fornecedor, Integer>{

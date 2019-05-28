@@ -1,4 +1,4 @@
-package com.ebm.estoque.resouce;
+package com.ebm.estoque.resource;
 
 import java.net.URI;
 

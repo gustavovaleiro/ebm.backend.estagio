@@ -138,8 +138,11 @@ public class FuncionarioService {
 	}
 
 	public Funcionario findByCpfOrCnpj(String document) {
-		
-		return findById(pessoaService.findByCpfOrCnpj(document).getId());
+		try {
+			return findById(pessoaService.findByCpfOrCnpj(document).getId());
+		} catch(ObjectNotFoundException ex) {
+			throw new ObjectNotFoundException(PessoaService.NOT_FOUND_DOCUMENT + document);
+		}
 	}
 
 	// aux

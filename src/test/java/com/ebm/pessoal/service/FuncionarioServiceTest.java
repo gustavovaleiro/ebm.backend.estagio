@@ -59,8 +59,8 @@ public class FuncionarioServiceTest {
 	public void testInsercaoSemPessoaDevLancarException() {
 
 		try {
-			bd.ff1.setPessoa(null);
-			bd.ff1 = funcionarioService.save(bd.ff1);
+			bd.funf1.setPessoa(null);
+			bd.funf1 = funcionarioService.save(bd.funf1);
 			fail("Falha tentando inserir cliente sem pessoa associada, era esperado Data Integration Exception");
 
 		} catch (DataIntegrityException ex) {
@@ -72,10 +72,10 @@ public class FuncionarioServiceTest {
 	@Transactional
 	@Test
 	public void testInsersaoComMatriculaReptida() {
-		funcionarioService.save(bd.ff1);
+		funcionarioService.save(bd.funf1);
 		try {
-			bd.fj1.setMatricula(bd.ff1.getMatricula());
-			funcionarioService.save(bd.fj1);
+			bd.funj1.setMatricula(bd.funf1.getMatricula());
+			funcionarioService.save(bd.funj1);
 			fail();
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(FuncionarioService.DATAINTEGRITY_DUPLICATEMATRICULA));
@@ -85,11 +85,11 @@ public class FuncionarioServiceTest {
 	@Transactional
 	@Test
 	public void testUpdateComMatriculaReptida() {
-		bd.fj1 = funcionarioService.save(bd.fj1);
+		bd.funj1 = funcionarioService.save(bd.funj1);
 
 		try {
-			bd.ff1.setMatricula(bd.fj1.getMatricula());
-			funcionarioService.save(bd.ff1);
+			bd.funf1.setMatricula(bd.funj1.getMatricula());
+			funcionarioService.save(bd.funf1);
 			fail();
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(FuncionarioService.DATAINTEGRITY_DUPLICATEMATRICULA));
@@ -100,21 +100,21 @@ public class FuncionarioServiceTest {
 	@Test
 	public void testInsercao() {
 
-		funcionarioService.save(bd.ff1);
+		funcionarioService.save(bd.funf1);
 
-		assertNotNull(bd.ff1.getId());
-		assertNotNull(bd.ff1.getPessoa().getId());
-		assertThat(bd.ff1.getId(), equalTo(bd.ff1.getPessoa().getId()));
+		assertNotNull(bd.funf1.getId());
+		assertNotNull(bd.funf1.getPessoa().getId());
+		assertThat(bd.funf1.getId(), equalTo(bd.funf1.getPessoa().getId()));
 	}
 
 	@Transactional
 	@Test
 	public void testInsercaoClienteComPessoaQueJaPertenceAOutroCliente() {
-		bd.ff1.setPessoa(bd.fj1.getPessoa());
-		bd.ff1 = funcionarioService.save(bd.ff1);
+		bd.funf1.setPessoa(bd.funj1.getPessoa());
+		bd.funf1 = funcionarioService.save(bd.funf1);
 
 		try {
-			bd.fj1 = funcionarioService.save(bd.fj1);
+			bd.funj1 = funcionarioService.save(bd.funj1);
 			fail("Falha insercao de cliente com pessoa que ja pertence a outro cliente, deve lançar DataIntegratyExcpetion");
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(FuncionarioService.DATAINTEGRITY_DUPLICATEPERSON));
@@ -125,24 +125,24 @@ public class FuncionarioServiceTest {
 	@Transactional
 	@Test
 	public void testUpdateSemMudarPessoa() {
-		bd.ff1 = funcionarioService.save(bd.ff1);
+		bd.funf1 = funcionarioService.save(bd.funf1);
 
-		bd.ff1.setCargo(bd.cAdministrador);
+		bd.funf1.setCargo(bd.cAdministrador);
 
-		bd.ff1.getPessoa().setNome("novonome");
-		bd.ff1 = funcionarioService.save(bd.ff1);
+		bd.funf1.getPessoa().setNome("novonome");
+		bd.funf1 = funcionarioService.save(bd.funf1);
 
-		assertThat(bd.ff1.getCargo(), equalTo(bd.cAdministrador));
-		assertThat(bd.ff1.getPessoa().getNome(), equalTo("novonome"));
+		assertThat(bd.funf1.getCargo(), equalTo(bd.cAdministrador));
+		assertThat(bd.funf1.getPessoa().getNome(), equalTo("novonome"));
 	}
 
 	@Transactional
 	@Test
 	public void testUpdateMudarPessoa() {
-		bd.ff1 = funcionarioService.save(bd.ff1);
-		bd.ff1.setPessoa(bd.pj1);
+		bd.funf1 = funcionarioService.save(bd.funf1);
+		bd.funf1.setPessoa(bd.pj1);
 		try {
-			bd.ff1 = funcionarioService.save(bd.ff1);
+			bd.funf1 = funcionarioService.save(bd.funf1);
 			fail();
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(FuncionarioService.DATAINTEGRITY_CHANCEPERSON));
@@ -152,12 +152,12 @@ public class FuncionarioServiceTest {
 	@Transactional
 	@Test
 	public void testUpdateClienteComPessoaPertenceOutroCliente() {
-		bd.ff1 = funcionarioService.save(bd.ff1);
-		bd.fj1 = funcionarioService.save(bd.fj1);
+		bd.funf1 = funcionarioService.save(bd.funf1);
+		bd.funj1 = funcionarioService.save(bd.funj1);
 
-		bd.ff1.setPessoa(bd.fj1.getPessoa());
+		bd.funf1.setPessoa(bd.funj1.getPessoa());
 		try {
-			bd.ff1 = funcionarioService.save(bd.ff1);
+			bd.funf1 = funcionarioService.save(bd.funf1);
 			fail("Falha insercao de cliente com pessoa que ja pertence a outro cliente, deve lançar DataIntegratyExcpetion");
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(FuncionarioService.DATAINTEGRITY_DUPLICATEPERSON));
@@ -167,21 +167,21 @@ public class FuncionarioServiceTest {
 	@Transactional
 	@Test
 	public void testFindCnpj() {
-		funcionarioService.save(bd.fj1);
+		funcionarioService.save(bd.funj1);
 
-		Funcionario result = funcionarioService.findByCpfOrCnpj(((PessoaJuridica) bd.fj1.getPessoa()).getCnpj());
+		Funcionario result = funcionarioService.findByCpfOrCnpj(((PessoaJuridica) bd.funj1.getPessoa()).getCnpj());
 
 		assertNotNull(result.getId());
 		assertThat(((PessoaJuridica) result.getPessoa()).getCnpj(),
-				equalTo(((PessoaJuridica) bd.fj1.getPessoa()).getCnpj()));
+				equalTo(((PessoaJuridica) bd.funj1.getPessoa()).getCnpj()));
 	}
 
 	@Transactional
 	@Test
 	public void testFindCPF() {
-		funcionarioService.save(bd.ff1);
+		funcionarioService.save(bd.funf1);
 
-		Funcionario result = funcionarioService.findByCpfOrCnpj(((PessoaFisica) bd.ff1.getPessoa()).getCpf());
+		Funcionario result = funcionarioService.findByCpfOrCnpj(((PessoaFisica) bd.funf1.getPessoa()).getCpf());
 
 		assertNotNull(result.getId());
 		assertThat(((PessoaFisica) result.getPessoa()).getCpf(), equalTo(((PessoaFisica) result.getPessoa()).getCpf()));
@@ -200,7 +200,7 @@ public class FuncionarioServiceTest {
 	}
 	private void cenarioParaBuscaParamiterizada() {
 		pessoaService.saveAll(Arrays.asList(bd.pf2,bd.pf3,bd.pf4,bd.pj2,bd.pj3,bd.pj4));
-		funcionarioService.saveAll(Arrays.asList(bd.ff1, bd.ff2, bd.ff3, bd.ff4, bd.fj1, bd.fj2, bd.fj3, bd.fj4));
+		funcionarioService.saveAll(Arrays.asList(bd.funf1, bd.funf2, bd.funf3, bd.funf4, bd.funj1, bd.funj2, bd.funj3, bd.funj4));
 		
 	}
 

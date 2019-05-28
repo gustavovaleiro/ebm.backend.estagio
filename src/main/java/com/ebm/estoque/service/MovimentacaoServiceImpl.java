@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
-import com.ebm.estoque.domain.Fornecedor;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
@@ -26,11 +25,12 @@ import com.ebm.estoque.domain.interfaces.OrigemMovimentacao;
 import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.estoque.repository.MovimentacaoRepository;
 import com.ebm.estoque.repository.ProdutoMovimentacaoRepository;
-import com.ebm.estoque.service.interfaces.FornecedorService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.pessoal.domain.Fornecedor;
+import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 @Service
 public class MovimentacaoServiceImpl implements MovimentacaoService {

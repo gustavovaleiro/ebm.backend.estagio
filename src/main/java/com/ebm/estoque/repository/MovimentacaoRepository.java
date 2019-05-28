@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.estoque.domain.Fornecedor;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
+import com.ebm.pessoal.domain.Fornecedor;
 @Repository
 public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Integer> {
 
