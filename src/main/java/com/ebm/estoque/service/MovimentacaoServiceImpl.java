@@ -58,14 +58,15 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
 		if (movimentacao.getId() == null)
 			movimentacao.setDataCadastro(LocalDateTime.now());
-
+		recuperaFornecedorFrom(movimentacao);
+		recuperaProdutosFrom(movimentacao);
 		movimentacao = movimentacaoRepository.save(movimentacao);
 
 		if (!Optional.ofNullable(movimentacao.getDataMovimentacao()).isPresent())
 			movimentacao.setDataMovimentacao(LocalDateTime.now());
 		for (ProdutoMovimentacao pM : movimentacao.getProdutosMovimentacao()) {
 			pM.setMovimentacao(movimentacao);
-			pM.setProduto((Produto) itemService.findById(pM.getProduto().getId()));
+			
 
 			if (movimentacao.getTipoMovimentacao() == TipoMovimentacao.ENTRADA) {
 				// Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade
@@ -83,11 +84,18 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
 		}
 
-		recuperaFornecedorFrom(movimentacao);
+		
 		movimentacao.setProdutosMovimentacao(new HashSet<ProdutoMovimentacao>(
 				pMovimentacaoRepository.saveAll(movimentacao.getProdutosMovimentacao())));
 
 		return movimentacao;
+	}
+
+	private void recuperaProdutosFrom(Movimentacao movimentacao) {
+		movimentacao.getProdutosMovimentacao().stream().forEach(pM ->{
+			pM.setProduto((Produto) itemService.findById(pM.getProduto().getId()));
+		});
+		
 	}
 
 	private int valueOrZero(Integer value) {

@@ -7,13 +7,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Arrays;
 
 import javax.transaction.Transactional;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,16 +21,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
-import com.ebm.pessoal.domain.Cidade;
+import com.ebm.geral.service.PopulaBD;
 import com.ebm.pessoal.domain.Cliente;
-import com.ebm.pessoal.domain.Endereco;
-import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
-import com.ebm.pessoal.domain.RG;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.ClienteListDTO;
 
@@ -48,7 +41,7 @@ public class ClienteServiceTest {
 	@Autowired
 	private PessoaService pessoaService;
 	@Autowired
-	private PessoalPopulaBD	 bd;
+	private PopulaBD	 bd;
 	
 	@Before
 	public void setUp() {

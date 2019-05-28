@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.service.PopulaBD;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
@@ -43,7 +44,7 @@ public class FuncionarioServiceTest {
 	@Autowired
 	private CargoService cargoService;
 	@Autowired
-	private PessoalPopulaBD bd;
+	private PopulaBD bd;
 
 	@Before
 	public void setUp() {
@@ -198,10 +199,12 @@ public class FuncionarioServiceTest {
 			assertThat(ex.getMessage(), equalTo(PessoaService.NOT_FOUND_DOCUMENT + "05909561162"));
 		}
 	}
+
 	private void cenarioParaBuscaParamiterizada() {
-		pessoaService.saveAll(Arrays.asList(bd.pf2,bd.pf3,bd.pf4,bd.pj2,bd.pj3,bd.pj4));
-		funcionarioService.saveAll(Arrays.asList(bd.funf1, bd.funf2, bd.funf3, bd.funf4, bd.funj1, bd.funj2, bd.funj3, bd.funj4));
-		
+		pessoaService.saveAll(Arrays.asList(bd.pf2, bd.pf3, bd.pf4, bd.pj2, bd.pj3, bd.pj4));
+		funcionarioService
+				.saveAll(Arrays.asList(bd.funf1, bd.funf2, bd.funf3, bd.funf4, bd.funj1, bd.funj2, bd.funj3, bd.funj4));
+
 	}
 
 	@Transactional
@@ -329,8 +332,8 @@ public class FuncionarioServiceTest {
 
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
-		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_FISICA, bd.cAdministrador.getNomeCargo(),
-				null, null, pageRequest);
+		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_FISICA,
+				bd.cAdministrador.getNomeCargo(), null, null, pageRequest);
 
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(0));
@@ -351,8 +354,8 @@ public class FuncionarioServiceTest {
 		funcionarioService.save(f);
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
-		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_JURIDICA, bd.cDesenvolvedor.getNomeCargo(),
-				null, null, pageRequest);
+		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_JURIDICA,
+				bd.cDesenvolvedor.getNomeCargo(), null, null, pageRequest);
 
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(1));
@@ -368,8 +371,8 @@ public class FuncionarioServiceTest {
 
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
-		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, bd.cDesenvolvedor.getNomeCargo(), "MaRiA", null,
-				pageRequest);
+		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, bd.cDesenvolvedor.getNomeCargo(), "MaRiA",
+				null, pageRequest);
 
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(2));

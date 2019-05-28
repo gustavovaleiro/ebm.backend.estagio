@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,11 @@ public class EnderecoServiceTest {
 		
 	}
 	
-	
+	@After
+	public void setDown() {
+		enderecoService.deleteAll();
+		cidadeService.deleteAll(true);
+	}
 	@Test
 	public void SalvaEnderecoComCidade() {
 		Endereco result = enderecoService.save(endereco);

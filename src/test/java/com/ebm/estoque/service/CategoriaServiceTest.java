@@ -20,7 +20,6 @@ import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
-import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;

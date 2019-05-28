@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,25 +26,27 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
-import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.estoque.domain.ProdutoMovimentacaoPK;
-import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
 import com.ebm.estoque.dtos.MovimentacaoListDTO;
+import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
+import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.service.PopulaBD;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.RG;
+import com.ebm.pessoal.service.PessoaService;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 
@@ -61,46 +62,33 @@ public class MovimentacaoServiceTest {
 	private ItemService itemService;
 	@Autowired
 	private FornecedorService fornecedorService;
-	private Produto p1;
-	private Produto p2;
-	private Produto p3;
-	private Movimentacao e1;
-	private Movimentacao s1;
+	@Autowired
+	private CategoriaItemService catServ;
+	@Autowired
+	private UnidadeService uniServ;
+	@Autowired
+	private PessoaService pessoaService;
+	@Autowired
+	private PopulaBD bd;
+	
 	private List<Item> produtos;
-	private CategoriaItem cat1;
-	private Unidade un1;
-	private Produto p4;
-	private Produto p5;
-	private Produto p6;
-	private Produto p7;
-	private Movimentacao e2;
-	private Movimentacao e3;
-	private Movimentacao s2;
-	private Movimentacao s3;
+	
 	private Fornecedor ff1;
 
 	
 	@Before
 	public void setUp() {
 	
-		 un1 = new Unidade(null, "un", "Unidade");
-		cat1 = new CategoriaItem(null, "Informatica");
-
-		 p1 = Produto.of("Computador I3 4gb RAM", un1, cat1);
-		 p2 = Produto.of("Processador I3", un1, cat1);
-		 p3 = Produto.of("Memoria ram 4GB", un1, cat1);
-		 
-		 
-		
-		 produtos = Arrays.asList(p1,p2,p3);
+		bd.instanciaMovimentacao(true);
+		 produtos = Arrays.asList(bd.p1,bd.p2,bd.p3);
 		 produtos.forEach( p -> ((Produto) p).setEstoque(5,0,10) );
-		 e1 = Movimentacao.novaEntrada();
-		 s1  = Movimentacao.novaSaida();
 		 
-		 Arrays.asList(e1,s1).forEach( m -> m.getProdutosMovimentacao().addAll( produtos.stream()
-				 .map( p -> new ProdutoMovimentacao( new ProdutoMovimentacaoPK((Produto) p, e1), BigDecimal.valueOf(10), BigDecimal.valueOf(100), 5)).collect(Collectors.toSet())  ));
-
-		
+		catServ.save(bd.cat1);
+		catServ.save(bd.cat2);
+		catServ.save(bd.cat3);
+		catServ.save(bd.cat4);
+		uniServ.save(bd.un1);
+		uniServ.save(bd.un2);
 	}
 	
 	private Fornecedor fornecedor() {
@@ -114,8 +102,10 @@ public class MovimentacaoServiceTest {
 		pf1.getEndereco().add(endereco1);
 		pf1.getTelefone().add(Utils.getRandomTelefone(true));
 		pf1.getEmail().add(Utils.getRandomEmail(pf1, true));
+		pessoaService.save(pf1);
 		Fornecedor ff1 = new Fornecedor(null, pf1);
-		ff1.getCategorias().addAll(new HashSet<>(Arrays.asList(cat1)));
+		
+		ff1.getCategorias().addAll(new HashSet<>(Arrays.asList(bd.cat1)));
 		return ff1;
 	}
 
@@ -127,16 +117,16 @@ public class MovimentacaoServiceTest {
 		 
 			
 		fornecedorService.save(ff1);
-		e1.getFornecedores().add(ff1);
-		e1 = movimentacaoService.save(e1);
+		bd.ent1.getFornecedores().add(ff1);
+		bd.ent1 = movimentacaoService.save(bd.ent1);
 		List<Item> result = itemService.findBy(null, null, null, null, null);
 		
-		assertNotNull(e1.getId());
-		assertThat(e1.getTipoMovimentacao(), equalTo(TipoMovimentacao.ENTRADA));
-		assertTrue(e1.getProdutosMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == e1.getId()));
-		assertTrue(e1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
-		assertTrue(e1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
-		assertTrue(e1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
+		assertNotNull(bd.ent1.getId());
+		assertThat(bd.ent1.getTipoMovimentacao(), equalTo(TipoMovimentacao.ENTRADA));
+		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == bd.ent1.getId()));
+		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
+		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
+		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
 		assertTrue(result.stream().allMatch( p ->  ((Produto) p).getEstoqueAtual().equals(5)));
 		
 	}
@@ -151,9 +141,9 @@ public class MovimentacaoServiceTest {
 		Fornecedor ff1 = fornecedor();
 		
 		fornecedorService.save(ff1);
-		s1.getFornecedores().add(ff1);
+		bd.sai1.getFornecedores().add(ff1);
 		try {
-			s1 = movimentacaoService.save(s1);
+			bd.sai1 = movimentacaoService.save(bd.sai1);
 			fail();
 		}catch(DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(MovimentacaoService.DATAINTEGRITY_SAIDAWITHFORNECEDOR));
@@ -167,15 +157,15 @@ public class MovimentacaoServiceTest {
 	@Test
 	public void testeSalvandoMovimentacaoSaida() {
 		produtos = (List<Item>) itemService.saveAll(produtos);
-		s1 = movimentacaoService.save(s1);
+		bd.sai1 = movimentacaoService.save(bd.sai1);
 		List<Item> result = itemService.findBy(null, null, null, null, null);
-	
-		assertNotNull(s1.getId());
-		assertThat(s1.getTipoMovimentacao(), equalTo(TipoMovimentacao.SAIDA));
-		assertTrue(s1.getProdutosMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == s1.getId()));
-		assertTrue(s1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
-		assertTrue(s1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
-		assertTrue(s1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
+		
+		assertNotNull(bd.sai1.getId());
+		assertThat(bd.sai1.getTipoMovimentacao(), equalTo(TipoMovimentacao.SAIDA));
+		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == bd.sai1.getId()));
+		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
+		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
+		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
 		assertTrue(result.stream().allMatch( p ->  ((Produto) p).getEstoqueAtual().equals(-5)));
 		
 	}
@@ -185,10 +175,10 @@ public class MovimentacaoServiceTest {
 	public void testeSalvarSemProduto() {
 		produtos = (List<Item>) itemService.saveAll(produtos);
 
-		s1.getProdutosMovimentacao().clear();
+		bd.sai1.getProdutosMovimentacao().clear();
 		
 		try {
-			s1 = movimentacaoService.save(s1);
+			bd.sai1 = movimentacaoService.save(bd.sai1);
 			fail();
 		}catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(MovimentacaoService.DATAINTEGRITY_NOPRODUTOS));
@@ -222,18 +212,18 @@ public class MovimentacaoServiceTest {
 	public void testFindById() {
 		produtos = (List<Item>) itemService.saveAll(produtos);
 		
-		e1 = movimentacaoService.save(e1);
+		bd.ent1 = movimentacaoService.save(bd.ent1);
 		
-		Movimentacao result = movimentacaoService.findById(e1.getId());
+		Movimentacao result = movimentacaoService.findById(bd.ent1.getId());
 		
-		assertThat(e1.getId(), equalTo(result.getId()));
+		assertThat(bd.ent1.getId(), equalTo(result.getId()));
 	}
 	@Transactional
 	@Test
 	public void testFindByIdExNull() {
 
 		try {
-			Movimentacao result = movimentacaoService.findById(null);
+			 movimentacaoService.findById(null);
 			fail();
 		}catch(DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(MovimentacaoService.DATAINTEGRITY_IDNULL));
@@ -245,7 +235,7 @@ public class MovimentacaoServiceTest {
 	public void testFindByIdExNotFound() {
 
 		try {
-			Movimentacao result = movimentacaoService.findById(1);
+		movimentacaoService.findById(1);
 			fail();
 		}catch(ObjectNotFoundException ex) {
 			assertThat(ex.getMessage(), equalTo(MovimentacaoService.ONFE_NOTFOUNDBYID + 1));
@@ -259,40 +249,22 @@ public class MovimentacaoServiceTest {
 	//S2 -> P4 P5;
 	//S3 -> P4 P6P7
 	private void preparaCenarioBuscaParamiterizada() {
-		p4 = Produto.of("Computador i5 8GB", un1, cat1);
-		p5 = Produto.of("Mouse", un1, cat1);
-		p6 = Produto.of("Teclado", un1, cat1);
-		p7 = Produto.of("Processador i5", un1, cat1);
-		
+
 	
 		produtos = (List<Item>) itemService.saveAll(produtos);
-		itemService.saveAll(Arrays.asList(p4,p5,p6,p7));
+		itemService.saveAll(Arrays.asList(bd.p4,bd.p5,bd.p6,bd.p7));
 		
-		e2 = Movimentacao.novaEntrada();
-		e3 = Movimentacao.novaEntrada();
-		s2 = Movimentacao.novaSaida();
-		s3 = Movimentacao.novaSaida();
-
-		e2.setDocumento("notafiscal-01");
-		e3.setDocumento("notafiscal-01");
-		s2.setDocumento("Venda01");
-		s3.setDocumento("Venda02");
+		
+		bd.ent2.setDocumento("notafiscal-01");
+		bd.ent3.setDocumento("notafiscal-01");
+		bd.sai2.setDocumento("Venda01");
+		bd.sai3.setDocumento("Venda02");
 		
 		ff1 = fornecedorService.save(fornecedor());
 		
-		Arrays.asList(e2,e3,s2,s3).forEach(m ->m.getProdutosMovimentacao()
-			.add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p4, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 10))
-		); 
-		
-		Arrays.asList(e2,s2).forEach(m -> { 
-			m.getProdutosMovimentacao().add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5));
-		}); 
-		e2.getFornecedores().add(ff1);
-		Arrays.asList(e3,s3).forEach(m -> m.getProdutosMovimentacao()
-				.addAll( Arrays.asList(p6,p7).stream().map( p -> new ProdutoMovimentacao
-						(new ProdutoMovimentacaoPK(((Produto)p), m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4)).collect(Collectors.toSet())));
+		bd.ent2.getFornecedores().add(ff1);
 
-		movimentacaoService.saveAll(Arrays.asList(e1,e2,e3,s1,s2,s3));
+		movimentacaoService.saveAll(Arrays.asList(bd.ent1,bd.ent2,bd.ent3,bd.sai1,bd.sai2,bd.sai3));
 	}
 	
 	//test find por tipo E
@@ -342,7 +314,7 @@ public class MovimentacaoServiceTest {
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, Arrays.asList(ff1.getId()),null, PageRequest.of(0, 8));
 		
 		assertThat(result.getNumberOfElements(), equalTo(1));
-		assertTrue(result.stream().anyMatch(m -> m.getId().equals(e2.getId())));
+		assertTrue(result.stream().anyMatch(m -> m.getId().equals(bd.ent2.getId())));
 	}
 	
 	//test find por produto e2 s2 S3 E3
@@ -351,11 +323,11 @@ public class MovimentacaoServiceTest {
 	public void testFindParameterizadoProduto() {
 		preparaCenarioBuscaParamiterizada();
 		
-		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, null,Arrays.asList(p4.getId(), p5.getId()), PageRequest.of(0, 8));
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, null,Arrays.asList(bd.p4.getId(), bd.p5.getId()), PageRequest.of(0, 8));
 		
 		assertThat(result.getNumberOfElements(), equalTo(4));
 		
-		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e2,s2,e3,s3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
+		assertTrue(result.stream().anyMatch(m -> Arrays.asList(bd.ent2,bd.sai2,bd.ent3,bd.sai3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
 
 	}
 	
@@ -365,10 +337,10 @@ public class MovimentacaoServiceTest {
 	public void testFindParameterizadoProdutoETipo() {
 		preparaCenarioBuscaParamiterizada();
 		
-		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.ENTRADA, null, null,Arrays.asList(p4.getId(), p5.getId()), PageRequest.of(0, 8));
+		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(TipoMovimentacao.ENTRADA, null, null,Arrays.asList(bd.p4.getId(), bd.p5.getId()), PageRequest.of(0, 8));
 		
 		assertThat(result.getNumberOfElements(), equalTo(2));
-		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e2,e3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
+		assertTrue(result.stream().anyMatch(m -> Arrays.asList(bd.ent2,bd.ent3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
 	}
 	//test find tipo e fornecedor
 	@Transactional
@@ -390,7 +362,7 @@ public class MovimentacaoServiceTest {
 		Page<MovimentacaoListDTO> result = movimentacaoService.findBy(null, null, new ArrayList<>(), new ArrayList<>(), PageRequest.of(0, 8));
 		
 		assertThat(result.getNumberOfElements(), equalTo(6));
-		assertTrue(result.stream().anyMatch(m -> Arrays.asList(e1,e2,e3,s1,s2,s3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
+		assertTrue(result.stream().anyMatch(m -> Arrays.asList(bd.ent1,bd.ent2,bd.ent3,bd.sai1,bd.sai2,bd.sai3).stream().anyMatch(i -> m.getId().equals(i.getId()))));
 	}
 	
 	@Transactional
@@ -419,8 +391,8 @@ public class MovimentacaoServiceTest {
 	@Test
 	public void testDelete() {
 		itemService.saveAll(produtos);
-		e1 = movimentacaoService.save(e1);
-		int id = e1.getId();
+		bd.ent1 = movimentacaoService.save(bd.ent1);
+		int id = bd.ent1.getId();
 		movimentacaoService.deleteById(id);
 		try {
 			movimentacaoService.findById(id);

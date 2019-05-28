@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.geral.service.PopulaBD;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Email;
 import com.ebm.pessoal.domain.Estado;
@@ -41,7 +42,7 @@ public class PessoaServiceTest extends DevApplicationTests {
 	@Autowired
 	private CidadeService cidadeService;
 	@Autowired
-	private PessoalPopulaBD bp;
+	private PopulaBD bp;
 
 	@Before
 	public void set_up() {

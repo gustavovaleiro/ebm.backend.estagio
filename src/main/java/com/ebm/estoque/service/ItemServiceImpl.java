@@ -67,8 +67,8 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	private void salvaAssociacao(Item item) {
-		item.setUnidade(unidadeService.save(item.getUnidade()));
-		item.setCategoria(categoriaService.save(item.getCategoria()));
+		item.setUnidade(unidadeService.findById(item.getUnidade().getId()));
+		item.setCategoria(categoriaService.findById(item.getCategoria().getId()));
 	}
 	
 

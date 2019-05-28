@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.service.PopulaBD;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
@@ -44,22 +45,17 @@ public class FornecedorServiceTest {
 	@Autowired
 	private CategoriaItemService categoriaService;
 	@Autowired
-	private PessoalPopulaBD bd;
+	private PopulaBD bd;
 
 	@Before
 	public void setUp() {
 
 		bd.instanciaFornecedores(true);
-
-	
-
 		categoriaService.saveAll(Arrays.asList(bd.cat1, bd.cat2, bd.cat3, bd.cat4));
 
-		pessoaService.saveAll(Arrays.asList(bd.pf1,bd.pj1));
+		pessoaService.saveAll(Arrays.asList(bd.pf1, bd.pj1));
 	}
 
-
-	
 	@Transactional
 	@Test
 	public void testInsercaoSemPessoaDevLancarException() {
@@ -73,6 +69,7 @@ public class FornecedorServiceTest {
 			assertThat(ex.getMessage(), equalTo(FornecedorService.DATAINTEGRITY_FORNECEDORWITHOUTPERSON));
 		}
 	}
+
 	@Transactional
 	@Test
 	public void testInsercaoComPessoaNaoPersistida() {
@@ -83,7 +80,7 @@ public class FornecedorServiceTest {
 		assertNotNull(bd.forf1.getPessoa().getId());
 		assertThat(bd.forf1.getId(), equalTo(bd.forf1.getPessoa().getId()));
 	}
-	
+
 	@Transactional
 	@Test
 	public void testInsercaoComPessoaJaPersistida() {
@@ -97,6 +94,7 @@ public class FornecedorServiceTest {
 		assertNotNull(bd.forf1.getPessoa().getId());
 		assertThat(bd.forf1.getId(), equalTo(bd.forf1.getPessoa().getId()));
 	}
+
 	@Transactional
 	@Test
 	public void testInsercaoFornecedorComPessoaQueJaPertenceAOutroFornecedor() {
@@ -111,6 +109,7 @@ public class FornecedorServiceTest {
 		}
 
 	}
+
 	@Transactional
 	@Test
 	public void testUpdateSemMudarPessoa() {
@@ -120,6 +119,7 @@ public class FornecedorServiceTest {
 
 		assertThat(bd.forf1.getPessoa().getNome(), equalTo("novonome"));
 	}
+
 	@Transactional
 	@Test
 	public void testUpdateMudarPessoa() {
@@ -133,6 +133,7 @@ public class FornecedorServiceTest {
 			assertThat(ex.getMessage(), equalTo(FornecedorService.DATAINTEGRITY_CHANCEPERSON));
 		}
 	}
+
 	@Transactional
 	@Test
 	public void testUpdateFornecedorComPessoaPertenceOutroFornecedor() {
@@ -147,6 +148,7 @@ public class FornecedorServiceTest {
 			assertThat(ex.getMessage(), equalTo(FornecedorService.DATAINTEGRITY_DUPLICATEPERSON));
 		}
 	}
+
 	@Transactional
 	@Test
 	public void findById() {
@@ -156,6 +158,7 @@ public class FornecedorServiceTest {
 
 		assertThat(bd.forf1.getId(), equalTo(result.getId()));
 	}
+
 	@Transactional
 	@Test
 	public void findByIdNull() {
@@ -165,6 +168,7 @@ public class FornecedorServiceTest {
 			assertThat(ex.getMessage(), equalTo(FornecedorService.DATAINTEGRITY_IDNULL));
 		}
 	}
+
 	@Transactional
 	@Test
 	public void findByIdONFEX() {
@@ -174,6 +178,7 @@ public class FornecedorServiceTest {
 			assertThat(ex.getMessage(), equalTo(FornecedorService.ONFE_BYID + 4));
 		}
 	}
+
 	@Transactional
 	@Test
 	public void testFindCnpj() {
@@ -185,6 +190,7 @@ public class FornecedorServiceTest {
 		assertThat(((PessoaJuridica) result.getPessoa()).getCnpj(),
 				equalTo(((PessoaJuridica) bd.forj1.getPessoa()).getCnpj()));
 	}
+
 	@Transactional
 	@Test
 	public void testFindCPF() {
@@ -195,6 +201,7 @@ public class FornecedorServiceTest {
 		assertNotNull(result.getId());
 		assertThat(((PessoaFisica) result.getPessoa()).getCpf(), equalTo(((PessoaFisica) result.getPessoa()).getCpf()));
 	}
+
 	@Transactional
 	@Test
 	public void testFindCPFEx() {
@@ -203,20 +210,16 @@ public class FornecedorServiceTest {
 			fornecedorService.findByCpfOrCnpj("05909561162");
 			fail();
 		} catch (ObjectNotFoundException ex) {
-			assertThat(ex.getMessage(),
-					equalTo(PessoaService.NOT_FOUND_DOCUMENT + "05909561162"));
+			assertThat(ex.getMessage(), equalTo(PessoaService.NOT_FOUND_DOCUMENT + "05909561162"));
 		}
 	}
-	
 
 	private void cenarioParaBuscaParamiterizada() {
-		
-		
 
-		pessoaService.saveAll(Arrays.asList(bd.pf2,bd.pf3, bd.pf4,bd.pf4, bd.pf5, bd.pj2,bd.pj3,bd.pj4));
-		
-		fornecedorService.saveAll(Arrays.asList(bd.forf1, bd.forf2, bd.forf3, bd.forf4, bd.forj1, bd.forj2, bd.forj3, bd.forj4, bd.forf5));
+		pessoaService.saveAll(Arrays.asList(bd.pf2, bd.pf3, bd.pf4, bd.pf4, bd.pf5, bd.pj2, bd.pj3, bd.pj4));
 
+		fornecedorService.saveAll(Arrays.asList(bd.forf1, bd.forf2, bd.forf3, bd.forf4, bd.forj1, bd.forj2, bd.forj3,
+				bd.forj4, bd.forf5));
 
 	}
 
@@ -344,7 +347,7 @@ public class FornecedorServiceTest {
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<FornecedorListDTO> result = fornecedorService.findBy(null, "JOAO", cats, pageRequest);
-	
+
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(1));
 		assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj3.getId()));
@@ -360,7 +363,7 @@ public class FornecedorServiceTest {
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<FornecedorListDTO> result = fornecedorService.findBy(TipoPessoa.PESSOA_FISICA, null, cats, pageRequest);
-	
+
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(1));
 		assertTrue(result.get().anyMatch(f -> f.getId() == bd.forf5.getId()));

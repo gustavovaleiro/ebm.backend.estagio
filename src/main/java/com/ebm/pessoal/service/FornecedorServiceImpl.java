@@ -49,7 +49,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 		fornecedor.setPessoa(pessoaService.findById(fornecedor.getPessoa().getId()));
 		Set<CategoriaItem> categorias = fornecedor.getCategorias();
 		
-		if(!categorias.isEmpty() && Optional.ofNullable(categorias).isPresent() )
+		if(Optional.ofNullable(categorias).isPresent() && !categorias.isEmpty()  )
 			fornecedor.setCategorias(categoriaService.findAllById(categorias.stream().map(CategoriaItem::getId).collect(Collectors.toSet())));
 	}
 
