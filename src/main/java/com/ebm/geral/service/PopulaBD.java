@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.Utils;
 import com.ebm.estoque.domain.CategoriaItem;
@@ -40,7 +39,7 @@ import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 @Service
 public class PopulaBD {
-	
+
 	public Estado estadoGO;
 	public Cidade goiania;
 	public Endereco endereco1;
@@ -114,7 +113,7 @@ public class PopulaBD {
 	private FuncionarioService funcionarioS;
 	@Autowired
 	private CargoService cargoS;
-	
+
 	@Autowired
 	private UnidadeService unidadeS;
 	@Autowired
@@ -123,9 +122,7 @@ public class PopulaBD {
 	private ItemService itemS;
 	@Autowired
 	private MovimentacaoService movimentacaoS;
-	
-	
-	@Transactional
+
 	public void populaBD() {
 		instanciaPessoa();
 		associaPessoa();
@@ -133,51 +130,61 @@ public class PopulaBD {
 		instanciaCategorias();
 		instanciaFornecedores(false);
 		instanciaFuncionario(false);
-		
-		pessoaS.saveAll(Arrays.asList(pf1,pf2,pf3,pf4,pj1,pj2,pj3,pj4));
-		clientS.saveAll(Arrays.asList(cf1,cf2,cf3,cf4,cj1,cj2,cj3,cj4));
-		categoriaS.saveAll(Arrays.asList(cat1,cat2,cat3,cat4));
-		fornecedorS.saveAll(Arrays.asList(forf1,forf2,forf3,forf4,forj1,forj2,forj3,forj4 ));
+
+		pessoaS.saveAll(Arrays.asList(pf1, pf2, pf3, pf4, pj1, pj2, pj3, pj4));
+		clientS.saveAll(Arrays.asList(cf1, cf2, cf3, cf4, cj1, cj2, cj3, cj4));
+		categoriaS.saveAll(Arrays.asList(cat1, cat2, cat3, cat4));
+		fornecedorS.saveAll(Arrays.asList(forf1, forf2, forf3, forf4, forj1, forj2, forj3, forj4));
 		cargoS.save(cAdministrador);
 		cargoS.save(cDesenvolvedor);
-		funcionarioS.saveAll(Arrays.asList(funf1,funf2,funf3,funf4,funj1,funj2,funj3,funj4));
-	
+		funcionarioS.saveAll(Arrays.asList(funf1, funf2, funf3, funf4, funj1, funj2, funj3, funj4));
 		
+		instanciaItem(false);
+		instanciaMovimentacao(false);
+		unidadeS.save(un1);
+		unidadeS.save(un2);
+
+		itemS.saveAll(Arrays.asList(s1, s2, s3, s4, p1, p2, p3, p4, p5, p6, p7));
+		movimentacaoS.saveAll(Arrays.asList(ent1, ent2, ent3, sai1, sai2, sai3));
 	}
-	public void instanciaPessoa(){	
+
+	public void instanciaPessoa() {
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
 		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678",
-				"Endereco residencial", true);
+				true, "Endereco residencial");
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30),
 				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
 		pj1 = new PessoaJuridica(null, "Lanches", "99787331000180", "Lanches ME", "inscricaoEstadual1",
 				"inscricaoMunicipal1");
-	    pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30),
+		pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30),
 				new RG("3234", "SSP", estadoGO), "Brasileira", goiania);
-	    pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30),
+		pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30),
 				new RG("54345", "SSP", estadoGO), "Brasileira", goiania);
-	    pf4 = new PessoaFisica(null, "Maria Carvalho", "58522943060", LocalDate.of(1990, 1, 30),
+		pf4 = new PessoaFisica(null, "Maria Carvalho", "58522943060", LocalDate.of(1990, 1, 30),
 				new RG("4523", "SSP", estadoGO), "Brasileira", goiania);
-	    pj2 = new PessoaJuridica(null, "Juniscleids ME", "18038642000145", "Juniscleids ME",
-				"inscricaoEstadual2", "inscricaoMunicipal2");
-	    pj3 = new PessoaJuridica(null, "Joao Dev", "46530490000139", "Profissionais ME",
-				"inscricaoEstadual3", "inscricaoEstadual3");
-	    pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME",
-				"inscricaoEstadual4", "inscricaoMunicipal4");
-		
-	     pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30),
-				new RG("34", "ssp", estadoGO), "Brasileira", goiania);
+		pj2 = new PessoaJuridica(null, "Juniscleids ME", "18038642000145", "Juniscleids ME", "inscricaoEstadual2",
+				"inscricaoMunicipal2");
+		pj3 = new PessoaJuridica(null, "Joao Dev", "46530490000139", "Profissionais ME", "inscricaoEstadual3",
+				"inscricaoEstadual3");
+		pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4",
+				"inscricaoMunicipal4");
+
+		pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30), new RG("34", "ssp", estadoGO),
+				"Brasileira", goiania);
+
 	}
+
 	public void associaPessoa() {
-		Arrays.asList(pf1,pj1,pf2, pf3, pf4, pf5, pj2, pj3, pj4).forEach(p -> {
+		Arrays.asList(pf1, pj1, pf2, pf3, pf4, pf5, pj2, pj3, pj4).forEach(p -> {
 			p.getEndereco().add(endereco1);
 			p.getTelefone().add(Utils.getRandomTelefone(true));
-			p.getEmail().add(Utils.getRandomEmail(p,true));
+			p.getEmail().add(Utils.getRandomEmail(p, true));
 		});
 	}
+
 	public void instanciaFuncionario(boolean instanciaAssocia) {
-		if(instanciaAssocia) {
+		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
 		}
@@ -188,7 +195,7 @@ public class PopulaBD {
 				cAdministrador.getSalarioBase());
 		funf2 = new Funcionario(null, pf2, "dev-02", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
-	    funf3 = new Funcionario(null, pf3, "dev-03", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
+		funf3 = new Funcionario(null, pf3, "dev-03", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
 		funf4 = new Funcionario(null, pf4, "dev-04", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
@@ -200,39 +207,41 @@ public class PopulaBD {
 		funj4 = new Funcionario(null, pj4, "adm-04", cAdministrador, LocalDate.now().minusYears(1), 0.,
 				cAdministrador.getSalarioBase());
 	}
+
 	private void instanciaCargos() {
 		cDesenvolvedor = new Cargo(null, "Desenvolvedor", BigDecimal.valueOf(2000), "rsats");
 		cAdministrador = new Cargo(null, "Administrador", BigDecimal.valueOf(5000), "tes");
 	}
-	
+
 	public void instanciaCliente(boolean instanciaAssocia) {
-		if(instanciaAssocia) {
+		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
 		}
 		cf1 = new Cliente(null, pf1, BigDecimal.valueOf(3000), "Cliente tal");
 		cj1 = new Cliente(null, pj1, BigDecimal.valueOf(20000), "Empresa tal, cliente desde 1231");
-		 cf2 = new Cliente(null, pf2, BigDecimal.valueOf(1233), "12312");
-		 cf3 = new Cliente(null, pf3, BigDecimal.valueOf(1233), "12312");
-		 cf4 = new Cliente(null, pf4, BigDecimal.valueOf(2412), "descricao");
-		 cj2 = new Cliente(null, pj2, new BigDecimal(2133), "sdaf");
-		 cj3 = new Cliente(null, pj3, BigDecimal.valueOf(1233), "12312");
-		 cj4 = new Cliente(null, pj4, BigDecimal.valueOf(1233), "12312");
+		cf2 = new Cliente(null, pf2, BigDecimal.valueOf(1233), "12312");
+		cf3 = new Cliente(null, pf3, BigDecimal.valueOf(1233), "12312");
+		cf4 = new Cliente(null, pf4, BigDecimal.valueOf(2412), "descricao");
+		cj2 = new Cliente(null, pj2, new BigDecimal(2133), "sdaf");
+		cj3 = new Cliente(null, pj3, BigDecimal.valueOf(1233), "12312");
+		cj4 = new Cliente(null, pj4, BigDecimal.valueOf(1233), "12312");
 	}
-	
+
 	public void instanciaCategorias() {
 		cat1 = new CategoriaItem(null, "Informatica");
 		cat3 = new CategoriaItem(null, "Cama");
 		cat2 = new CategoriaItem(null, "Eletrodomesticos");
 		cat4 = new CategoriaItem(null, "Banho");
 	}
+
 	public void instanciaFornecedores(boolean instanciaAssocia) {
-		if(instanciaAssocia) {
+		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
 			instanciaCategorias();
 		}
-		
+
 		forf1 = new Fornecedor(null, pf1);
 		forf1.getCategorias().addAll(new HashSet<>(Arrays.asList(cat3, cat4)));
 		forj1 = new Fornecedor(null, pj1);
@@ -247,58 +256,66 @@ public class PopulaBD {
 		Arrays.asList(forf3, forf4).forEach(f -> f.getCategorias().addAll(Arrays.asList(cat3)));
 		Arrays.asList(forj3, forj4, forf5).forEach(f -> f.getCategorias().addAll(Arrays.asList(cat1)));
 	}
+
 	public void instanciaItem(boolean instanciaAssocia) {
-		if(instanciaAssocia) {
+		if (instanciaAssocia) {
 			instanciaCategorias();
 		}
-		
+
 		un1 = new Unidade(null, "un", "Unidade");
 		un2 = new Unidade(null, "hrs", "Horas");
-		
+
 		p1 = new Produto(null, "Computador", "Computador i5 8gbRam", un1, cat1, "COM01", BigDecimal.valueOf(100), null,
 				0.3, 0.01, 5, 0, 10);
 		s1 = new Servico(null, "Limpeza Cooler", "Limpesa cooler", un2, cat2, "LIMP02", BigDecimal.valueOf(100),
 				BigDecimal.valueOf(20), 0.5, 0.02);
-		
-	
+
 		p2 = Produto.of("Teclado Mecanico RGB", un1, cat3);
 		p3 = Produto.of("Teclado membrana", un1, cat3);
 		p4 = Produto.of("Computador i3  4gbram", un1, cat3);
 		p5 = Produto.of("Mouse", un1, cat1);
 		p6 = Produto.of("Teclado", un1, cat1);
 		p7 = Produto.of("Processador i5", un1, cat1);
-		
+
 		s2 = Servico.of("Troca de fonte", un1, cat2);
 		s3 = Servico.of("Montagem Computador", un2, cat1);
 		s4 = Servico.of("Formatacao", un1, cat2);
 	}
-	
+
 	public void instanciaMovimentacao(boolean instanciaAssocia) {
-		if(instanciaAssocia) {
+		if (instanciaAssocia) {
 			instanciaItem(true);
 		}
-		
-		 ent1 = Movimentacao.novaEntrada();
-		 sai1  = Movimentacao.novaSaida();
-		 ent2 = Movimentacao.novaEntrada();
-		 ent3 = Movimentacao.novaEntrada();
-		 sai2 = Movimentacao.novaSaida();
-		 sai3 = Movimentacao.novaSaida();
-		 Arrays.asList(ent1,sai1).forEach( m -> m.getProdutosMovimentacao().addAll( Arrays.asList(p1,p2,p3).stream()
-				 .map( p -> new ProdutoMovimentacao( new ProdutoMovimentacaoPK((Produto) p, ent1), BigDecimal.valueOf(10), BigDecimal.valueOf(100), 5)).collect(Collectors.toSet())  ));
-		 
-		 Arrays.asList(ent2,ent3,sai2,sai3).forEach(m ->m.getProdutosMovimentacao()
-			.add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p4, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 10))
-		); 
-		
-		Arrays.asList(ent2,sai2).forEach(m -> { 
-			m.getProdutosMovimentacao().add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5));
-		}); 
-		
-		Arrays.asList(ent3,sai3).forEach(m -> m.getProdutosMovimentacao()
-				.addAll( Arrays.asList(p6,p7).stream().map( p -> new ProdutoMovimentacao
-						(new ProdutoMovimentacaoPK(((Produto)p), m), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4)).collect(Collectors.toSet())));
+
+		ent1 = Movimentacao.novaEntrada();
+		sai1 = Movimentacao.novaSaida();
+		ent2 = Movimentacao.novaEntrada();
+		ent3 = Movimentacao.novaEntrada();
+		sai2 = Movimentacao.novaSaida();
+		sai3 = Movimentacao.novaSaida();
+		Arrays.asList(ent1, sai1)
+				.forEach(m -> m.getProdutoMovimentacao()
+						.addAll(Arrays.asList(p1, p2, p3).stream()
+								.map(p -> new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) p, ent1),
+										BigDecimal.valueOf(10), BigDecimal.valueOf(100), 5))
+								.collect(Collectors.toSet())));
+
+		Arrays.asList(ent2, ent3, sai2, sai3)
+				.forEach(m -> m.getProdutoMovimentacao().add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p4, m),
+						BigDecimal.valueOf(0), BigDecimal.valueOf(10), 10)));
+
+		Arrays.asList(ent2, sai2).forEach(m -> {
+			m.getProdutoMovimentacao().add(new ProdutoMovimentacao(new ProdutoMovimentacaoPK(p5, m),
+					BigDecimal.valueOf(0), BigDecimal.valueOf(10), 5));
+		});
+
+		Arrays.asList(ent3, sai3)
+				.forEach(m -> m.getProdutoMovimentacao()
+						.addAll(Arrays.asList(p6, p7).stream()
+								.map(p -> new ProdutoMovimentacao(new ProdutoMovimentacaoPK(((Produto) p), m),
+										BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4))
+								.collect(Collectors.toSet())));
 
 	}
-	
+
 }

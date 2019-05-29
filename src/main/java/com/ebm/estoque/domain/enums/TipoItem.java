@@ -5,6 +5,8 @@ import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Servico;
 import com.ebm.exceptions.DataIntegrityException;
 
+import lombok.Getter;
+@Getter
 public enum TipoItem {
 	PRODUTO(1, "Produto"),
 	SERVICO(2,"Servico");
@@ -14,12 +16,6 @@ public enum TipoItem {
 	TipoItem(int id, String descricao){
 		this.id = id;
 		this.descricao = descricao;
-	}
-	public int getId() {
-		return id;
-	}
-	public String getDescricao() {
-		return descricao;
 	}
 	public Item getInstance() {
 		if(this.id == 1)

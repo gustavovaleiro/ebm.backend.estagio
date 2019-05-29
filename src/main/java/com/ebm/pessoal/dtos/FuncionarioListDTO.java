@@ -5,6 +5,14 @@ import java.io.Serializable;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.TipoPessoa;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FuncionarioListDTO implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -16,64 +24,9 @@ public class FuncionarioListDTO implements Serializable{
 	private String cargo;
 	private String telefone;
 	private String email;
-	
-	public FuncionarioListDTO() {}
-	public FuncionarioListDTO(Integer id, String nome, TipoPessoa tipo, String matricula, String cargo, String telefone, String email) {
-		this.id=id;
-		this.nome=nome;
-		this.tipo = tipo.getDescricao();
-		this.matricula=matricula;
-		this.cargo = cargo;
-		this.telefone = telefone;
-		this.email = email;
-	}
 
 	public FuncionarioListDTO(Funcionario f ) {
-		this(f.getId(), f.getPessoa().getNome(), f.getPessoa().getTipo(), f.getMatricula(), f.getCargo().getNomeCargo(), f.getPessoa().getTelefonePrincipal().toString(), f.getPessoa().getEmailPrincipal().toString());
-	}
-	
-
-	public String getMatricula() {
-		return matricula;
-	}
-	public void setMatricula(String matricula) {
-		this.matricula = matricula;
-	}
-	public String getCargo() {
-		return cargo;
-	}
-	public void setCargo(String cargo) {
-		this.cargo = cargo;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public String getTipo() {
-		return tipo;
-	}
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-	public String getTelefone() {
-		return telefone;
-	}
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
+		this(f.getId(), f.getPessoa().getNome(), f.getPessoa().getTipo().getDescricao(), f.getMatricula(), f.getCargo().getNomeCargo(), f.getPessoa().getTelefonePrincipal().toString(), f.getPessoa().getEmailPrincipal().toString());
 	}
 	
 	

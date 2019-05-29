@@ -20,7 +20,7 @@ import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Estado;
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class EstadoServiceTest {

@@ -20,7 +20,18 @@ import javax.persistence.Transient;
 
 import com.ebm.security.Usuario;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name  = "_tipo", discriminatorType= DiscriminatorType.STRING, length=1)
 public abstract class Item implements Serializable {
@@ -29,6 +40,7 @@ public abstract class Item implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Integer id;
 	
 	@Column(nullable = false, length = 140)
@@ -60,10 +72,6 @@ public abstract class Item implements Serializable {
 	private Usuario ultimaModificacao;
 	protected String tipo;
 	
-	public Item() {}
-
-
-	
 	public Item(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria, String codInterno,
 			BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro, Double comissaoVenda) {
 		super();
@@ -79,114 +87,7 @@ public abstract class Item implements Serializable {
 		this.comissaoVenda = comissaoVenda;
 
 	}
-	
 
-	public String getTipo() {
-		return tipo;
-	}
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public Unidade getUnidade() {
-		return unidade;
-	}
-
-	public void setUnidade(Unidade unidade) {
-		this.unidade = unidade;
-	}
-
-	public CategoriaItem getCategoria() {
-		return categoria;
-	}
-
-	public void setCategoria(CategoriaItem categoria) {
-		this.categoria = categoria;
-	}
-
-	public String getCodInterno() {
-		return codInterno;
-	}
-
-	public void setCodInterno(String codInterno) {
-		this.codInterno = codInterno;
-	}
-
-	public BigDecimal getValorCompraMedio() {
-		return valorCompraMedio;
-	}
-
-	public void setValorCompraMedio(BigDecimal valorCompraMedio) {
-		this.valorCompraMedio = valorCompraMedio;
-	}
-
-	public BigDecimal getOutrasDespesa() {
-		return outrasDespesa;
-	}
-
-	public void setOutrasDespesa(BigDecimal outrasDespesa) {
-		this.outrasDespesa = outrasDespesa;
-	}
-
-	public Double getMargemLucro() {
-		return margemLucro;
-	}
-
-	public void setMargemLucro(Double margemLucro) {
-		this.margemLucro = margemLucro;
-	}
-
-	public LocalDateTime getDataCadastro() {
-		return dataCadastro;
-	}
-
-	public void setDataCadastro(LocalDateTime dataCadastro) {
-		this.dataCadastro = dataCadastro;
-	}
-
-	public Usuario getUsuarioCadastro() {
-		return usuarioCadastro;
-	}
-
-	public void setUsuarioCadastro(Usuario usuarioCadastro) {
-		this.usuarioCadastro = usuarioCadastro;
-	}
-
-	public LocalDateTime getDataUltimaModificacao() {
-		return dataUltimaModificacao;
-	}
-
-	public void setDataUltimaModificacao(LocalDateTime dataUltimaModificacao) {
-		this.dataUltimaModificacao = dataUltimaModificacao;
-	}
-
-	public Usuario getUltimaModificacao() {
-		return ultimaModificacao;
-	}
-
-	public void setUltimaModificacao(Usuario ultimaModificacao) {
-		this.ultimaModificacao = ultimaModificacao;
-	}
 	@Transient
 	public BigDecimal getPrecoVenda() {
 		return (getCustoTotal()).multiply(BigDecimal.valueOf(this.margemLucro + 1d));
@@ -203,39 +104,9 @@ public abstract class Item implements Serializable {
 	public Double getComissaoVenda() {
 		return comissaoVenda;
 	}
-
-	public void setComissaoVenda(Double comissaoVenda) {
-		this.comissaoVenda = comissaoVenda;
-	}
 	@Transient
 	public BigDecimal getCustoTotal() {
 		return this.valorCompraMedio.add(Optional.ofNullable(this.outrasDespesa).orElse(BigDecimal.valueOf(0)));
 	}
-	
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Item other = (Item) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-	
 }

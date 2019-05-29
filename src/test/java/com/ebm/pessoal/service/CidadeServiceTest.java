@@ -22,7 +22,7 @@ import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.service.CidadeService;
 import com.ebm.pessoal.service.EstadoService;
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class CidadeServiceTest {
@@ -65,7 +65,8 @@ public class CidadeServiceTest {
 	public void salvaCidadeNovaComEstadoEditado() {
 		
 		estadoService.save(estado);
-		estado.setUF("MT").setNome("Mato Grosso");
+		estado.setUF("MT");
+		estado.setNome("Mato Grosso");
 	
 	    cidadeService.save(cidade);
 		

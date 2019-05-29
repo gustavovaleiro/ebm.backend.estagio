@@ -31,7 +31,7 @@ import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.ClienteListDTO;
 
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ClienteServiceTest {

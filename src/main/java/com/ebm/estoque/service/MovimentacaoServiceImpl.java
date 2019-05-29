@@ -64,7 +64,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 
 		if (!Optional.ofNullable(movimentacao.getDataMovimentacao()).isPresent())
 			movimentacao.setDataMovimentacao(LocalDateTime.now());
-		for (ProdutoMovimentacao pM : movimentacao.getProdutosMovimentacao()) {
+		for (ProdutoMovimentacao pM : movimentacao.getProdutoMovimentacao()) {
 			pM.setMovimentacao(movimentacao);
 			
 
@@ -85,14 +85,14 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 		}
 
 		
-		movimentacao.setProdutosMovimentacao(new HashSet<ProdutoMovimentacao>(
-				pMovimentacaoRepository.saveAll(movimentacao.getProdutosMovimentacao())));
+		movimentacao.setProdutoMovimentacao(new HashSet<ProdutoMovimentacao>(
+				pMovimentacaoRepository.saveAll(movimentacao.getProdutoMovimentacao())));
 
 		return movimentacao;
 	}
 
 	private void recuperaProdutosFrom(Movimentacao movimentacao) {
-		movimentacao.getProdutosMovimentacao().stream().forEach(pM ->{
+		movimentacao.getProdutoMovimentacao().stream().forEach(pM ->{
 			pM.setProduto((Produto) itemService.findById(pM.getProduto().getId()));
 		});
 		
@@ -110,7 +110,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 	}
 
 	private void garanteIntegridade(Movimentacao movimentacao) {
-		if (movimentacao.getProdutosMovimentacao() == null || movimentacao.getProdutosMovimentacao().size() == 0)
+		if (movimentacao.getProdutoMovimentacao() == null || movimentacao.getProdutoMovimentacao().size() == 0)
 			throw new DataIntegrityException(DATAINTEGRITY_NOPRODUTOS);
 		if (movimentacao.getTipoMovimentacao() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_NOTIPO);

@@ -32,7 +32,7 @@ import com.ebm.pessoal.domain.Telefone;
 
 import dev.gustavovalerio.DevApplicationTests;
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class PessoaServiceTest extends DevApplicationTests {
@@ -48,7 +48,6 @@ public class PessoaServiceTest extends DevApplicationTests {
 	public void set_up() {
 		bp.instanciaPessoa();
 		bp.associaPessoa();
-
 	}
 
 	// teste de inserção com endereco, telefone e email, deve passar

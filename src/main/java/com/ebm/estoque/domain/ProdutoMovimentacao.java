@@ -11,7 +11,16 @@ import javax.persistence.Transient;
 import com.ebm.estoque.domain.interfaces.ProdutoVendas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProdutoMovimentacao implements ProdutoVendas {
 	@EmbeddedId
 	private ProdutoMovimentacaoPK id = new ProdutoMovimentacaoPK();
@@ -22,17 +31,6 @@ public class ProdutoMovimentacao implements ProdutoVendas {
 	@Column(nullable = false)
 	private Integer quantidade;
 
-	public ProdutoMovimentacao() {
-	}
-
-	public ProdutoMovimentacao(ProdutoMovimentacaoPK id, BigDecimal desconto, BigDecimal valorInicial,
-			Integer quantidade) {
-		super();
-		this.id = id;
-		this.desconto = desconto;
-		this.valorInicialVenda = valorInicial;
-		this.quantidade = quantidade;
-	}
 
 	public Produto getProduto() {
 		return this.id.getProduto();
@@ -50,33 +48,13 @@ public class ProdutoMovimentacao implements ProdutoVendas {
 		this.id.setMovimentacao(movimentacao);
 	}
 
-	public BigDecimal getDesconto() {
-		return desconto;
-	}
 
-	public void setDesconto(BigDecimal desconto) {
-		this.desconto = desconto;
-	}
 
 	public Double getComissao() {
 		return Optional.of(this.getProduto().getComissaoVenda()).orElse(0d);
 	}
 
-	public BigDecimal getValorInicial() {
-		return valorInicialVenda;
-	}
 
-	public void setValorInicial(BigDecimal valorInicial) {
-		this.valorInicialVenda = valorInicial;
-	}
-
-	public Integer getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
-	}
 
 	@Transient
 	@JsonIgnore

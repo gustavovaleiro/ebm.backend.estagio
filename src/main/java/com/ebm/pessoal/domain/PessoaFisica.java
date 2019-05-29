@@ -1,6 +1,8 @@
 package com.ebm.pessoal.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -8,9 +10,17 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
+import com.ebm.security.Usuario;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
 @PrimaryKeyJoinColumn(name ="pessoa_id")
 @JsonTypeName("PessoaFisica")
 public class PessoaFisica extends Pessoa {
@@ -37,46 +47,6 @@ public class PessoaFisica extends Pessoa {
 		this.dataNascimento = dataNascimento;
 		this.rG = rG;
 		this.nacionalidade = nacionalidade;
-		this.naturalidade = naturalidade;
-	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public LocalDate getDataNascimento() {
-		return dataNascimento;
-	}
-
-	public void setDataNascimento(LocalDate dataNascimento) {
-		this.dataNascimento = dataNascimento;
-	}
-
-	public RG getRG() {
-		return rG;
-	}
-
-	public void setRG(RG rG) {
-		this.rG = rG;
-	}
-
-	public String getNacionalidade() {
-		return nacionalidade;
-	}
-
-	public void setNacionalidade(String nacionalidade) {
-		this.nacionalidade = nacionalidade;
-	}
-
-	public Cidade getNaturalidade() {
-		return naturalidade;
-	}
-
-	public void setNaturalidade(Cidade naturalidade) {
 		this.naturalidade = naturalidade;
 	}
 	

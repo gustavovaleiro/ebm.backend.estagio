@@ -50,7 +50,7 @@ import com.ebm.pessoal.service.PessoaService;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class MovimentacaoServiceTest {
@@ -95,7 +95,7 @@ public class MovimentacaoServiceTest {
 		Estado estadoGO = new Estado(null, "GO", "Goias");
 		Cidade goiania = new Cidade(null, "Goiania", estadoGO);
 		Endereco endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678",
-				"Endereco residencial", true);
+				true,"Endereco residencial");
 		PessoaFisica pf1 = new PessoaFisica(null, "Joao Da Silva", "02142627668", LocalDate.of(1990, 4, 30),
 				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
 		
@@ -123,10 +123,10 @@ public class MovimentacaoServiceTest {
 		
 		assertNotNull(bd.ent1.getId());
 		assertThat(bd.ent1.getTipoMovimentacao(), equalTo(TipoMovimentacao.ENTRADA));
-		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == bd.ent1.getId()));
-		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
-		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
-		assertTrue(bd.ent1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
+		assertTrue(bd.ent1.getProdutoMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == bd.ent1.getId()));
+		assertTrue(bd.ent1.getProdutoMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
+		assertTrue(bd.ent1.getProdutoMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
+		assertTrue(bd.ent1.getProdutoMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
 		assertTrue(result.stream().allMatch( p ->  ((Produto) p).getEstoqueAtual().equals(5)));
 		
 	}
@@ -162,10 +162,10 @@ public class MovimentacaoServiceTest {
 		
 		assertNotNull(bd.sai1.getId());
 		assertThat(bd.sai1.getTipoMovimentacao(), equalTo(TipoMovimentacao.SAIDA));
-		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == bd.sai1.getId()));
-		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
-		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
-		assertTrue(bd.sai1.getProdutosMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
+		assertTrue(bd.sai1.getProdutoMovimentacao().stream().allMatch(pe -> pe.getMovimentacao().getId() == bd.sai1.getId()));
+		assertTrue(bd.sai1.getProdutoMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getId() == p.getProduto().getId())));
+		assertTrue(bd.sai1.getProdutoMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getNome() == p.getProduto().getNome())));
+		assertTrue(bd.sai1.getProdutoMovimentacao().stream().allMatch( p -> produtos.stream().anyMatch( pS -> pS.getUnidade().getNome() == p.getProduto().getUnidade().getNome())));
 		assertTrue(result.stream().allMatch( p ->  ((Produto) p).getEstoqueAtual().equals(-5)));
 		
 	}
@@ -175,7 +175,7 @@ public class MovimentacaoServiceTest {
 	public void testeSalvarSemProduto() {
 		produtos = (List<Item>) itemService.saveAll(produtos);
 
-		bd.sai1.getProdutosMovimentacao().clear();
+		bd.sai1.getProdutoMovimentacao().clear();
 		
 		try {
 			bd.sai1 = movimentacaoService.save(bd.sai1);
@@ -193,12 +193,12 @@ public class MovimentacaoServiceTest {
 		produtos = (List<Item>) itemService.saveAll(produtos);
 		
 		Movimentacao en = Movimentacao.novaEntrada(); 
-		en.getProdutosMovimentacao().add( new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) produtos.get(0), en), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4));
+		en.getProdutoMovimentacao().add( new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) produtos.get(0), en), BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4));
 		movimentacaoService.save(en);
 		int estoqPosEntrada = ((Produto) itemService.findById(produtos.get(0).getId())).getEstoqueAtual();
 	
 		Movimentacao sa = Movimentacao.novaSaida();
-		sa.getProdutosMovimentacao().add(  new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) produtos.get(0), en), BigDecimal.valueOf(0), BigDecimal.valueOf(10),2));
+		sa.getProdutoMovimentacao().add(  new ProdutoMovimentacao(new ProdutoMovimentacaoPK((Produto) produtos.get(0), en), BigDecimal.valueOf(0), BigDecimal.valueOf(10),2));
 		movimentacaoService.save(sa);
 		
 		

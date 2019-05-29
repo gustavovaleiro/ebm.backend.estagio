@@ -32,7 +32,7 @@ import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FuncionarioListDTO;
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class FuncionarioServiceTest {

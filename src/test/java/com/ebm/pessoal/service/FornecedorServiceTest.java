@@ -33,7 +33,7 @@ import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FornecedorListDTO;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class FornecedorServiceTest {

@@ -22,7 +22,7 @@ import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class EnderecoServiceTest {
@@ -42,7 +42,7 @@ public class EnderecoServiceTest {
 		enderecoService.deleteAll();
 		cidadeService.deleteAll(true);
 		cidade = new Cidade(null, "Cuiaba", new Estado(null, "MT", "Mato Grosso"));
-		endereco = new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", "Comercial", true);
+		endereco = new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", true, "Comercial");
 		
 	}
 	
@@ -101,8 +101,8 @@ public class EnderecoServiceTest {
 		String tipo3 = "Residencial";
 		
 		enderecoService.save(endereco);
-		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", tipo2,true));
-		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", tipo3,true));
+		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", true,tipo2));
+		enderecoService.save(new Endereco(null, "Rua tal", "Bairro", cidade, "123", "test", "32432432", true,tipo3));
 	
 		List<String> tipos = enderecoService.getTipoEndereco();
 		
