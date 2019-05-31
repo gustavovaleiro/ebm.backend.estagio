@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Pessoa;
@@ -23,7 +24,7 @@ public Telefone save(Telefone telefone) {
 			if(!result.getId().equals(telefone.getId()))
 				throw new DataIntegrityException("O telefone: " + telefone.toString() + " ja existe.");		
 		}catch(ObjectNotFoundException e) {}
-		
+		Utils.audita(telefone.getHistorico());
 		return telefoneRepository.save(telefone);
 	}
 

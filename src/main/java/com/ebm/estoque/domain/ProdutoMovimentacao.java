@@ -8,7 +8,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import com.ebm.estoque.domain.interfaces.ProdutoVendas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -21,16 +20,15 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProdutoMovimentacao implements ProdutoVendas {
+public class ProdutoMovimentacao  {
 	@EmbeddedId
 	private ProdutoMovimentacaoPK id = new ProdutoMovimentacaoPK();
 
 	private BigDecimal desconto;
 	@Column(nullable = false)
-	private BigDecimal valorInicialVenda;
+	private BigDecimal valor;
 	@Column(nullable = false)
 	private Integer quantidade;
-
 
 	public Produto getProduto() {
 		return this.id.getProduto();
@@ -75,7 +73,7 @@ public class ProdutoMovimentacao implements ProdutoVendas {
 	@Transient
 	@JsonIgnore
 	public BigDecimal getValorVenda() {
-		return this.valueOrZero(this.valorInicialVenda).subtract(valueOrZero(this.desconto));
+		return this.valueOrZero(this.valor).subtract(valueOrZero(this.desconto));
 	}
 
 	@Transient
@@ -93,7 +91,7 @@ public class ProdutoMovimentacao implements ProdutoVendas {
 	@Transient
 	@JsonIgnore
 	public BigDecimal getValorTotalSemDesconto() {
-		return valueOrZero(this.valorInicialVenda).multiply(quantidadeOrZero());
+		return valueOrZero(this.valor).multiply(quantidadeOrZero());
 	}
 
 	@Transient

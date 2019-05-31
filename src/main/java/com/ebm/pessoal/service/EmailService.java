@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Email;
@@ -28,7 +29,7 @@ public class EmailService {
 			if(!result.getId().equals(email.getId()))
 				throw new DataIntegrityException("O email: "+ email.getEmail() + " ja existe.");		
 		}catch(ObjectNotFoundException e) {}
-		
+		Utils.audita(email.getHistorico());
 		return emailRepository.save(email);
 	}
 

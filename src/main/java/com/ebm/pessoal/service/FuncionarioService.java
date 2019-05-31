@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cargo;
@@ -52,6 +53,7 @@ public class FuncionarioService {
 	public Funcionario save(Funcionario funcionario) {
 		garantaIntegridade(funcionario);
 		saveAssociations(funcionario);
+		Utils.audita(funcionario.getHistorico());
 		return funcionarioRepository.save(funcionario);
 	}
 

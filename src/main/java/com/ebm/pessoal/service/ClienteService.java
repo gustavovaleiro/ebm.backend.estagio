@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cliente;
@@ -41,9 +42,10 @@ public class ClienteService {
 
 	@Transactional
 	public Cliente save(Cliente cliente) {
-
+		
 		garantaIntegridade(cliente);
 		saveAssociations(cliente);
+		Utils.audita(cliente.getHistorico());
 		return clienteRepository.save(cliente);
 	}
 

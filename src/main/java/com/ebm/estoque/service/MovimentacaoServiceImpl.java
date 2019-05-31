@@ -55,11 +55,11 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 	@Override
 	public Movimentacao save(Movimentacao movimentacao) {
 		garanteIntegridade(movimentacao);
-
-		if (movimentacao.getId() == null)
-			movimentacao.setDataCadastro(LocalDateTime.now());
+		
 		recuperaFornecedorFrom(movimentacao);
 		recuperaProdutosFrom(movimentacao);
+		
+		Utils.audita(movimentacao.getHistorico());
 		movimentacao = movimentacaoRepository.save(movimentacao);
 
 		if (!Optional.ofNullable(movimentacao.getDataMovimentacao()).isPresent())

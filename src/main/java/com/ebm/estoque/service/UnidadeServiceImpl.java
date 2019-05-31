@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.repository.UnidadeRepository;
 import com.ebm.estoque.service.interfaces.ItemService;
@@ -24,6 +25,7 @@ public class UnidadeServiceImpl implements UnidadeService{
 	public Unidade save(Unidade unidade) {
 		garantaIntegridade(unidade);
 		saveAssociacoes(unidade);
+		Utils.audita(unidade.getHistorico());
 		return unidadeRepository.save(unidade);
 	}
 	

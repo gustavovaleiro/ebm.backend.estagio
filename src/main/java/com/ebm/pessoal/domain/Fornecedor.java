@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,7 +40,8 @@ public class Fornecedor implements Serializable {
 
 	@ManyToMany
 	private Set<CategoriaItem> categorias = new HashSet<CategoriaItem>();
-
+	@Embedded
+	private HistoricoCadastral historico= new HistoricoCadastral();
 	public Fornecedor(Integer id, Pessoa pessoa) {
 		this.id = id;
 		this.pessoa = pessoa;

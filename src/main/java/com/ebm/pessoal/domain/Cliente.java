@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cliente implements Serializable{
 
@@ -42,5 +41,13 @@ public class Cliente implements Serializable{
 
 	@Column(length = 240)
 	private String descricao;
+	@Embedded
+	private HistoricoCadastral historico= new HistoricoCadastral();
+	public Cliente(Integer id, Pessoa pessoa, BigDecimal limite_compra, String descricao) {
+		this.id = id;
+		this.pessoa = pessoa;
+		this.limite_compra = limite_compra;
+		this.descricao = descricao;
+	}
 	
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Endereco;
@@ -28,7 +29,7 @@ public class EnderecoService {
 			throw new DataIntegrityException(DATAINTEGRITY_ENDERECOCIDADE);
 		
 		endereco.setCidade(cidadeService.save(endereco.getCidade()));
-		
+		Utils.audita(endereco.getHistorico());
 		return enderecoRepository.save(endereco);
 	}	
 

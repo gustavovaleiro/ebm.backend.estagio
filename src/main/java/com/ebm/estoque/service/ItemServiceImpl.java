@@ -1,7 +1,6 @@
 package com.ebm.estoque.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,10 +50,7 @@ public class ItemServiceImpl implements ItemService {
 	public Item save(Item item) {
 		garantaIntegridade(item);
 		salvaAssociacao(item);
-		if(item.getId() == null) {
-			item.setDataCadastro(LocalDateTime.now());
-		}else {item.setDataUltimaModificacao(LocalDateTime.now());}
-		
+		Utils.audita(item.getHistorico());
 		return itemRepository.save(item);
 	}
 

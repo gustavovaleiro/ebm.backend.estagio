@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.security.Grupo;
 import com.ebm.security.Usuario;
@@ -35,7 +36,7 @@ public class GrupoService {
 
 	@Transactional
 	public Grupo insert(Grupo grupo) {
-
+		Utils.audita(grupo.getHistorico());
 		grupo = grupoRepository.save(grupo);
 
 		if (grupo.getUsuarios() != null || !grupo.getUsuarios().isEmpty()) {
@@ -52,10 +53,11 @@ public class GrupoService {
 		return grupo;
 	}
 
-	public Grupo update(Grupo newUser) {
+	public Grupo update(Grupo grupo) {
 		@SuppressWarnings("unused")
-		Grupo old = this.find(newUser.getId());
-		return grupoRepository.save(newUser);
+		Grupo old = this.find(grupo.getId());
+		Utils.audita(grupo.getHistorico());
+		return grupoRepository.save(grupo);
 	}
 
 	public void deleteById(Integer id) {

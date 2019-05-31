@@ -2,12 +2,12 @@ package com.ebm.estoque.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,7 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
-import com.ebm.security.Usuario;
+import com.ebm.pessoal.domain.HistoricoCadastral;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -64,14 +64,9 @@ public abstract class Item implements Serializable {
 	private BigDecimal outrasDespesa;
 	private Double margemLucro;
 	private Double comissaoVenda;
-	private LocalDateTime  dataCadastro;
-	@ManyToOne
-	private Usuario usuarioCadastro;
-	private LocalDateTime dataUltimaModificacao;
-	@ManyToOne
-	private Usuario ultimaModificacao;
 	protected String tipo;
-	
+	@Embedded
+	private HistoricoCadastral historico= new HistoricoCadastral();
 	public Item(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria, String codInterno,
 			BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro, Double comissaoVenda) {
 		super();

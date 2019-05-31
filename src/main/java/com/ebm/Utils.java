@@ -1,14 +1,18 @@
 package com.ebm;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.pessoal.domain.Email;
+import com.ebm.pessoal.domain.HistoricoCadastral;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.Telefone;
+import com.ebm.security.Usuario;
 
 public class Utils {
 		
@@ -46,7 +50,20 @@ public class Utils {
 		// TODO Auto-generated method stub
 		return brFormat ;
 	}
-
+	
+	public static void audita(HistoricoCadastral historico) {
+		Usuario principal = null;
+		if(Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication()).isPresent())
+			principal = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(historico.getUsuarioCadastro() == null ) {
+			historico.setDataCadastro(LocalDateTime.now());
+			historico.setUsuarioCadastro(principal);
+		}else {
+			historico.setDataUltimaModificacao(LocalDateTime.now());
+			historico.setUltimaModificacao(principal);
+		}
+	}
 
 
 }

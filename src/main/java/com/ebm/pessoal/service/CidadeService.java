@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cidade;
@@ -29,7 +30,7 @@ public class CidadeService {
 
 	@Transactional
 	public Cidade save(Cidade cidade) {
-
+		
 		if (cidade.getEstado() == null) {
 			throw new DataIntegrityException(CIDADE_ESTADO_INVALIDO);
 		}
@@ -39,7 +40,7 @@ public class CidadeService {
 			cidade.setId(result.get().getId());
 
 		cidade.setEstado(estadoService.save(cidade.getEstado()));
-
+		Utils.audita(cidade.getHistorico());
 		return cidadeRepository.save(cidade);
 
 	}

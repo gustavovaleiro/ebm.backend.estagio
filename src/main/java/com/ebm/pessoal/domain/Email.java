@@ -3,12 +3,12 @@ package com.ebm.pessoal.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Email implements Serializable, Principalizar{
 	
@@ -35,5 +34,14 @@ public class Email implements Serializable, Principalizar{
 	@Column(length = 140, name = "email_descricao")
 	private String tipo;	
 	private boolean principal;
+	@Embedded
+	private HistoricoCadastral historico= new HistoricoCadastral();
+	public Email(Integer id, String email, String tipo, boolean principal) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.tipo = tipo;
+		this.principal = principal;
+	}
 	
 }

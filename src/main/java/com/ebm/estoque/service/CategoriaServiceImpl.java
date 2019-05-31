@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.repository.CategoriaItemRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
@@ -29,6 +30,7 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 	public CategoriaItem save(CategoriaItem categoria) {
 		garantaIntegridade(categoria);
 		saveAssociacoes(categoria);
+		Utils.audita(categoria.getHistorico());
 		return categoriaRepository.save(categoria);
 	}
 	

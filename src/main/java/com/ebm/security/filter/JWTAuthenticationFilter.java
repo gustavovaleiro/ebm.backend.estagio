@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ebm.security.JWTUtil;
-import com.ebm.security.UserSS;
+import com.ebm.security.Usuario;
 import com.ebm.security.dto.CredenciaisDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -54,7 +54,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 	
-		String username = ((UserSS) authResult.getPrincipal()).getUsername();
+		String username = ((Usuario) authResult.getPrincipal()).getUsername();
 		String token = jwtUtil.generatedToken(username);
 		response.addHeader("Authorization",  "Bearer " + token);
 	}

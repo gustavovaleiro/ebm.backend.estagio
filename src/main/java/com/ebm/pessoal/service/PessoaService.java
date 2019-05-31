@@ -1,7 +1,6 @@
 
 package com.ebm.pessoal.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,26 +70,18 @@ public class PessoaService {
 	@Transactional
 	private PessoaFisica save(PessoaFisica pf) {
 		validateCPF(pf.getCpf());
-		Boolean update = false;
-		
 		try {
 			PessoaFisica result = findbyCPF(pf.getCpf());
 			if (!result.getId().equals(pf.getId()))
 				throw new DataIntegrityException(DUPLICATE_CPF);
-			else
-				update = true;
 		} catch (ObjectNotFoundException e) {}
 		
-		if(update)
-			pf.setDataUltimaModificacao(LocalDateTime.now());
-		else
-			pf.setDataCadastro(LocalDateTime.now());
-
 		saveAssociations(pf);
 
 		pf.setNaturalidade(cidadeService.save(pf.getNaturalidade()));
 		if(pf.getRG()!=null)
 			pf.getRG().setUF(estadoService.save(pf.getRG().getUF()));
+		Utils.audita(pf.getHistorico());
 		return pessoaFisicaRepository.save(pf);
 
 	}
@@ -98,20 +89,13 @@ public class PessoaService {
 	@Transactional
 	private PessoaJuridica save(PessoaJuridica pj) {
 		validateCNPJ(pj.getCnpj());
-		Boolean update = false;
 		try {
 			PessoaJuridica result= findByCPNJ(pj.getCnpj());
 			if(!result.getId().equals(pj.getId()))
 				throw new DataIntegrityException(DUPLICATE_CNPJ);
-			else
-				update = true;
 		} catch (ObjectNotFoundException e) {}
-		if(update)
-			pj.setDataUltimaModificacao(LocalDateTime.now());
-		else
-			pj.setDataCadastro(LocalDateTime.now());
-		
 		saveAssociations(pj);
+		Utils.audita(pj.getHistorico());
 		return pessoaJuridicaRepository.save(pj);
 		
 	}

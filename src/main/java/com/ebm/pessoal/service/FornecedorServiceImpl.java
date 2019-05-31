@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.Utils;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.exceptions.DataIntegrityException;
@@ -42,6 +43,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public Fornecedor save(Fornecedor fornecedor) {
 		garantaIntegridade(fornecedor);
 		saveAssociations(fornecedor);
+		Utils.audita(fornecedor.getHistorico());
 		return fornecedorRepository.save(fornecedor);
 	}
 

@@ -3,13 +3,13 @@ package com.ebm.pessoal.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cidade implements Serializable {
 
@@ -32,9 +31,16 @@ public class Cidade implements Serializable {
 
 	@Column(nullable = false, length = 60)
 	private String nome;
-	
+
 	@ManyToOne(optional = false)
 	private Estado estado;
+	@Embedded
+	private HistoricoCadastral historico = new HistoricoCadastral();
 
+	public Cidade(Integer id, String nome, Estado estado) {
+		this.id = id;
+		this.nome = nome;
+		this.estado = estado;
+	}
 
 }

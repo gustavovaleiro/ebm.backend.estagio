@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Cargo;
@@ -22,8 +23,10 @@ public class CargoService {
 
 	
 	public Cargo save(Cargo c1) {
+		
 		if(c1.getNomeCargo() == null || c1.getNomeCargo().isEmpty())
 			throw new DataIntegrityException(DATAINTEGRITY_NOTNAME);
+		Utils.audita(c1.getHistorico());
 		return cargoRepository.save(c1);
 	}
 	

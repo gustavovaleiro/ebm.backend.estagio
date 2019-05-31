@@ -389,7 +389,6 @@ public class FuncionarioServiceTest {
 		// executa
 		PageRequest pageRequest = PageRequest.of(0, 8);
 		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, null, null, "adm", pageRequest);
-
 		// verifica
 		assertThat(result.getNumberOfElements(), equalTo(4));
 		assertTrue(result.get().allMatch(f -> f.getMatricula().toLowerCase().contains("adm")));

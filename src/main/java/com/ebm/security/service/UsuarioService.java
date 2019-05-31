@@ -17,11 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.Utils;
 import com.ebm.exceptions.DataIntegrityException;
 import com.ebm.exceptions.ObjectNotFoundException;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.service.FuncionarioService;
-import com.ebm.security.UserSS;
 import com.ebm.security.Usuario;
 import com.ebm.security.dto.UsuarioListDTO;
 import com.ebm.security.repository.UsuarioRepository;
@@ -43,7 +43,7 @@ public class UsuarioService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
-			return new UserSS(this.findByUserName(username));
+			return new Usuario(this.findByUserName(username));
 		} catch (ObjectNotFoundException ex) {
 			throw new UsernameNotFoundException(ex.getMessage() + username);
 		} 
@@ -61,6 +61,7 @@ public class UsuarioService implements UserDetailsService {
 		garantirIntegridade(user);
 		
 		user.setSenha(pEncoder.encode(user.getSenha()));
+		Utils.audita(user.getHistorico());
 		return userRepository.save(user);
 	}
 

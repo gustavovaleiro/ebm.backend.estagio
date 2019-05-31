@@ -1,11 +1,11 @@
  package com.ebm.pessoal.domain;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,14 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import com.ebm.security.Usuario;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import lombok.EqualsAndHashCode;
@@ -49,12 +47,8 @@ public abstract class Pessoa implements Serializable{
 	
 	@Column(length = 60, nullable = false)
 	protected String nome;
-	private LocalDateTime  dataCadastro;
-	@ManyToOne
-	private Usuario usuarioCadastro;
-	private LocalDateTime dataUltimaModificacao;
-	@ManyToOne
-	private Usuario ultimaModificacao;
+	@Embedded
+	private HistoricoCadastral historico= new HistoricoCadastral();
 	@OneToMany
 	@JoinColumn(name = "pessoa_id")
 	@LazyCollection(LazyCollectionOption.FALSE)

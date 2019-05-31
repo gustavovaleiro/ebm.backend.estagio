@@ -1,6 +1,11 @@
 package com.ebm.security;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,32 +15,51 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.domain.HistoricoCadastral;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
-public class Usuario {
-	
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Usuario implements UserDetails {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Integer id;
-	
+
 	@Column(nullable = false, length = 30)
 	private String login;
-	
-	
+
 	@JsonIgnore
 	@Column(nullable = false)
 	private String senha;
-	
+
 	@ManyToOne
 	private Grupo grupo;
 	@MapsId
 	@OneToOne
 	private Funcionario funcionario;
+	@Embedded
+	private HistoricoCadastral historico= new HistoricoCadastral();
+	@Transient
+	private Collection<? extends GrantedAuthority> authorities;
 
-	public Usuario() {}
-	
+	public Usuario() {
+	}
+
 	public Usuario(Integer id, String login, String senha, Grupo grupo) {
 		this.id = id;
 		this.login = login;
@@ -43,78 +67,66 @@ public class Usuario {
 		this.grupo = grupo;
 	}
 
+	public String getEmail() {
+		return this.funcionario.getPessoa().getEmailPrincipal().getEmail();
+	}
+
+	public Usuario(Integer id, String login, String senha, Set<PermissaoE> permissoes) {
+		this.id = id;
+		this.login = login;
+		this.senha = senha;
+		this.authorities = permissoes.stream().map(x -> new SimpleGrantedAuthority(x.getNome()))
+				.collect(Collectors.toSet());
+
+	}
+
+	public Usuario(Usuario user) {
+		this(user.getId(), user.getLogin(), user.getSenha(), user.getGrupo().getPermissoes());
+	}
+
 	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	@Transient
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
 	}
 
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-
-	public String getSenha() {
+	@Transient
+	@Override
+	public String getPassword() {
 		return senha;
 	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public Grupo getGrupo() {
-		return grupo;
-	}
-
-	public void setGrupo(Grupo grupo) {
-		this.grupo = grupo;
-	}
-	
-	public Funcionario getFuncionario() {
-		return funcionario;
-	}
-
-	public void setFuncionario(Funcionario funcionario) {
-		this.funcionario = funcionario;
-	}
-	
-	public String getEmail() {
-		return this.funcionario.getPessoa().getEmailPrincipal().getEmail();
-	}
-	
-
+	@Transient
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+	public String getUsername() {
+		return login;
 	}
 
+	@Transient
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
+	public boolean isAccountNonExpired() {
 		return true;
 	}
 
+	@Transient
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-	
+	@Transient
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
+	@Transient
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +33,8 @@ public class Cargo implements Serializable{
 	private String descricao;
 	@Column( nullable = false)
 	private BigDecimal salarioBase;
-
+	@Embedded
+	private HistoricoCadastral historico = new HistoricoCadastral();
 	public Cargo(Integer id, String nomeCargo, BigDecimal salarioBase, String descricao) {
 		this.id = id;
 		this.nomeCargo = nomeCargo;
