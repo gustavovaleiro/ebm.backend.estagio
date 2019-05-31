@@ -8,6 +8,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import com.ebm.estoque.domain.interfaces.ItemVendaInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProdutoMovimentacao  {
+public class ProdutoMovimentacao implements ItemVendaInfo {
 	@EmbeddedId
 	private ProdutoMovimentacaoPK id = new ProdutoMovimentacaoPK();
 
@@ -46,18 +47,14 @@ public class ProdutoMovimentacao  {
 		this.id.setMovimentacao(movimentacao);
 	}
 
-
-
 	public Double getComissao() {
 		return Optional.of(this.getProduto().getComissaoVenda()).orElse(0d);
 	}
 
-
-
 	@Transient
 	@JsonIgnore
 	public BigDecimal getLucroBrutoUnitario() {
-		return this.valueOrZero(this.getValorVenda()).subtract(valueOrZero(this.id.getProduto().getCustoTotal()));
+		return this.valueOrZero(this.getValorVendaLiquido()).subtract(valueOrZero(this.id.getProduto().getCustoTotal()));
 	}
 
 	@Transient
@@ -72,14 +69,14 @@ public class ProdutoMovimentacao  {
 
 	@Transient
 	@JsonIgnore
-	public BigDecimal getValorVenda() {
+	public BigDecimal getValorVendaLiquido() {
 		return this.valueOrZero(this.valor).subtract(valueOrZero(this.desconto));
 	}
 
 	@Transient
 	@JsonIgnore
 	public BigDecimal getValorVendaTotal() {
-		return getValorVenda().multiply(quantidadeOrZero());
+		return getValorVendaLiquido().multiply(quantidadeOrZero());
 	}
 
 	@Transient
@@ -98,7 +95,7 @@ public class ProdutoMovimentacao  {
 	@JsonIgnore
 	public BigDecimal getLucroLiquidoUnitario() {
 		return this.getLucroBrutoUnitario()
-				.subtract(BigDecimal.valueOf(this.getComissao()).multiply(this.getValorVenda()));
+				.subtract(BigDecimal.valueOf(this.getComissao()).multiply(this.getValorVendaLiquido()));
 	}
 
 	@Transient
@@ -109,6 +106,13 @@ public class ProdutoMovimentacao  {
 
 	private BigDecimal valueOrZero(BigDecimal value) {
 		return Optional.ofNullable(value).orElse(BigDecimal.valueOf(0));
+	}
+
+	@Transient
+	@JsonIgnore
+	@Override
+	public BigDecimal getCusto() {
+		return getProduto().getCustoTotal();
 	}
 
 }

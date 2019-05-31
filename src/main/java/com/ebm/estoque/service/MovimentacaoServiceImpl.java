@@ -45,12 +45,6 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 	@Autowired
 	private ItemService itemService;
 
-	public void baixaEstoque(OrigemMovimentacao origem) {
-	}
-
-	public void cancelarBaixaEstoque(OrigemMovimentacao origem) {
-	}
-
 	@Transactional
 	@Override
 	public Movimentacao save(Movimentacao movimentacao) {
