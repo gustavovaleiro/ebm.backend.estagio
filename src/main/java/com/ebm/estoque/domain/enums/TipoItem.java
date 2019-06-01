@@ -3,7 +3,7 @@ package com.ebm.estoque.domain.enums;
 import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Servico;
-import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.DataIntegrityException;
 
 import lombok.Getter;
 @Getter

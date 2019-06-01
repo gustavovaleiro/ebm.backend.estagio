@@ -22,10 +22,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.ebm.Utils;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
 import com.ebm.geral.service.PopulaBD;
+import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;

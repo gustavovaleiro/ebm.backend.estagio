@@ -10,13 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.repository.CategoriaItemRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.utils.Utils;
 
 @Service
 public class CategoriaServiceImpl implements CategoriaItemService{

@@ -1,5 +1,4 @@
-package com.ebm.config;
-
+package com.ebm.geral.config;
 import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;

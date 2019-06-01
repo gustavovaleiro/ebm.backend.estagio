@@ -18,9 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.Utils;
-import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.service.PopulaBD;
+import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Email;
 import com.ebm.pessoal.domain.Estado;

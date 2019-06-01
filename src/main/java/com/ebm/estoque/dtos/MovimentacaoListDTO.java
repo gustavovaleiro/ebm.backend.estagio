@@ -2,8 +2,8 @@ package com.ebm.estoque.dtos;
 
 import java.io.Serializable;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.Movimentacao;
+import com.ebm.geral.utils.Utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ebm.Utils;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.repository.CargoRepository;
 

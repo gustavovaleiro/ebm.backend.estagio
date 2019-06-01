@@ -1,4 +1,4 @@
-package com.ebm.config;
+package com.ebm.geral.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

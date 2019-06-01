@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ebm.Utils;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.Telefone;
 import com.ebm.pessoal.repository.TelefoneRepository;

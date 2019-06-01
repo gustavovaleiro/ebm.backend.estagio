@@ -16,19 +16,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
-import com.ebm.estoque.domain.interfaces.OrigemMovimentacao;
 import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.estoque.repository.MovimentacaoRepository;
 import com.ebm.estoque.repository.ProdutoMovimentacaoRepository;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 

@@ -3,8 +3,8 @@ package com.ebm.estoque.service.interfaces;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.Unidade;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
 
 @Service
 public interface UnidadeService {

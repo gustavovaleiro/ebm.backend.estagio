@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
 import com.ebm.estoque.dtos.MovimentacaoListDTO;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
 
 
 @Service

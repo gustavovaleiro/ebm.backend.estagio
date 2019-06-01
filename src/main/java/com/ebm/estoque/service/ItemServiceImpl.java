@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.estoque.dtos.ItemListDTO;
@@ -24,8 +23,9 @@ import com.ebm.estoque.repository.ItemRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.utils.Utils;
 
 @Service
 public class ItemServiceImpl implements ItemService {

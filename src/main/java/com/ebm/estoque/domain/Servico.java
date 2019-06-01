@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.enums.TipoItem;
+import com.ebm.geral.utils.Utils;
 
 import lombok.Getter;
 import lombok.Setter;

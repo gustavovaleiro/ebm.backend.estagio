@@ -1,6 +1,6 @@
 package com.ebm.estoque.domain.enums;
 
-import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.DataIntegrityException;
 
 import lombok.Getter;
 

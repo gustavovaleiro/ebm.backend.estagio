@@ -8,8 +8,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.enums.TipoItem;
+import com.ebm.geral.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;

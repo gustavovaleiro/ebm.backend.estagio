@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import com.ebm.estoque.domain.interfaces.ItemVendaInfo;
+import com.ebm.geral.utils.CalculosItemVenda;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -27,9 +28,20 @@ public class ProdutoMovimentacao implements ItemVendaInfo {
 
 	private BigDecimal desconto;
 	@Column(nullable = false)
-	private BigDecimal valor;
+	private BigDecimal valorVendaBruto;
 	@Column(nullable = false)
 	private Integer quantidade;
+	@Transient
+	@JsonIgnore
+	final private CalculosItemVenda calculadora = new CalculosItemVenda(this);
+
+	public ProdutoMovimentacao(Movimentacao m, Produto p, BigDecimal desconto, BigDecimal valorVendaBruto,
+			Integer quantidade) {
+		this.id = new ProdutoMovimentacaoPK(p, m);
+		this.desconto = desconto;
+		this.valorVendaBruto = valorVendaBruto;
+		this.quantidade = quantidade;
+	}
 
 	public Produto getProduto() {
 		return this.id.getProduto();
@@ -47,61 +59,16 @@ public class ProdutoMovimentacao implements ItemVendaInfo {
 		this.id.setMovimentacao(movimentacao);
 	}
 
-	public Double getComissao() {
+	@Transient
+	@JsonIgnore
+	public Double getComissaoTx() {
 		return Optional.of(this.getProduto().getComissaoVenda()).orElse(0d);
 	}
 
+	@Override
 	@Transient
-	@JsonIgnore
-	public BigDecimal getLucroBrutoUnitario() {
-		return this.valueOrZero(this.getValorVendaLiquido()).subtract(valueOrZero(this.id.getProduto().getCustoTotal()));
-	}
-
-	@Transient
-	@JsonIgnore
-	public BigDecimal getLucroBrutoTotal() {
-		return this.valueOrZero(this.getLucroBrutoUnitario()).multiply(quantidadeOrZero());
-	}
-
-	private BigDecimal quantidadeOrZero() {
-		return BigDecimal.valueOf(Optional.ofNullable(quantidade).orElse(0));
-	}
-
-	@Transient
-	@JsonIgnore
 	public BigDecimal getValorVendaLiquido() {
-		return this.valueOrZero(this.valor).subtract(valueOrZero(this.desconto));
-	}
-
-	@Transient
-	@JsonIgnore
-	public BigDecimal getValorVendaTotal() {
-		return getValorVendaLiquido().multiply(quantidadeOrZero());
-	}
-
-	@Transient
-	@JsonIgnore
-	public BigDecimal getValorTotalDesconto() {
-		return this.valueOrZero(this.getDesconto()).multiply(this.quantidadeOrZero());
-	}
-
-	@Transient
-	@JsonIgnore
-	public BigDecimal getValorTotalSemDesconto() {
-		return valueOrZero(this.valor).multiply(quantidadeOrZero());
-	}
-
-	@Transient
-	@JsonIgnore
-	public BigDecimal getLucroLiquidoUnitario() {
-		return this.getLucroBrutoUnitario()
-				.subtract(BigDecimal.valueOf(this.getComissao()).multiply(this.getValorVendaLiquido()));
-	}
-
-	@Transient
-	@JsonIgnore
-	public BigDecimal getLucroLiquidoTotal() {
-		return this.getLucroLiquidoUnitario().multiply(quantidadeOrZero());
+		return this.valueOrZero(this.valorVendaBruto).subtract(valueOrZero(this.desconto));
 	}
 
 	private BigDecimal valueOrZero(BigDecimal value) {

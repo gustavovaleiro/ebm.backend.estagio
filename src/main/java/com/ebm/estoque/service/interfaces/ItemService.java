@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.dtos.ItemListDTO;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
 
 @Service
 public interface ItemService {

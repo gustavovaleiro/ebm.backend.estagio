@@ -1,4 +1,4 @@
-package com.ebm.config;
+package com.ebm.geral.config;
 
 import java.util.Arrays;
 

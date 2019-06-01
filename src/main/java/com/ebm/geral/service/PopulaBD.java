@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ebm.Utils;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
@@ -21,6 +20,7 @@ import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
+import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Cliente;

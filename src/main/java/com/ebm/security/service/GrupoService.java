@@ -14,8 +14,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ebm.Utils;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.utils.Utils;
 import com.ebm.security.Grupo;
 import com.ebm.security.Usuario;
 import com.ebm.security.dto.GrupoDTO;

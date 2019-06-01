@@ -1,6 +1,6 @@
 package com.ebm.pessoal.domain;
 
-import com.ebm.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.DataIntegrityException;
 
 public enum TipoPessoa {
 	PESSOA_FISICA(0,"Pessoa Física"),

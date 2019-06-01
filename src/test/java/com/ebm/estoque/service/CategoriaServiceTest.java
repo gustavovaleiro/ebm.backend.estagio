@@ -21,8 +21,8 @@ import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
-import com.ebm.exceptions.DataIntegrityException;
-import com.ebm.exceptions.ObjectNotFoundException;
+import com.ebm.geral.exceptions.DataIntegrityException;
+import com.ebm.geral.exceptions.ObjectNotFoundException;
 
 @ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)

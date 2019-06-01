@@ -1,4 +1,4 @@
-package com.ebm.exceptions;
+package com.ebm.geral.exceptions;
 
 public class AuthorizationException extends RuntimeException
 {
