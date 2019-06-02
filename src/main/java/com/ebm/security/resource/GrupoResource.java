@@ -32,7 +32,7 @@ public class GrupoResource {
 	@PreAuthorize("hasAuthority('GRUPO_PERMISSAO_POST')")
 	@PostMapping
 	public ResponseEntity<Void> insert(@RequestBody Grupo grupo) {
-		Grupo obj = grupoService.insert(grupo);
+		Grupo obj = grupoService.save(grupo);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
@@ -42,7 +42,7 @@ public class GrupoResource {
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> update(@RequestBody Grupo grupo, @PathVariable Integer id) {
 		grupo.setId(id);
-		grupo = grupoService.update(grupo);
+		grupo = grupoService.save(grupo);
 		return ResponseEntity.noContent().build();
 
 	}

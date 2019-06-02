@@ -64,12 +64,12 @@ public class Grupo implements Serializable {
 
 	public void addUsuario(Usuario usuario) {
 		this.usuarios.add(usuario);
+
 	}
 
 	public Set<PermissaoE> getPermissoes() {
 		return permissoes.stream().map(p -> PermissaoE.toEnum(p)).collect(Collectors.toSet());
 	}
-
 	public void addPermissao(PermissaoE permissao) {
 		this.permissoes.add(permissao.getId());
 	}
@@ -80,6 +80,11 @@ public class Grupo implements Serializable {
 
 	public void setPermissao(Set<PermissaoE> permissao) {
 		this.permissoes = permissao.stream().map(p -> p.getId()).collect(Collectors.toSet());
+	}
+	
+	public void removeUsuario(Usuario usuario) {
+		if(usuarios.contains(usuario))
+			usuarios.remove(usuario);
 	}
 
 

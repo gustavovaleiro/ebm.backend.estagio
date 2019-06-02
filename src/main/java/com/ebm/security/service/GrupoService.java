@@ -23,6 +23,7 @@ import com.ebm.security.repository.GrupoRepository;
 
 @Service
 public class GrupoService {
+	public static final String GRUPONOTFOUND_BYID = "Grupo de permissões nao encontrado! id: ";
 	@Autowired
 	private GrupoRepository grupoRepository;
 	@Autowired
@@ -31,17 +32,18 @@ public class GrupoService {
 	public Grupo find(Integer id) {
 		Optional<Grupo> obj = grupoRepository.findById(id);
 
-		return obj.orElseThrow(() -> new ObjectNotFoundException("Grupo de permissões nao encontrado! id: " + id));
+		return obj.orElseThrow(() -> new ObjectNotFoundException(GRUPONOTFOUND_BYID + id));
 	}
-
+	
+	
 	@Transactional
-	public Grupo insert(Grupo grupo) {
+	public Grupo save(Grupo grupo) {
 		Utils.audita(grupo.getHistorico());
 		grupo = grupoRepository.save(grupo);
 
 		if (grupo.getUsuarios() != null || !grupo.getUsuarios().isEmpty()) {
 			grupo.setUsuarios(userService
-					.findAllById(grupo.getUsuarios().stream().map(u -> u.getId()).collect(Collectors.toList())));
+					.findAllById(grupo.getUsuarios().stream().filter(u -> u.getId() != null).map(u -> u.getId()).collect(Collectors.toList())));
 
 			// percorrendo cada usuario e setando o grupo criado
 			for (Usuario user : grupo.getUsuarios()) {
@@ -53,12 +55,6 @@ public class GrupoService {
 		return grupo;
 	}
 
-	public Grupo update(Grupo grupo) {
-		@SuppressWarnings("unused")
-		Grupo old = this.find(grupo.getId());
-		Utils.audita(grupo.getHistorico());
-		return grupoRepository.save(grupo);
-	}
 
 	public void deleteById(Integer id) {
 		find(id);

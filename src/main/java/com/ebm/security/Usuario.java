@@ -64,7 +64,7 @@ public class Usuario implements UserDetails {
 		this.id = id;
 		this.login = login;
 		this.senha = senha;
-		this.grupo = grupo;
+		this.setGrupo(grupo);
 	}
 
 	public String getEmail() {
@@ -87,7 +87,14 @@ public class Usuario implements UserDetails {
 	public Integer getId() {
 		return id;
 	}
-
+	
+	public void setGrupo(Grupo grupo) {
+		if(this.grupo!=null&& this.grupo !=grupo) {
+			this.grupo.removeUsuario(this);
+		}
+		this.grupo = grupo;
+		grupo.addUsuario(this);
+	}
 	@Transient
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

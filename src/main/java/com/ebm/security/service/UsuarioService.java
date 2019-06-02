@@ -28,6 +28,9 @@ import com.ebm.security.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService implements UserDetailsService {
+	public static final String DATAINTEGRITY = "Um usuario precisa de um grupo de permissões";
+	public static final String DATAINTEGRITY_FUNCASSO = "Um usuario precisa de um funcionario associado";
+	public static final String DATAINTEGRITY_CHANGEFUNC = "Você nao pode trocar o funcionario de um usuario";
 	public static final String ONFE_BYUSERNAME = ObjectNotFoundException.DEFAULT + " um usuario com o login passado.";
 	@Autowired
 	private UsuarioRepository userRepository;
@@ -66,18 +69,18 @@ public class UsuarioService implements UserDetailsService {
 	}
 
 	private void garantirIntegridade(Usuario user) {
-		if(user.getGrupo()==null)
-			throw new DataIntegrityException("Um usuario precisa de um grupo de permissões");
+		if(user.getGrupo()==null || user.getGrupo().getId() == null)
+			throw new DataIntegrityException(DATAINTEGRITY);
 		else
 			user.setGrupo(grupoService.find(user.getGrupo().getId()));
 		
-		if(user.getFuncionario().getId() == null)
-			throw new DataIntegrityException("Um usuario precisa de um funcionario associado");
+		if(user.getFuncionario() == null || user.getFuncionario().getId() == null)
+			throw new DataIntegrityException(DATAINTEGRITY_FUNCASSO);
 		else {
 			if(user.getId() != null) {
 				Usuario userR = userRepository.findById(user.getId()).get();
 				if(!userR.getFuncionario().equals(user.getFuncionario())) {
-					throw new DataIntegrityException("Você nao pode trocar o funcionario de um usuario");
+					throw new DataIntegrityException(DATAINTEGRITY_CHANGEFUNC);
 				}
 			}	
 			user.setFuncionario(funcionarioService.findById(user.getFuncionario().getId()));

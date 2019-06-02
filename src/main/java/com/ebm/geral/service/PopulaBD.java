@@ -36,6 +36,10 @@ import com.ebm.pessoal.service.ClienteService;
 import com.ebm.pessoal.service.FuncionarioService;
 import com.ebm.pessoal.service.PessoaService;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
+import com.ebm.security.Grupo;
+import com.ebm.security.Modulo;
+import com.ebm.security.PermissaoE;
+import com.ebm.security.Usuario;
 
 @Service
 public class PopulaBD {
@@ -102,7 +106,11 @@ public class PopulaBD {
 	public Movimentacao ent2;
 	public Movimentacao sai2;
 	public Movimentacao sai3;
-
+	public Grupo grup1;
+	public Usuario user1;
+	public Grupo grup2;
+	public Usuario user2;
+	
 	@Autowired
 	private PessoaService pessoaS;
 	@Autowired
@@ -122,8 +130,11 @@ public class PopulaBD {
 	private ItemService itemS;
 	@Autowired
 	private MovimentacaoService movimentacaoS;
+	private Usuario user3;
+	private Usuario user4;
 
-	public void populaBD() {
+
+	public PopulaBD populaBD() {
 		instanciaPessoa();
 		associaPessoa();
 		instanciaCliente(false);
@@ -146,9 +157,10 @@ public class PopulaBD {
 
 		itemS.saveAll(Arrays.asList(s1, s2, s3, s4, p1, p2, p3, p4, p5, p6, p7));
 		movimentacaoS.saveAll(Arrays.asList(ent1, ent2, ent3, sai1, sai2, sai3));
+		return this;
 	}
 
-	public void instanciaPessoa() {
+	public PopulaBD instanciaPessoa() {
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
 		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678",
@@ -172,18 +184,19 @@ public class PopulaBD {
 
 		pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30), new RG("34", "ssp", estadoGO),
 				"Brasileira", goiania);
-
+		return this;
 	}
 
-	public void associaPessoa() {
+	public PopulaBD associaPessoa() {
 		Arrays.asList(pf1, pj1, pf2, pf3, pf4, pf5, pj2, pj3, pj4).forEach(p -> {
 			p.getEndereco().add(endereco1);
 			p.getTelefone().add(Utils.getRandomTelefone(true));
 			p.getEmail().add(Utils.getRandomEmail(p, true));
 		});
+		return this;
 	}
 
-	public void instanciaFuncionario(boolean instanciaAssocia) {
+	public PopulaBD instanciaFuncionario(boolean instanciaAssocia) {
 		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
@@ -206,14 +219,16 @@ public class PopulaBD {
 				cAdministrador.getSalarioBase());
 		funj4 = new Funcionario(null, pj4, "adm-04", cAdministrador, LocalDate.now().minusYears(1), 0.,
 				cAdministrador.getSalarioBase());
+		return this;
 	}
 
-	private void instanciaCargos() {
+	private PopulaBD instanciaCargos() {
 		cDesenvolvedor = new Cargo(null, "Desenvolvedor", BigDecimal.valueOf(2000), "rsats");
 		cAdministrador = new Cargo(null, "Administrador", BigDecimal.valueOf(5000), "tes");
+		return this;
 	}
 
-	public void instanciaCliente(boolean instanciaAssocia) {
+	public PopulaBD instanciaCliente(boolean instanciaAssocia) {
 		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
@@ -226,16 +241,18 @@ public class PopulaBD {
 		cj2 = new Cliente(null, pj2, new BigDecimal(2133), "sdaf");
 		cj3 = new Cliente(null, pj3, BigDecimal.valueOf(1233), "12312");
 		cj4 = new Cliente(null, pj4, BigDecimal.valueOf(1233), "12312");
+		return this;
 	}
 
-	public void instanciaCategorias() {
+	public PopulaBD instanciaCategorias() {
 		cat1 = new CategoriaItem(null, "Informatica");
 		cat3 = new CategoriaItem(null, "Cama");
 		cat2 = new CategoriaItem(null, "Eletrodomesticos");
 		cat4 = new CategoriaItem(null, "Banho");
+		return this;
 	}
 
-	public void instanciaFornecedores(boolean instanciaAssocia) {
+	public PopulaBD instanciaFornecedores(boolean instanciaAssocia) {
 		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
@@ -255,9 +272,10 @@ public class PopulaBD {
 		forf5 = new Fornecedor(null, pf5);
 		Arrays.asList(forf3, forf4).forEach(f -> f.getCategorias().addAll(Arrays.asList(cat3)));
 		Arrays.asList(forj3, forj4, forf5).forEach(f -> f.getCategorias().addAll(Arrays.asList(cat1)));
+		return this;
 	}
 
-	public void instanciaItem(boolean instanciaAssocia) {
+	public PopulaBD instanciaItem(boolean instanciaAssocia) {
 		if (instanciaAssocia) {
 			instanciaCategorias();
 		}
@@ -280,9 +298,10 @@ public class PopulaBD {
 		s2 = Servico.of("Troca de fonte", un1, cat2);
 		s3 = Servico.of("Montagem Computador", un2, cat1);
 		s4 = Servico.of("Formatacao", un1, cat2);
+		return this;
 	}
 
-	public void instanciaMovimentacao(boolean instanciaAssocia) {
+	public PopulaBD instanciaMovimentacao(boolean instanciaAssocia) {
 		if (instanciaAssocia) {
 			instanciaItem(true);
 		}
@@ -315,7 +334,33 @@ public class PopulaBD {
 								.map(p -> new ProdutoMovimentacao(new ProdutoMovimentacaoPK(((Produto) p), m),
 										BigDecimal.valueOf(0), BigDecimal.valueOf(10), 4))
 								.collect(Collectors.toSet())));
+		return this;
 
+	}
+
+	public PopulaBD instanciaUsuarios() {
+		user1 = new Usuario(null, "gustavo", "123456", grup1);
+		user1.setFuncionario(funf1);
+		
+		user2 = new Usuario(null, "login2", "senha2", grup2);
+		user2.setFuncionario(funf2);
+		
+		user3 = new Usuario(null, "login3", "senha3",  grup1);
+		user3.setFuncionario(funf3);
+		
+		user4 = new Usuario(null, "login4", "senha4",  grup2);
+		user4.setFuncionario(funf4);
+		return this;
+		
+	}
+
+	public PopulaBD instanciaGrupo() {
+		grup1 = new Grupo(null, "Administrador Estoque");
+		grup2 = new Grupo(null, "Administrador RH");
+		Arrays.asList(PermissaoE.values()).stream().filter(p -> p.getMod().equals(Modulo.ESTOQUE)).forEach(p -> grup1.addPermissao(p));
+		Arrays.asList(PermissaoE.values()).stream().filter(p -> p.getMod().equals(Modulo.PESSOAL)).forEach(p -> grup2.addPermissao(p));
+		return this;
+		
 	}
 
 }

@@ -1,11 +1,10 @@
-package com.ebm.geral;
+package com.ebm.geral.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
@@ -19,7 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ebm.estoque.domain.ProdutoMovimentacao;
 import com.ebm.estoque.domain.interfaces.ItemVendaInfo;
 import com.ebm.geral.service.PopulaBD;
-import com.ebm.geral.utils.UtilContabel;
 
 @ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
