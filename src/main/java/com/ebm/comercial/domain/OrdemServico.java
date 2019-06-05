@@ -126,8 +126,16 @@ public class OrdemServico extends Venda {
 	}
 	
 	public double getValorTotalServicos() {
-		return this.servicosOrdem.stream().mapToDouble(x -> x.getSubTotal()).sum();
+		return this.servicosOrdem.stream().mapToDouble(s -> s.getSubTotal()).sum();
 	}
+	public double getValorTotalServicos() {
+		double total = 0;
+		for(ServicoOrdem servico: this.servicosOrdem) {
+			total+=servico.getSubTotal();
+		}
+		return total;
+	}
+		
 	public double getValorTotal() {
 		return super.getValorTotal() + this.getValorTotalServicos();
 	}

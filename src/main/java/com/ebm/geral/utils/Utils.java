@@ -42,7 +42,8 @@ public class Utils {
 
 	public static Email getRandomEmail(Pessoa pf1, boolean principal) {
 		// TODO Auto-generated method stub
-		return new Email(null,pf1.getNome() + 100+ gerador.nextInt(899), "geradoAutomatico", principal);
+		String replace = pf1.getNome();
+		return new Email(null,replace.replace(" ", ".") + 100+ gerador.nextInt(899) +"@example.com", "geradoAutomatico", principal);
 	}
 
 

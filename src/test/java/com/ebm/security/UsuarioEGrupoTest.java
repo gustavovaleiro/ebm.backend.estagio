@@ -1,10 +1,7 @@
-package com.ebm.security.service;
-import static org.hamcrest.CoreMatchers.equalTo;
+package com.ebm.security;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,12 +11,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ebm.geral.service.PopulaBD;
-import com.ebm.pessoal.service.PessoaService;
 
 @ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class UsuarioGrupoTest {
+public class UsuarioEGrupoTest {
 
 	@Autowired
 	private PopulaBD bd;
@@ -58,5 +54,7 @@ public class UsuarioGrupoTest {
 		assertFalse(bd.grup1.getUsuarios().contains(bd.user1));
 		assertFalse(bd.grup2.getUsuarios().contains(bd.user2));
 	}
+	
+	
 	
 }

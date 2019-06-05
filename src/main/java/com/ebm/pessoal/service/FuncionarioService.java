@@ -157,7 +157,6 @@ public class FuncionarioService {
 	}
 
 	public List<Integer> findIdByEmailPrincipalLike(String email) {
-		
 		return funcionarioRepository.findAllIdByEmailPrincipalLike(email);
 	}
 }

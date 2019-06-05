@@ -139,10 +139,10 @@ public class UsuarioService implements UserDetailsService {
 			ids.retainAll(userRepository.findAllIdByGrupo(grupo_id));
 
 		if (login != null)
-			ids.retainAll(userRepository.findAllIdByLogin(login));
+			ids.retainAll(userRepository.findAllIdByLogin("%"+login+"%"));
 
 		if (email != null)
-			ids.retainAll(funcionarioService.findIdByEmailPrincipalLike(email));
+			ids.retainAll(funcionarioService.findIdByEmailPrincipalLike("%"+email+"%"));
 
 		List<UsuarioListDTO> usuarios = userRepository.findAllById(ids).stream().map(u -> new UsuarioListDTO(u))
 				.collect(Collectors.toList());
