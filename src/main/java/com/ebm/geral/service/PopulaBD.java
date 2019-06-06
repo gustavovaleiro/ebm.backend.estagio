@@ -36,11 +36,9 @@ import com.ebm.pessoal.service.ClienteService;
 import com.ebm.pessoal.service.FuncionarioService;
 import com.ebm.pessoal.service.PessoaService;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
-import com.ebm.security.Grupo;
 import com.ebm.security.Modulo;
 import com.ebm.security.PermissaoE;
 import com.ebm.security.Usuario;
-import com.ebm.security.service.GrupoService;
 import com.ebm.security.service.UsuarioService;
 
 @Service
@@ -108,13 +106,10 @@ public class PopulaBD {
 	public Movimentacao ent2;
 	public Movimentacao sai2;
 	public Movimentacao sai3;
-	public Grupo grup1;
 	public Usuario user1;
-	public Grupo grup2;
 	public Usuario user2;
 	public Usuario user3;
 	public Usuario user4;
-	public Grupo grup3;
 	@Autowired
 	private PessoaService pessoaS;
 	@Autowired
@@ -135,10 +130,7 @@ public class PopulaBD {
 	@Autowired
 	private MovimentacaoService movimentacaoS;
 	@Autowired
-	private GrupoService grupoService;
-	@Autowired
 	private UsuarioService usuarioService;
-	private Grupo grup4;
 	private Usuario user5;
 
 
@@ -168,11 +160,8 @@ public class PopulaBD {
 		itemS.saveAll(Arrays.asList(s1, s2, s3, s4, p1, p2, p3, p4, p5, p6, p7));
 		movimentacaoS.saveAll(Arrays.asList(ent1, ent2, ent3, sai1, sai2, sai3));
 		
-		instanciaGrupo().instanciaUsuarios();
-		grupoService.save(grup1);
-		grupoService.save(grup2);
-		grupoService.save(grup3);
-		grupoService.save(grup4);
+		instanciaUsuarios();
+
 		usuarioService.saveAll(Arrays.asList(user1,user2,user3,user4,user5));
 		return this;
 		
@@ -358,36 +347,30 @@ public class PopulaBD {
 	}
 
 	public PopulaBD instanciaUsuarios() {
-		user1 = new Usuario(null, "gustavo", "123456", grup1);
+		 
+		user1 = new Usuario(null, "gustavo", "123456");
 		user1.setFuncionario(funf1);
+		PermissaoE.getPermissaoStream().filter(p -> p.getMod().equals(Modulo.PESSOAL)).forEach( p-> user1.addPermissao(p));
 		
-		user2 = new Usuario(null, "login2", "senha2", grup2);
+		
+		user2 = new Usuario(null, "login2", "senha2");
 		user2.setFuncionario(funf2);
+		PermissaoE.getPermissaoStream().filter(p -> p.getNome().toLowerCase().contains("get")).forEach(p -> user2.addPermissao(p));
 		
-		user3 = new Usuario(null, "login3", "senha3",  grup2);
+		user3 = new Usuario(null, "login3", "senha3");
 		user3.setFuncionario(funf3);
+		PermissaoE.getPermissaoStream().filter(p -> p.getMod().equals(Modulo.ESTOQUE)).forEach(p -> user3.addPermissao(p));
 		
-		user4 = new Usuario(null, "login4", "senha4",  grup3);
+		user4 = new Usuario(null, "login4", "senha4");
 		user4.setFuncionario(funf4);
 		
-		user5 = new Usuario(null, "adm", "adm", grup4);
+		user5 = new Usuario(null, "adm", "adm");
 		user5.setFuncionario(funj1);
+		PermissaoE.getPermissaoStream().forEach(p -> user5.addPermissao(p));
 		return this;
 		
 	}
 
-	public PopulaBD instanciaGrupo() {
-		grup1 = new Grupo(null, "Administrador Estoque");
-		grup2= new Grupo(null, "ApenasGet");
-		grup3= new Grupo(null, "Administrador RH E Usuarios");
-		grup4 = new Grupo(null, "GOD");
-		Arrays.asList(PermissaoE.values()).stream().filter(p -> p.getMod().equals(Modulo.ESTOQUE)).forEach(p -> grup1.addPermissao(p));
-		Arrays.asList(PermissaoE.values()).stream().filter(p -> p.getMod().equals(Modulo.PESSOAL)).forEach(p -> grup3.addPermissao(p));
-		Arrays.asList(PermissaoE.values()).stream().filter(p -> p.getMod().equals(Modulo.AUTH)).forEach(p -> grup3.addPermissao(p));
-		Arrays.asList(PermissaoE.values()).stream().filter(p -> p.getNome().contains("GET")).forEach(p -> grup2.addPermissao(p));
-		Arrays.asList(PermissaoE.values()).forEach(p -> grup4.addPermissao(p));
-		return this;
-		
-	}
+	
 
 }

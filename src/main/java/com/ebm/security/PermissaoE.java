@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,7 +50,7 @@ public enum PermissaoE  {
 	MOVIMENTACAO_PUT(121, Modulo.ESTOQUE, "MOVIMENTACAO_PUT", "Atualização de  entradas/saidas  já cadastrados." ),
 	MOVIMENTACAO_POST(122, Modulo.ESTOQUE, "MOVIMENTACAO_POST", "Cadastro de entradas/saidas."),
 	MOVIMENTACAO_DELETE(123, Modulo.ESTOQUE, "MOVIMENTACAO_DELETE", "Deletar entradas/saidas."),
-	
+	 
 	
 	USUARIO_GET(200, Modulo.AUTH, "USUARIO_GET", "Vizualização de usuarios já cadastrados." ),
 	USUARIO_PUT(201, Modulo.AUTH, "USUARIO_PUT", "Atualização de  usuarios  já cadastrados." ),
@@ -118,7 +119,9 @@ public enum PermissaoE  {
 		return new PageImpl<>(permissoes, page, permissoes.size());
 	}
 
-
+	public static Stream<PermissaoE> getPermissaoStream(){
+		return Arrays.asList(PermissaoE.values()).stream();
+	}
 	
 	
 }

@@ -37,8 +37,6 @@ public class UsuarioService implements UserDetailsService {
 	@Autowired
 	private FuncionarioService funcionarioService;
 	@Autowired
-	private GrupoService grupoService;
-	@Autowired
 	private BCryptPasswordEncoder pEncoder;
 	public UsuarioService() {
 	}
@@ -69,8 +67,6 @@ public class UsuarioService implements UserDetailsService {
 	}
 
 	private void garantirIntegridade(Usuario user) {
-		if( !(user.getGrupo()==null || user.getGrupo().getId() == null))
-			user.setGrupo(grupoService.find(user.getGrupo().getId()));
 
 		if(user.getFuncionario() == null || user.getFuncionario().getId() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_FUNCASSO);
@@ -125,16 +121,13 @@ public class UsuarioService implements UserDetailsService {
 	}
 
 	//metodo nenhum pouco perfomatico
-	public Page<UsuarioListDTO> findBy(String nome, Integer grupo_id, String login, String email,
+	public Page<UsuarioListDTO> findBy(String nome , String login, String email,
 			PageRequest pageRequest) {
 		Set<Integer> ids = new HashSet<>();
 
 		ids = userRepository.findAllId();
 		if (nome != null)
 			ids.retainAll(funcionarioService.findIdByNomeLike(nome));
-
-		if (grupo_id != null)
-			ids.retainAll(userRepository.findAllIdByGrupo(grupo_id));
 
 		if (login != null)
 			ids.retainAll(userRepository.findAllIdByLogin("%"+login+"%"));

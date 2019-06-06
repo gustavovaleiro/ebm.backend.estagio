@@ -73,7 +73,6 @@ public class UsuarioResource {
 	@PreAuthorize("hasAuthority('USUARIO_GET')")
 	@GetMapping(value = "/page")
 	public ResponseEntity<Page<UsuarioListDTO>> findAllBy(@RequestParam(value = "nome", required = false) String nome,
-			@RequestParam(value = "grupo", required = false) Integer grupo,
 			@RequestParam(value = "login", required = false) String login,
 			@RequestParam(value = "email", required = false) String email,
 			@RequestParam(value = "page", required = false) Integer page,
@@ -82,7 +81,7 @@ public class UsuarioResource {
 			@RequestParam(value = "direction", required = false) String direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<UsuarioListDTO> rs = usuarioService.findBy(nome, grupo, login, email, pageRequest);
+		Page<UsuarioListDTO> rs = usuarioService.findBy(nome, login, email, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 
