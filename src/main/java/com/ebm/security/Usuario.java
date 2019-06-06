@@ -48,6 +48,7 @@ public class Usuario implements UserDetails {
 	private String senha;
 
 	@ManyToOne
+	@JsonIgnore
 	private Grupo grupo;
 	@MapsId
 	@OneToOne
@@ -89,11 +90,15 @@ public class Usuario implements UserDetails {
 	}
 	
 	public void setGrupo(Grupo grupo) {
+		
 		if(this.grupo!=null&& this.grupo !=grupo) {
-			this.grupo.removeUsuario(this);
+			if(this.grupo.getUsuarios().contains(this))
+				this.grupo.removeUsuario(this);
 		}
+		
 		this.grupo = grupo;
-		grupo.addUsuario(this);
+		if(grupo != null)
+			grupo.addUsuario(this);
 	}
 	@Transient
 	@Override

@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import lombok.EqualsAndHashCode;
@@ -71,16 +72,19 @@ public abstract class Pessoa implements Serializable{
 		this.nome = nome;
 		this.tipo = tipo;
 	}
-
+	
 	@Transient
+	@JsonIgnore
 	public Email getEmailPrincipal() {
 		return email.stream().filter(e -> e.isPrincipal()).findAny().get();
 	}
 	@Transient
+	@JsonIgnore
 	public Telefone getTelefonePrincipal() {
 		return telefone.stream().filter(e -> e.isPrincipal()).findAny().get();
 	}
 	@Transient
+	@JsonIgnore
 	public Endereco getEnderecoPrincipal() {
 		return endereco.stream().filter(e -> e.isPrincipal()).findAny().get();
 	}

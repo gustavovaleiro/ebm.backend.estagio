@@ -69,11 +69,9 @@ public class UsuarioService implements UserDetailsService {
 	}
 
 	private void garantirIntegridade(Usuario user) {
-		if(user.getGrupo()==null || user.getGrupo().getId() == null)
-			throw new DataIntegrityException(DATAINTEGRITY);
-		else
+		if( !(user.getGrupo()==null || user.getGrupo().getId() == null))
 			user.setGrupo(grupoService.find(user.getGrupo().getId()));
-		
+
 		if(user.getFuncionario() == null || user.getFuncionario().getId() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_FUNCASSO);
 		else {

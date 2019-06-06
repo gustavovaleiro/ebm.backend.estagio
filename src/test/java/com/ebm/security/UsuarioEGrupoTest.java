@@ -2,6 +2,8 @@ package com.ebm.security;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +55,23 @@ public class UsuarioEGrupoTest {
 		assertTrue(bd.user2.getGrupo().equals(bd.grup1));
 		assertFalse(bd.grup1.getUsuarios().contains(bd.user1));
 		assertFalse(bd.grup2.getUsuarios().contains(bd.user2));
+	}
+	
+	@Test
+	public void adicionaUsuarioPeloGrupPartindoNull() {
+		bd.user1.setGrupo(null);
+		bd.user2.setGrupo(null);
+		bd.grup1.removeUsuario(bd.user1);
+		bd.grup1.removeUsuario(bd.user2);
+		
+		bd.grup1.addUsuario(bd.user1);
+		
+		assertTrue(bd.user1.getGrupo().equals(bd.grup1));
+	}
+	
+	@Test
+	public void testPermissao() {
+		assertTrue(bd.grup3.getPermissoes().contains(PermissaoE.GRUPO_PERMISSAO_GET));
 	}
 	
 	

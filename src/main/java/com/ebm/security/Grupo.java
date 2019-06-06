@@ -63,7 +63,14 @@ public class Grupo implements Serializable {
 	}
 
 	public void addUsuario(Usuario usuario) {
-		this.usuarios.add(usuario);
+		if(usuario != null) {
+			this.usuarios.add(usuario);
+			if(usuario.getGrupo()!=this)
+				usuario.setGrupo(this);
+		}
+		
+		
+		
 
 	}
 
@@ -85,7 +92,8 @@ public class Grupo implements Serializable {
 	public void removeUsuario(Usuario usuario) {
 		if(usuarios.contains(usuario))
 			usuarios.remove(usuario);
+		if(usuario.getGrupo() == this)
+			usuario.setGrupo(null);
 	}
-
 
 }
