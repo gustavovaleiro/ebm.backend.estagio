@@ -17,6 +17,7 @@ public class JacksonConfig {
 			public void configure(ObjectMapper objectMapper) {
 				objectMapper.registerSubtypes(PessoaFisica.class);
 				objectMapper.registerSubtypes(PessoaJuridica.class);
+		
 				super.configure(objectMapper);
 			};
 		};

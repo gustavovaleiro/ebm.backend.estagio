@@ -23,11 +23,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.HistoricoCadastral;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -55,6 +50,9 @@ public class Usuario implements UserDetails {
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<Integer> permissoes = new HashSet<>();
+	
+	
+	
 	@MapsId
 	@OneToOne
 	private Funcionario funcionario;
@@ -149,7 +147,7 @@ public class Usuario implements UserDetails {
 	}
 
 
-	public void setPermissao(Set<PermissaoE> permissao) {
+	public void setPermissoes(Set<PermissaoE> permissao) {
 		this.permissoes = permissao.stream().map(p -> p.getId()).collect(Collectors.toSet());
 	}
 	
