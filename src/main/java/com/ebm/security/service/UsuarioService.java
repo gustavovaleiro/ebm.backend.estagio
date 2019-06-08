@@ -24,6 +24,8 @@ import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.service.FuncionarioService;
 import com.ebm.security.Usuario;
 import com.ebm.security.dto.UsuarioListDTO;
+import com.ebm.security.dto.UsuarioNewDTO;
+import com.ebm.security.dto.UsuarioUpdateDTO;
 import com.ebm.security.repository.UsuarioRepository;
 
 @Service
@@ -58,32 +60,56 @@ public class UsuarioService implements UserDetailsService {
 
 	// INSERT
 	@Transactional
-	public Usuario save(Usuario user) {
-		garantirIntegridade(user);
-		
+	public Usuario save(UsuarioNewDTO userDTO) {
+		Usuario user = fromDTO(userDTO);
 		user.setSenha(pEncoder.encode(user.getSenha()));
 		Utils.audita(user.getHistorico());
 		return userRepository.save(user);
 	}
+	private void findFuncionario(Usuario user, Integer id) {
 
-	private void garantirIntegridade(Usuario user) {
-
-		if(user.getFuncionario() == null || user.getFuncionario().getId() == null)
+		if(id == null)
 			throw new DataIntegrityException(DATAINTEGRITY_FUNCASSO);
-		else {
-			if(user.getId() != null) {
-				Usuario userR = userRepository.findById(user.getId()).get();
-				if(!userR.getFuncionario().equals(user.getFuncionario())) {
-					throw new DataIntegrityException(DATAINTEGRITY_CHANGEFUNC);
-				}
-			}	
-			user.setFuncionario(funcionarioService.findById(user.getFuncionario().getId()));
-		}
+		user.setFuncionario(funcionarioService.findById(id));
+		
 	}
 
 
+	public Usuario update(UsuarioUpdateDTO userUp) {
+		Usuario old = fromDTO(userUp);
+		
+		Utils.audita(old.getHistorico());
+		
+		return this.userRepository.save(old);
+	}
+
+	public Usuario fromDTO(UsuarioUpdateDTO userUp) {
+		Usuario old = this.findById(userUp.getId());
+		
+		if(userUp.getLogin()!= null && !userUp.getLogin().equals(old.getLogin()))
+			old.setLogin(userUp.getLogin());
+		
+		if(userUp.getPermissoes() != null)		
+			old.setPermissoes(userUp.getPermissoes());
+		return old;
+	}
+	
+	public Usuario fromDTO(UsuarioNewDTO userDTO) {
+		Usuario usuario = new Usuario(null, userDTO.getLogin(), userDTO.getSenha(), userDTO.getPermissoes());
+		findFuncionario(usuario,userDTO.getFuncionario_id());
+		return usuario;
+	}
+	public Usuario findById(Integer id) {
+		if(!Optional.ofNullable(id).isPresent())
+			throw new DataIntegrityException("Id não pode ser nulo");
+		
+		return this.userRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException("Não foi possivel encontrar um usuario com o id fornecido"));
+	}
+
+	
+
 	public List<Usuario> saveAll(List<Usuario> usuarios) {
-		return usuarios.stream().map(f -> this.save(f)).collect(Collectors.toList());
+		return usuarios.stream().map(u -> UsuarioNewDTO.fromUsuario(u)).map( u -> this.save(u)).collect(Collectors.toList());
 	}
 
 	// DELETE

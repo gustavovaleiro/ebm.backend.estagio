@@ -18,7 +18,6 @@ public class Utils {
 		
 	private static Random gerador = new Random(System.currentTimeMillis());
 	private static DateTimeFormatter brFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-	
 	public static Telefone getRandomTelefone(boolean principal) {
 		return new Telefone(null, String.valueOf(gerador.nextInt(89)+10), String.valueOf(900000000 + gerador.nextInt(99999999)), "GeradoAutomaticamente", principal);
 	}
@@ -57,12 +56,14 @@ public class Utils {
 		if(Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication()).isPresent())
 			principal = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
-		if(historico.getUsuarioCadastro() == null ) {
+		if(historico.getDataCadastro() == null ) {
 			historico.setDataCadastro(LocalDateTime.now());
 			historico.setUsuarioCadastro(principal);
+		
 		}else {
 			historico.setDataUltimaModificacao(LocalDateTime.now());
 			historico.setUltimaModificacao(principal);
+		
 		}
 	}
 

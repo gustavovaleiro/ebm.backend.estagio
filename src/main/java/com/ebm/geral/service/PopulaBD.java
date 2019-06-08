@@ -131,7 +131,7 @@ public class PopulaBD {
 	private MovimentacaoService movimentacaoS;
 	@Autowired
 	private UsuarioService usuarioService;
-	private Usuario user5;
+	public Usuario user5;
 
 
 

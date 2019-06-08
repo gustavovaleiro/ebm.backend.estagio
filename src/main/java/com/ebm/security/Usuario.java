@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.HistoricoCadastral;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,22 +45,18 @@ public class Usuario implements UserDetails {
 	@Column(nullable = false, length = 30)
 	private String login;
 
-
+	@JsonIgnore
 	@Column(nullable = false)
 	private String senha;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<Integer> permissoes = new HashSet<>();
-	
-	
-	
+
 	@MapsId
 	@OneToOne
 	private Funcionario funcionario;
 	@Embedded
 	private HistoricoCadastral historico= new HistoricoCadastral();
-	@Transient
-	private Collection<? extends GrantedAuthority> authorities;
 
 	public Usuario() {
 	}
@@ -79,8 +76,7 @@ public class Usuario implements UserDetails {
 		this.id = id;
 		this.login = login;
 		this.senha = senha;
-		this.authorities = permissoes.stream().map(x -> new SimpleGrantedAuthority(x.getNome()))
-				.collect(Collectors.toSet());
+		this.permissoes = permissoes.stream().map(p -> p.getId()).collect(Collectors.toSet());
 
 	}
 
@@ -92,19 +88,20 @@ public class Usuario implements UserDetails {
 		return id;
 	}
 	
-	
+	@JsonIgnore
 	@Transient
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
+		return permissoes.stream().map(x -> new SimpleGrantedAuthority(PermissaoE.toEnum(x).getNome()))
+				.collect(Collectors.toSet());
 	}
-
+	@JsonIgnore
 	@Transient
 	@Override
 	public String getPassword() {
 		return senha;
 	}
-
+	@JsonIgnore
 	@Transient
 	@Override
 	public String getUsername() {
@@ -135,9 +132,7 @@ public class Usuario implements UserDetails {
 		return true;
 	}
 	
-	public Set<PermissaoE> getPermissoes() {
-		return permissoes.stream().map(p -> PermissaoE.toEnum(p)).collect(Collectors.toSet());
-	}
+	
 	public void addPermissao(PermissaoE permissao) {
 		this.permissoes.add(permissao.getId());
 	}
@@ -145,7 +140,9 @@ public class Usuario implements UserDetails {
 	public void removePermissao(PermissaoE permissao) {
 		this.permissoes.remove(permissao.getId());
 	}
-
+	public Set<PermissaoE> getPermissoes() {
+		return permissoes.stream().map(p -> PermissaoE.toEnum(p)).collect(Collectors.toSet());
+	}
 
 	public void setPermissoes(Set<PermissaoE> permissao) {
 		this.permissoes = permissao.stream().map(p -> p.getId()).collect(Collectors.toSet());

@@ -21,6 +21,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ebm.security.Usuario;
 import com.ebm.security.dto.UsuarioListDTO;
+import com.ebm.security.dto.UsuarioNewDTO;
+import com.ebm.security.dto.UsuarioUpdateDTO;
 import com.ebm.security.service.UsuarioService;
 
 @RestController
@@ -31,7 +33,7 @@ public class UsuarioResource {
 
 	@PreAuthorize("hasAuthority('USUARIO_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody Usuario usuario) {
+	public ResponseEntity<Void> insert(@RequestBody UsuarioNewDTO usuario) {
 		Usuario obj = usuarioService.save(usuario);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -40,9 +42,9 @@ public class UsuarioResource {
 
 	@PreAuthorize("hasAuthority('USUARIO_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Usuario usuario, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@RequestBody UsuarioUpdateDTO usuario, @PathVariable Integer id) {
 		usuario.setId(id);
-		usuario = usuarioService.save(usuario);
+		Usuario n = usuarioService.update(usuario);
 		return ResponseEntity.noContent().build();
 
 	}

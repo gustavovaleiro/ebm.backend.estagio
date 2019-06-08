@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.HistoricoCadastral;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -44,7 +45,7 @@ public  class Movimentacao implements Serializable{
 	private String documento;
 	@Column(length = 400)
 	private String descricao;
-	
+	 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime dataMovimentacao;
 	
 	@Enumerated(EnumType.STRING)

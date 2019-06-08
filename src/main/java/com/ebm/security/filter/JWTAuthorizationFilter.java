@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.ebm.security.JWTUtil;
+import com.ebm.security.Usuario;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -44,7 +44,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	private UsernamePasswordAuthenticationToken getAuthentication(String token) {
 		if(jwtUtil.tokenValido(token)) {
 			String username = jwtUtil.getUsername(token);
-			UserDetails user = userService.loadUserByUsername(username);
+			Usuario user = (Usuario) userService.loadUserByUsername(username);
 			return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		}
 		return null;

@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +19,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.service.PopulaBD;
 import com.ebm.geral.utils.Utils;
+import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.service.CargoService;
 import com.ebm.pessoal.service.FuncionarioService;
 import com.ebm.pessoal.service.PessoaService;
+import com.ebm.security.PermissaoE;
 import com.ebm.security.dto.UsuarioListDTO;
+import com.ebm.security.dto.UsuarioNewDTO;
+import com.ebm.security.dto.UsuarioUpdateDTO;
 
 @ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,31 +62,29 @@ public class UsuarioServiceTest {
 	@Transactional
 	@Test
 	public void testSave() {
-		userService.save(bd.user1);
+		bd.user1.setFuncionario(new Funcionario(bd.funf1.getId(), null, null, null, null, null, null));
+		bd.user1 = userService.save(UsuarioNewDTO.fromUsuario(bd.user1));
 
 		assertNotNull(bd.user1.getId());
 		assertThat(bd.user1.getId(), equalTo(bd.user1.getFuncionario().getId()));
 		assertThat(bd.user1.getFuncionario().getId(), equalTo(bd.user1.getFuncionario().getPessoa().getId()));
 	}
 
+	@Transactional
 	@Test
-	public void testTrocaFuncionarioDeveLancarEx() {
-		bd.user1 = userService.save(bd.user1);
-		bd.user1.setFuncionario(bd.funf2);
-		try {
-			userService.save(bd.user1);
-			fail();
-		} catch (DataIntegrityException ex) {
-			assertThat(ex.getMessage(), equalTo(UsuarioService.DATAINTEGRITY_CHANGEFUNC));
-		}
-
-		userService.deleteById(bd.user1.getId());
-
-		funcionarioService.deleteAll();
-		cargoS.deleteAll();
-
-		pessoaService.deleteAll(true);
+	public void testUpdate() {
+		bd.user1 = userService.save(UsuarioNewDTO.fromUsuario(bd.user1));
+		UsuarioUpdateDTO userDTO = UsuarioUpdateDTO.fromUsuario(bd.user1);
+		userDTO.setLogin("novologin");
+		userDTO.setPermissoes(null);
+		userDTO.setPermissoes(new HashSet<>(Arrays.asList(PermissaoE.CARGO_POST)));
+		bd.user1 = userService.update(userDTO);
+		
+		assertThat(bd.user1.getLogin(), equalTo("novologin"));
+		assertThat(bd.user1.getPermissoes().size(), equalTo(1));
+		assertNotNull(bd.user1.getHistorico().getDataUltimaModificacao() );
 	}
+	
 
 	public void prepara() {
 
@@ -92,10 +95,7 @@ public class UsuarioServiceTest {
 		pessoaService.save(bd.funf4.getPessoa());
 		funcionarioService.save(bd.funf3);
 		funcionarioService.save(bd.funf4);
-		bd.user1 = userService.save(bd.user1);
-		bd.user2 = userService.save(bd.user2);
-		bd.user3 = userService.save(bd.user3);
-		bd.user4 = userService.save(bd.user4);
+	    userService.saveAll(Arrays.asList(bd.user1,bd.user2,bd.user3,bd.user4));
 	}
 
 	@Transactional
@@ -106,6 +106,12 @@ public class UsuarioServiceTest {
 		Page<UsuarioListDTO> list = userService.findBy(null, null, null, PageRequest.of(0, 5));
 
 		testSePossuITodos(list);
+	}
+	
+	@Transactional
+	@Test
+	public void testPermissaoUserAdm() {
+		assertTrue(bd.user5.getPermissoes().containsAll(Arrays.asList(PermissaoE.values())));
 	}
 
 	private void testSePossuITodos(Page<UsuarioListDTO> list) {

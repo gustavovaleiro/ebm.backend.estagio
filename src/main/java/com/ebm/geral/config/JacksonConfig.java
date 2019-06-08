@@ -7,6 +7,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Configuration
 public class JacksonConfig {
@@ -17,7 +18,7 @@ public class JacksonConfig {
 			public void configure(ObjectMapper objectMapper) {
 				objectMapper.registerSubtypes(PessoaFisica.class);
 				objectMapper.registerSubtypes(PessoaJuridica.class);
-		
+				 objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 				super.configure(objectMapper);
 			};
 		};
