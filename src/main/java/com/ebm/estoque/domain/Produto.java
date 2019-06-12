@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.geral.utils.Utils;
@@ -22,6 +23,7 @@ import lombok.Setter;
 public class Produto extends Item {
 	private static final long serialVersionUID = 1L;
 
+	@NotNull(message = "O estoque minimo é um campo obrigatório")
 	private Integer estoqueMinimo;
 	private Integer estoqueMax;
 	private Integer estoqueAtual;

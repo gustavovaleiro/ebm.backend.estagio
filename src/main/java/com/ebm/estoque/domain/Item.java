@@ -17,6 +17,11 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import com.ebm.pessoal.domain.HistoricoCadastral;
 
@@ -43,26 +48,41 @@ public abstract class Item implements Serializable {
 	@EqualsAndHashCode.Include
 	private Integer id;
 	
-	@Column(nullable = false, length = 140)
+	@Column(nullable = false, length = 160)
+	@NotNull(message ="Nome é um campo requirido")
+	@NotEmpty(message ="Nome é um campo requirido")
+	@Length(min = 2, max = 160, message ="O nome tem que possuir entre 2 e 160 caracteres")
 	private String nome;
 	
-	@Column(nullable = false, length = 400)
+	@Column(nullable = false, length = 600)
+	@NotNull(message ="Descrição é um campo requirido")
+	@NotEmpty(message ="Descrição é um campo requirido")
+	@Length(min = 2, max = 600, message ="A Descrição tem que possuir entre 2 e 600 caracteres")
 	private String descricao;
 	
 	@ManyToOne()
 	@JoinColumn(nullable = false)
+	@NotNull(message="Unidate é um campo obrigatorio")
 	private Unidade unidade;
 	
 	@ManyToOne()
 	@JoinColumn(nullable = false)
+	@NotNull(message="Unidate é um campo obrigatorio")
 	private CategoriaItem categoria;
 	
 	@Column(length = 60)
+	@Length(max=60, message=" O código interno deve possuir no máximo 60 caracteres")
 	private String codInterno;
-	
+	@NotNull(message= "Valor de compra médio é um campo obrigatorio")
+	@DecimalMin(value = "0", message ="O valor de compra médio não pode ser menor do que zero")
 	private BigDecimal valorCompraMedio;
+	@DecimalMin(value = "0", message ="Outras despesas não pode ser menor do que zero")
 	private BigDecimal outrasDespesa;
+	@NotNull(message= "Margem de lucro é um campo obrigatorio")
+	@DecimalMin(value = "0", message ="Margem de lucro não pode ser menor do que zero")
 	private Double margemLucro;
+	@NotNull(message= "Comissao de venda é um campo obrigatorio")
+	@DecimalMin(value = "0", message ="Comissao de venda não pode ser menor do que zero")
 	private Double comissaoVenda;
 	protected String tipo;
 	@Embedded

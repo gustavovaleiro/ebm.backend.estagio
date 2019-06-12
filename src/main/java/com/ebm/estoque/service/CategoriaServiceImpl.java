@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +29,7 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 	private ItemService itens;
 	
 	@Override
-	public CategoriaItem save(CategoriaItem categoria) {
+	public CategoriaItem save(@Valid CategoriaItem categoria) {
 		garantaIntegridade(categoria);
 		saveAssociacoes(categoria);
 		Utils.audita(categoria.getHistorico());

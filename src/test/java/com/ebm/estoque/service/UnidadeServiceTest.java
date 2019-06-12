@@ -145,7 +145,7 @@ public class UnidadeServiceTest {
 	@Transactional
 	@Test
 	public void testDeleteComItem() {
-		CategoriaItem cat1 = new CategoriaItem(null, "t");
+		CategoriaItem cat1 = new CategoriaItem(null, "test");
 		cat1 = categorias.save(cat1);
 		un1 = unidadeService.save(un1);
 		Produto p = Produto.of("tal", un1,cat1);

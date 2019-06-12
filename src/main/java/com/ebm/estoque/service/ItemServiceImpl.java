@@ -59,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
 			throw new DataIntegrityException(DATAINTEGRITY_UNIDADENULL);
 		if(item.getCategoria() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_CATEGORIANULL);
-
+		
 	}
 
 	private void salvaAssociacao(Item item) {
