@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 
 import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.geral.utils.Utils;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @DiscriminatorValue("S")
+@JsonTypeName("Servico")
 public class Servico extends Item {
 	private static final long serialVersionUID = 1L;
 

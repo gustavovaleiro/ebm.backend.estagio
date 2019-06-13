@@ -54,7 +54,12 @@ public class Utils {
 	public static void audita(HistoricoCadastral historico) {
 		Usuario principal = null;
 		if(Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication()).isPresent())
-			principal = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			try {
+				principal = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			} catch (ClassCastException ex) {
+				principal = null;
+			}
+			
 		
 		if(historico.getDataCadastro() == null ) {
 			historico.setDataCadastro(LocalDateTime.now());

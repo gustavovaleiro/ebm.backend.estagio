@@ -23,7 +23,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.ebm.geral.utils.UtilNumeric;
 import com.ebm.pessoal.domain.HistoricoCadastral;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -38,7 +40,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name  = "_tipo", discriminatorType= DiscriminatorType.STRING, length=1)
+@DiscriminatorColumn(name = "_tipo", discriminatorType = DiscriminatorType.STRING, length = 1)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "tipo")
 public abstract class Item implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -47,46 +50,50 @@ public abstract class Item implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
 	private Integer id;
-	
+
 	@Column(nullable = false, length = 160)
-	@NotNull(message ="Nome é um campo requirido")
-	@NotEmpty(message ="Nome é um campo requirido")
-	@Length(min = 2, max = 160, message ="O nome tem que possuir entre 2 e 160 caracteres")
+	@NotNull(message = "Nome é um campo requirido")
+	@Length(min = 2, max = 160, message = "O nome tem que possuir entre 2 e 160 caracteres")
 	private String nome;
-	
+
 	@Column(nullable = false, length = 600)
-	@NotNull(message ="Descrição é um campo requirido")
-	@NotEmpty(message ="Descrição é um campo requirido")
-	@Length(min = 2, max = 600, message ="A Descrição tem que possuir entre 2 e 600 caracteres")
+	@NotNull(message = "Descrição é um campo requirido")
+	@Length(min = 2, max = 600, message = "A Descrição tem que possuir entre 2 e 600 caracteres")
 	private String descricao;
-	
+
 	@ManyToOne()
 	@JoinColumn(nullable = false)
-	@NotNull(message="Unidate é um campo obrigatorio")
+	@NotNull(message = "Unidate é um campo obrigatorio")
 	private Unidade unidade;
-	
+
 	@ManyToOne()
 	@JoinColumn(nullable = false)
-	@NotNull(message="Unidate é um campo obrigatorio")
+	@NotNull(message = "Categoria é um campo obrigatorio")
 	private CategoriaItem categoria;
-	
+
 	@Column(length = 60)
-	@Length(max=60, message=" O código interno deve possuir no máximo 60 caracteres")
+	@Length(max = 60, message = " O código interno deve possuir no máximo 60 caracteres")
 	private String codInterno;
-	@NotNull(message= "Valor de compra médio é um campo obrigatorio")
-	@DecimalMin(value = "0", message ="O valor de compra médio não pode ser menor do que zero")
+	
+	@NotNull(message = "Valor de compra médio é um campo obrigatorio")
+	@DecimalMin(value = "0", message = "O valor de compra médio não pode ser menor do que zero")
 	private BigDecimal valorCompraMedio;
-	@DecimalMin(value = "0", message ="Outras despesas não pode ser menor do que zero")
+	
+	@DecimalMin(value = "0", message = "Outras despesas não pode ser menor do que zero")
 	private BigDecimal outrasDespesa;
-	@NotNull(message= "Margem de lucro é um campo obrigatorio")
-	@DecimalMin(value = "0", message ="Margem de lucro não pode ser menor do que zero")
+	
+	@NotNull(message = "Margem de lucro é um campo obrigatorio")
+	@DecimalMin(value = "0", message = "Margem de lucro não pode ser menor do que zero")
 	private Double margemLucro;
-	@NotNull(message= "Comissao de venda é um campo obrigatorio")
-	@DecimalMin(value = "0", message ="Comissao de venda não pode ser menor do que zero")
+	
+	@NotNull(message = "Comissao de venda é um campo obrigatorio")
+	@DecimalMin(value = "0", message = "Comissao de venda não pode ser menor do que zero")
 	private Double comissaoVenda;
 	protected String tipo;
+	
 	@Embedded
-	private HistoricoCadastral historico= new HistoricoCadastral();
+	private HistoricoCadastral historico = new HistoricoCadastral();
+
 	public Item(Integer id, String nome, String descricao, Unidade unidade, CategoriaItem categoria, String codInterno,
 			BigDecimal valorCompraMedio, BigDecimal outrasDespesa, Double margemLucro, Double comissaoVenda) {
 		super();
@@ -105,23 +112,27 @@ public abstract class Item implements Serializable {
 
 	@Transient
 	public BigDecimal getPrecoVenda() {
-		return (getCustoTotal()).multiply(BigDecimal.valueOf(this.margemLucro + 1d));
+		return (getCustoTotal()).multiply(BigDecimal.valueOf(UtilNumeric.valueOrZero(this.margemLucro) + 1d));
 	}
+
 	@Transient
 	public BigDecimal getLucroEstimado() {
-		return getCustoTotal().multiply(BigDecimal.valueOf(this.margemLucro));
+		return getCustoTotal().multiply(BigDecimal.valueOf(UtilNumeric.valueOrZero(this.margemLucro)));
 	}
+
 	@Transient
 	public BigDecimal getComissaoEstimada() {
-		return  getPrecoVenda().multiply(BigDecimal.valueOf(comissaoVenda));
+		return getPrecoVenda().multiply(BigDecimal.valueOf(UtilNumeric.valueOrZero(comissaoVenda)));
 	}
+
 	@Transient
 	public Double getComissaoVenda() {
-		return comissaoVenda;
+		return this.comissaoVenda;
 	}
+
 	@Transient
 	public BigDecimal getCustoTotal() {
-		return this.valorCompraMedio.add(Optional.ofNullable(this.outrasDespesa).orElse(BigDecimal.valueOf(0)));
+		return UtilNumeric.valueOrZero(this.getValorCompraMedio()).add(UtilNumeric.valueOrZero(this.outrasDespesa));
 	}
 
 }

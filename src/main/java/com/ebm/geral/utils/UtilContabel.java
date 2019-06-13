@@ -43,5 +43,5 @@ public class UtilContabel {
 	public static Double calcularPrecoValorVendaLiquidoTotal(Collection<ItemVendaInfo> item) {
 		return item.stream().mapToDouble(i -> i.getCalculadora().getValorVendaLiquidoTotal().doubleValue()).sum();
 	}
-
+	
 }

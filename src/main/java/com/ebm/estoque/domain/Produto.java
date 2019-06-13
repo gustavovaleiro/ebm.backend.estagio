@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.geral.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @DiscriminatorValue("P")
+@JsonTypeName("Produto")
 public class Produto extends Item {
 	private static final long serialVersionUID = 1L;
 

@@ -26,6 +26,7 @@ public class ResourceExceptionHandler {
 	  StandardError standardError = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),"Integridade de dados", e.getMessage(), request.getRequestURI());
 	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(standardError);
 	}
+	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest request){
 	  ValidationError err = new ValidationError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),"Dados Invalidos", e.getMessage(), request.getRequestURI());;
@@ -33,7 +34,7 @@ public class ResourceExceptionHandler {
 		 err.addError(error.getField(), error.getDefaultMessage());
 	 }
 	  
-	  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	  return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY).body(err);
 	}
 	@ExceptionHandler(AuthorizationException.class)
 	public ResponseEntity<StandardError> auhtorizathion(AuthorizationException e, HttpServletRequest request){

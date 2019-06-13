@@ -2,6 +2,8 @@ package com.ebm.estoque.resource;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,19 +33,19 @@ public class ItemResource {
 
 	@PreAuthorize("hasAuthority('ITEM_POST')")
 	@PostMapping
-	public ResponseEntity<Item> insert(@RequestBody Item item) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Item item) {
 		Item itemS = itemService.save(item);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(itemS.getId()).toUri();
-		return ResponseEntity.created(uri).body(itemS);
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PreAuthorize("hasAuthority('ITEM_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Item> update(@RequestBody Item item, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody Item item, @PathVariable Integer id) {
 		item.setId(id);
 		item = itemService.save(item);
-		return ResponseEntity.ok(item);
+		return ResponseEntity.ok().build();
 
 	}
 

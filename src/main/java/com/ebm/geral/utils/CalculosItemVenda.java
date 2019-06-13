@@ -55,8 +55,9 @@ public class CalculosItemVenda {
 		return valueOrZero(item.getValorVendaBruto()).multiply(BigDecimal.valueOf(item.getQuantidade()));
 	}
 
-	private BigDecimal valueOrZero(BigDecimal value) {
+	private  BigDecimal valueOrZero(BigDecimal value) {
 		return Optional.ofNullable(value).orElse(BigDecimal.valueOf(0));
 	}
+	
 
 }
