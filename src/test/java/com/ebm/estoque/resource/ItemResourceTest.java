@@ -2,10 +2,9 @@ package com.ebm.estoque.resource;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.net.URI;
+import static  org.hamcrest.Matchers.hasSize;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -20,14 +19,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.geral.service.PopulaBD;
-import com.ebm.security.PermissaoE;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ActiveProfiles("testauto")
@@ -68,21 +65,23 @@ public class ItemResourceTest {
 				.content(om.writeValueAsString(bd.p1))
 				).andDo(print())
 				.andExpect(status().isCreated());
+				
 	}
 	
 	@Transactional
 	@Test
 	@WithMockUser(username="test", password="test", authorities = { "ITEM_POST" })
-	public void testaInsercaoNormalErros() throws Exception {
+	public void testaInsercaoNormalErrosObjectNullGiveErrors() throws Exception {
 		Produto p = new Produto();
 		mockMvc.perform( post("/itens") 
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(om.writeValueAsString(p))
 				).andDo(print())
-				.andExpect(status().isUnprocessableEntity());
+				.andExpect(status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors.*",hasSize(8)));
 			
 	}
-	
+//	
 
 //	@Transactional
 //	@Test
