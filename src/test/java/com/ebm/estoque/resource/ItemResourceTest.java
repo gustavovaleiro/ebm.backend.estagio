@@ -1,39 +1,42 @@
 package com.ebm.estoque.resource;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static  org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static  org.hamcrest.Matchers.hasSize;
+
 import java.util.Arrays;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.hamcrest.core.IsEqual;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.TestUtils;
+import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.geral.service.PopulaBD;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ActiveProfiles("testauto")
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ItemResourceTest {
-	@Autowired
-	private  ObjectMapper om;
+
 	@Autowired
 	private ItemService itemService;
 	@Autowired
@@ -42,9 +45,11 @@ public class ItemResourceTest {
 	private UnidadeService uniServ;
 	@Autowired
 	private PopulaBD bd;
+
 	@Autowired
-	private MockMvc mockMvc;
+	private TestUtils util;
 	
+	private final String ENDPOINT_BASE = "itens";
 	
 	@Before
 	public void setUp() {
@@ -59,13 +64,7 @@ public class ItemResourceTest {
 	@Test
 	@WithMockUser(username="test", password="test", authorities = { "ITEM_POST" })
 	public void testaInsercaoNormal() throws Exception {
-
-		mockMvc.perform( post("/itens") 
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(om.writeValueAsString(bd.p1))
-				).andDo(print())
-				.andExpect(status().isCreated());
-				
+		util.testPostExpectCreated(ENDPOINT_BASE, bd.p1);
 	}
 	
 	@Transactional
@@ -73,107 +72,51 @@ public class ItemResourceTest {
 	@WithMockUser(username="test", password="test", authorities = { "ITEM_POST" })
 	public void testaInsercaoNormalErrosObjectNullGiveErrors() throws Exception {
 		Produto p = new Produto();
-		mockMvc.perform( post("/itens") 
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(om.writeValueAsString(p))
-				).andDo(print())
-				.andExpect(status().isUnprocessableEntity())
-				.andExpect(jsonPath("$.errors.*",hasSize(8)));
-			
+		util.testPost(ENDPOINT_BASE, p, status().isUnprocessableEntity())
+				.andExpect(jsonPath("$.errors.*",hasSize(8)));	
 	}
-//	
+	
+	@Transactional
+	@Test
+	@WithMockUser(username="test", password="test", authorities = { "ITEM_GET" })
+	public void testInsercaoSemAuthority() throws Exception {
+		util.testPost("itens", bd.p1, status().isForbidden());
+		
+	}
 
-//	@Transactional
-//	@Test
-//	public void testaInsercaoServiceNormal() {
-//		bd.s1 = (Servico) itemService.save(bd.s1);
-//
-//		assertNotNull(bd.s1.getId());
-//
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaUpdate() {
-//		bd.p1 = (Produto) itemService.save(bd.p1);
-//		bd.p1.setNome("NOVONOME");
-//		bd.p1 = (Produto) itemService.save(bd.p1);
-//		assertNotNull(bd.p1.getId());
-//		assertThat(bd.p1.getNome(), equalTo("NOVONOME"));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaInsercaoSemUnidade() {
-//		bd.p1.setUnidade(null);
-//		try {
-//			bd.p1 = (Produto) itemService.save(bd.p1);
-//			fail();
-//		} catch (DataIntegrityException ex) {
-//			assertThat(ex.getMessage(), equalTo(ItemService.DATAINTEGRITY_UNIDADENULL));
-//		}
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaInsercaoSemCategoria() {
-//		bd.p1.setCategoria(null);
-//		try {
-//			bd.p1 = (Produto) itemService.save(bd.p1);
-//			fail();
-//		} catch (DataIntegrityException ex) {
-//			assertThat(ex.getMessage(), equalTo(ItemService.DATAINTEGRITY_CATEGORIANULL));
-//		}
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testComissaoEstimadaComTaxaFixa() {
-//		Double comissaoResultado = itemService.calcularComissaoEstimada(Arrays.asList(bd.p1, bd.s1), 0.1);
-//		assertTrue(comissaoResultado - 31 == 0);
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testComissaoEstimadaComTaxaItem() {
-//		Double comissaoResultado = itemService.calcularComissaoEstimada(Arrays.asList(bd.p1, bd.s1));
-//		assertTrue(comissaoResultado - 4.9 == 0);
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testCalculoLucroBruto() {
-//		Double resultado = itemService.calcularLucroBrutoEstimado(Arrays.asList(bd.p1, bd.s1));
-//		assertTrue(resultado - 90 == 0);
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testCalculoLucroLiquido() {
-//		Double resultado = itemService.calcularLucroLiquidoEstimado(Arrays.asList(bd.p1, bd.s1));
-//		assertTrue(resultado - 85.1 == 0);
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testCalculoLucroLiquidoComTaxaComissaoFixa() {
-//		Double resultado = itemService.calcularLucroLiquidoEstimado(Arrays.asList(bd.p1, bd.s1), 0.1);
-//		assertTrue(resultado - 59 == 0);
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testCalculoCustoTotal() {
-//		Double resultado = itemService.calcularCustoTotal(Arrays.asList(bd.p1, bd.s1));
-//		assertTrue(resultado - 220 == 0);
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testCalculoPrecoVendaTotal() {
-//		Double resultado = itemService.calcularPrecoVendaTotal(Arrays.asList(bd.p1, bd.s1));
-//		assertTrue(resultado - 310 == 0);
-//	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username="test", password="test", authorities = { "ITEM_POST" })
+	public void testaInsercaoServiceNormal() throws Exception {
+		util.testPostExpectCreated("itens", bd.s1);
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username="test", password="test", authorities = {"ITEM_PUT"})
+	public void testaUpdate() throws Exception {
+		bd.p1 = (Produto) itemService.save(bd.p1);
+		util.em().detach(bd.p1);
+		bd.p1.setNome("NOVONOME");
+		
+		util.testUpdateExpectSucess(ENDPOINT_BASE+"/"+bd.p1.getId(), bd.p1);
+		
+		bd.p1 = (Produto) itemService.findById(bd.p1.getId());
+		
+		assertThat(bd.p1.getNome(), equalTo("NOVONOME"));
+	}
+	@Transactional
+	@Test
+	@WithMockUser(username="test", password="test", authorities = {"ITEM_POST"})
+	public void testaUpdateNoAuthority() throws Exception {
+		bd.p1 = (Produto) itemService.save(bd.p1);
+		util.em().detach(bd.p1);
+		bd.p1.setNome("NOVONOME");
+		util.testUpdateExpectedForbidden(ENDPOINT_BASE+"/"+bd.p1.getId(), bd.p1);
+	}
+	
+
 //
 //	private void preparaTestParameterizado() {
 //		catServ.save(bd.cat3);
@@ -338,4 +281,6 @@ public class ItemResourceTest {
 //		assertTrue(results.get().allMatch(i -> i.getCategoria().equals(bd.cat2.getNome())));
 //
 //	}
+
+	
 }
