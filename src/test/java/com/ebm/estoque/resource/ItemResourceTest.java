@@ -108,7 +108,7 @@ public class ItemResourceTest {
 		util.em().detach(bd.p1);
 		bd.p1.setNome("NOVONOME");
 
-		util.testUpdateExpectSucess(ENDPOINT_BASE + "/" + bd.p1.getId(), bd.p1);
+		util.testPutExpectSucess(ENDPOINT_BASE + "/" + bd.p1.getId(), bd.p1);
 
 		bd.p1 = (Produto) itemService.findById(bd.p1.getId());
 
@@ -122,7 +122,7 @@ public class ItemResourceTest {
 		bd.p1 = (Produto) itemService.save(bd.p1);
 		util.em().detach(bd.p1);
 		bd.p1.setNome("NOVONOME");
-		util.testUpdateExpectedForbidden(ENDPOINT_BASE + "/" + bd.p1.getId(), bd.p1);
+		util.testPutExpectedForbidden(ENDPOINT_BASE + "/" + bd.p1.getId(), bd.p1);
 	}
 
 	@Transactional

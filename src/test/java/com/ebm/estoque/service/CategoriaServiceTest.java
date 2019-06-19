@@ -51,25 +51,6 @@ public class CategoriaServiceTest {
 	}
 
 	@Test
-	public void testaAdicionarCategoriaDeveAceitar() {
-		cat1 = categoriaService.save(cat1);
-
-		assertNotNull(cat1.getId());
-	}
-
-	@Test
-	public void testaAdicionarCategoriaSemNomeEx() {
-		cat1.setNome(null);
-		try {
-			cat1 = categoriaService.save(cat1);
-			fail();
-		} catch (DataIntegrityException ex) {
-			assertThat(ex.getMessage(), equalTo(CategoriaItemService.DATAINTEGRITY_NOMENULL));
-		}
-
-	}
-
-	@Test
 	public void testaAdicionarCategoriaNomeRepetido() {
 		CategoriaItem un2 = new CategoriaItem(null, cat1.getNome());
 		categoriaService.save(cat1);
@@ -82,27 +63,6 @@ public class CategoriaServiceTest {
 
 	}
 
-	@Test
-	public void testeUpdate() {
-		cat1 = categoriaService.save(cat1);
-		cat1.setNome("outronome");
-		CategoriaItem un2 = categoriaService.save(cat1);
-
-		assertNotNull(cat1.getId());
-		assertThat(un2.getId(), equalTo(cat1.getId()));
-		assertThat(un2.getNome(), equalTo("outronome"));
-	}
-
-	@Transactional
-	@Test
-	public void testDeleteNotFound() {
-		try {
-			categoriaService.deleteById(2);
-			fail();
-		} catch (ObjectNotFoundException ex) {
-			assertThat(ex.getMessage(), equalTo(CategoriaItemService.ONFE_NOTFOUNDBYID + 2));
-		}
-	}
 
 	@Transactional
 	@Test
@@ -112,21 +72,6 @@ public class CategoriaServiceTest {
 			fail();
 		} catch (DataIntegrityException ex) {
 			assertThat(ex.getMessage(), equalTo(CategoriaItemService.DATAINTEGRITY_IDNULL));
-		}
-	}
-
-	@Transactional
-	@Test
-	public void testDelete() {
-
-		cat1 = categoriaService.save(cat1);
-		int id = cat1.getId();
-		categoriaService.deleteById(id);
-		try {
-			categoriaService.findById(id);
-			fail();
-		} catch (ObjectNotFoundException ex) {
-			assertThat(ex.getMessage(), equalTo(CategoriaItemService.ONFE_NOTFOUNDBYID + id));
 		}
 	}
 

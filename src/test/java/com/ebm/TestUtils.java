@@ -2,6 +2,7 @@ package com.ebm;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -52,17 +53,22 @@ public class TestUtils {
 				.andExpect(statusExpect);
 	}
 
-	public ResultActions testUpdateExpectSucess(String endpoint, Object objectForUpdate) throws Exception {
+	public ResultActions testPutExpectSucess(String endpoint, Object objectForUpdate) throws Exception {
 		return mockMvc.perform(
 				put(endpoint).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsString(objectForUpdate)))
 				.andExpect(status().isOk());
 
 	}
 
-	public ResultActions testUpdateExpectedForbidden(String endpoint, Object objectForUpdate) throws Exception {
+	public ResultActions testPutExpectedForbidden(String endpoint, Object objectForUpdate) throws Exception {
 		return mockMvc.perform(
 				put(endpoint).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsString(objectForUpdate)))
 				.andExpect(status().isForbidden());
+	}
+	public ResultActions testPut(String endpoint, Object objectForUpdate, ResultMatcher status) throws Exception {
+		return mockMvc.perform(
+				put(endpoint).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsString(objectForUpdate)))
+				.andExpect(status);
 	}
 
 	public ResultActions testGetRequestParams(String endpoint, MultiValueMap<String, String> params,
@@ -87,6 +93,10 @@ public class TestUtils {
 	public ResultActions testGet(String endpoint, Integer id, ResultMatcher status) throws Exception {
 		return this.mockMvc.perform(get(endpoint + "/" + id).accept(MediaType.APPLICATION_JSON)).andExpect(status);
 	}
+	public ResultActions testDelete(String endpoint, ResultMatcher status) throws Exception {
+		return this.mockMvc.perform(delete(endpoint))
+				.andExpect(status);
+	}
 
 	public ObjectMapper objectMapper() {
 		return this.om;
@@ -99,5 +109,7 @@ public class TestUtils {
 	public EntityManager em() {
 		return this.entityManager;
 	}
+
+
 
 }
