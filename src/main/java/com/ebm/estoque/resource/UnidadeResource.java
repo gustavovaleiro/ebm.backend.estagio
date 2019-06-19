@@ -2,6 +2,8 @@ package com.ebm.estoque.resource;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +28,7 @@ public class UnidadeResource {
 	private UnidadeService unidadeService;
 	@PreAuthorize("hasAuthority('ITEM_AUX_POST')")
 	@PostMapping
-	public ResponseEntity<Unidade> insert(@RequestBody Unidade unidade) {
+	public ResponseEntity<Unidade> insert(@Valid @RequestBody Unidade unidade) {
 		Unidade unidadeS = unidadeService.save(unidade);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(unidadeS.getId())
@@ -35,7 +37,7 @@ public class UnidadeResource {
 	}
 	@PreAuthorize("hasAuthority('ITEM_AUX_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Unidade> update(@RequestBody Unidade unidade, @PathVariable Integer id) {
+	public ResponseEntity<Unidade> update(@Valid @RequestBody Unidade unidade, @PathVariable Integer id) {
 		unidade.setId(id);
 		unidade = unidadeService.save(unidade);
 		return ResponseEntity.ok(unidade);

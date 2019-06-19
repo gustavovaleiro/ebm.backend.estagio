@@ -288,8 +288,7 @@ public class PopulaBD {
 			instanciaCategorias();
 		}
 
-		un1 = new Unidade(null, "un", "Unidade");
-		un2 = new Unidade(null, "hrs", "Horas");
+		instanciaUnidade();
 
 		p1 = new Produto(null, "Computador", "Computador i5 8gbRam", un1, cat1, "COM01", BigDecimal.valueOf(100), null,
 				0.3, 0.01, 5, 0, 10);
@@ -320,6 +319,11 @@ public class PopulaBD {
 			s.setMargemLucro(0.4d);
 		});
 		return this;
+	}
+
+	public void instanciaUnidade() {
+		un1 = new Unidade(null, "un", "Unidade");
+		un2 = new Unidade(null, "hrs", "Horas");
 	}
 
 	public PopulaBD instanciaMovimentacao(boolean instanciaAssocia) {

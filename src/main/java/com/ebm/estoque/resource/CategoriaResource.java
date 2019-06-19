@@ -51,21 +51,21 @@ public class CategoriaResource {
 
 	@PreAuthorize("hasAuthority('ITEM_AUX_DELETE')")
 	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Void> delete(@Valid @PathVariable Integer id) {
+	public ResponseEntity<Void> delete( @PathVariable Integer id) {
 		categoriaService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PreAuthorize("hasAuthority('ITEM_AUX_GET')")
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<CategoriaItem> find(@Valid @PathVariable Integer id) {
+	public ResponseEntity<CategoriaItem> find( @PathVariable Integer id) {
 		CategoriaItem obj = categoriaService.findById(id);
 		return ResponseEntity.ok(obj);
 	}
 
 	@PreAuthorize("hasAuthority('ITEM_AUX_GET')")
 	@GetMapping(value = "/find")
-	public ResponseEntity<Page<CategoriaItem>> findAllBy(@Valid @RequestParam(value = "nome", required = false) String nome,
+	public ResponseEntity<Page<CategoriaItem>> findAllBy( @RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
