@@ -297,15 +297,28 @@ public class PopulaBD {
 				BigDecimal.valueOf(20), 0.5, 0.02);
 
 		p2 = Produto.of("Teclado Mecanico RGB", un1, cat3);
+		
 		p3 = Produto.of("Teclado membrana", un1, cat3);
 		p4 = Produto.of("Computador i3  4gbram", un1, cat3);
 		p5 = Produto.of("Mouse", un1, cat1);
 		p6 = Produto.of("Teclado", un1, cat1);
 		p7 = Produto.of("Processador i5", un1, cat1);
-
+		Arrays.asList(p2,p3,p4,p5,p6,p7).stream().forEach( p ->{
+			p.setEstoque(2, 4, 10);
+			p.setComissaoVenda(1d);
+			p.setValorCompraMedio(BigDecimal.valueOf(100));
+			p.setMargemLucro(0.4d);
+		});
+			
 		s2 = Servico.of("Troca de fonte", un1, cat2);
 		s3 = Servico.of("Montagem Computador", un2, cat1);
 		s4 = Servico.of("Formatacao", un1, cat2);
+		
+		Arrays.asList(s2,s3,s4).stream().forEach( s -> {
+			s.setComissaoVenda(1d);
+			s.setValorCompraMedio(BigDecimal.valueOf(100));
+			s.setMargemLucro(0.4d);
+		});
 		return this;
 	}
 
