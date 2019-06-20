@@ -25,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.estoque.domain.Item;
 import com.ebm.estoque.domain.Movimentacao;
 import com.ebm.estoque.domain.Produto;
@@ -49,11 +50,7 @@ import com.ebm.pessoal.domain.RG;
 import com.ebm.pessoal.service.PessoaService;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
-
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class MovimentacaoServiceTest {
+public class MovimentacaoServiceTest  extends BaseTest{
 	
 	
 	@Autowired

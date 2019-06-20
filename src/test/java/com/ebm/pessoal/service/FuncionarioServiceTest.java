@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.ebm.BaseTest;
 import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.exceptions.ObjectNotFoundException;
 import com.ebm.geral.service.PopulaBD;
@@ -32,10 +33,7 @@ import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FuncionarioListDTO;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class FuncionarioServiceTest {
+public class FuncionarioServiceTest  extends BaseTest{
 
 	@Autowired
 	private FuncionarioService funcionarioService;

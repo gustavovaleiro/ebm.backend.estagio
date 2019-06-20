@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.geral.service.PopulaBD;
 import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Funcionario;
@@ -30,10 +31,7 @@ import com.ebm.security.dto.UsuarioListDTO;
 import com.ebm.security.dto.UsuarioNewDTO;
 import com.ebm.security.dto.UsuarioUpdateDTO;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class UsuarioServiceTest {
+public class UsuarioServiceTest  extends BaseTest{
 
 	@Autowired
 	private UsuarioService userService;

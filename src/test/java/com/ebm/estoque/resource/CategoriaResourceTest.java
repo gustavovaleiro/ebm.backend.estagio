@@ -15,24 +15,20 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.TestUtils;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.geral.service.PopulaBD;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class CategoriaResourceTest {
+
+public class CategoriaResourceTest extends BaseTest{
 
 	@Autowired
 	private CategoriaItemService catServ;
 	@Autowired
 	private PopulaBD bd;
 
-	@Autowired
-	private TestUtils util;
 
 	private final String ENDPOINT_BASE = "/categorias";
 	private final String BASE_AUTHORITY = "ITEM_AUX_";

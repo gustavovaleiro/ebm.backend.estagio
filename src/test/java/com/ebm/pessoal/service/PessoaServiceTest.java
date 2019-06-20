@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.service.PopulaBD;
 import com.ebm.geral.utils.Utils;
@@ -32,10 +33,7 @@ import com.ebm.pessoal.domain.Telefone;
 
 import dev.gustavovalerio.DevApplicationTests;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class PessoaServiceTest extends DevApplicationTests {
+public class PessoaServiceTest extends   BaseTest{
 
 	@Autowired
 	private PessoaService pessoaService;

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Unidade;
@@ -25,10 +28,7 @@ import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.exceptions.ObjectNotFoundException;
 
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class UnidadeServiceTest {
+public class UnidadeServiceTest extends BaseTest{
 	
 	
 	@Autowired
@@ -149,6 +149,10 @@ public class UnidadeServiceTest {
 		cat1 = categorias.save(cat1);
 		un1 = unidadeService.save(un1);
 		Produto p = Produto.of("tal", un1,cat1);
+		p.setEstoque(5, 2, 4);
+		p.setMargemLucro(0.1);
+		p.setComissaoVenda(0.2);
+		p.setValorCompraMedio(BigDecimal.valueOf(2));
 		itens.save(p);
 		
 		

@@ -22,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.exceptions.ObjectNotFoundException;
@@ -33,10 +34,7 @@ import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FornecedorListDTO;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class FornecedorServiceTest {
+public class FornecedorServiceTest extends BaseTest{
 
 	@Autowired
 	private FornecedorService fornecedorService;

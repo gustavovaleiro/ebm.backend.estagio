@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.estoque.domain.CategoriaItem;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.Unidade;
@@ -24,10 +27,7 @@ import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.exceptions.ObjectNotFoundException;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class CategoriaServiceTest {
+public class CategoriaServiceTest  extends BaseTest{
 
 	@Autowired
 	private CategoriaItemService categoriaService;
@@ -36,6 +36,7 @@ public class CategoriaServiceTest {
 	@Autowired
 	private UnidadeService unidades;
 	private CategoriaItem cat1;
+
 
 	@Before
 	public void setUp() {
@@ -82,6 +83,10 @@ public class CategoriaServiceTest {
 		cat1 = categoriaService.save(cat1);
 		u = unidades.save(u);
 		Produto p = Produto.of("tal", u, cat1);
+		p.setEstoque(5, 2, 4);
+		p.setMargemLucro(0.1);
+		p.setComissaoVenda(0.2);
+		p.setValorCompraMedio(BigDecimal.valueOf(2));
 		itens.save(p);
 
 		int id = cat1.getId();

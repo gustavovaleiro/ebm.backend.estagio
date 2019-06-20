@@ -15,16 +15,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ebm.BaseTest;
 import com.ebm.TestUtils;
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.geral.service.PopulaBD;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class UnidadeResourceTest {
+public class UnidadeResourceTest extends BaseTest{
 
 
 	@Autowired
@@ -32,8 +29,6 @@ public class UnidadeResourceTest {
 	@Autowired
 	private PopulaBD bd;
 
-	@Autowired
-	private TestUtils util;
 
 	private final String ENDPOINT_BASE = "/unidades";
 	private final String BASE_AUTHORITY = "ITEM_AUX_";

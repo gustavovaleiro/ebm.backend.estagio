@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import com.ebm.BaseTest;
 import com.ebm.TestUtils;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.enums.TipoItem;
@@ -40,11 +41,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-@ActiveProfiles("testauto")
-@RunWith(SpringJUnit4ClassRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class ItemResourceTest {
+
+public class ItemResourceTest extends BaseTest{
 
 	@Autowired
 	private ItemService itemService;
@@ -55,8 +53,6 @@ public class ItemResourceTest {
 	@Autowired
 	private PopulaBD bd;
 
-	@Autowired
-	private TestUtils util;
 
 	private final String ENDPOINT_BASE = "/itens";
 	private final String BASE_AUTHORITY = "ITEM_";
