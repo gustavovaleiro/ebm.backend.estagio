@@ -29,6 +29,7 @@ import com.ebm.pessoal.domain.Endereco;
 import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.Funcionario;
+import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.RG;
@@ -402,6 +403,56 @@ public class PopulaBD {
 	public void saveProduto(List<Produto> produtos) {
 		itemS.saveAll(produtos);
 		
+	}
+
+	public void savePessoa(List<Pessoa> pessoas) {
+		pessoaS.saveAll(pessoas);
+		
+	}
+
+	public void saveFornecedores(List<Fornecedor> fornecedores) {
+		fornecedorS.saveAll(fornecedores);
+		
+	}
+
+	public PessoaService getPessoaS() {
+		return pessoaS;
+	}
+
+	public ClienteService getClientS() {
+		return clientS;
+	}
+
+	public FornecedorService getFornecedorS() {
+		return fornecedorS;
+	}
+
+	public FuncionarioService getFuncionarioS() {
+		return funcionarioS;
+	}
+
+	public CargoService getCargoS() {
+		return cargoS;
+	}
+
+	public UnidadeService getUnidadeS() {
+		return unidadeS;
+	}
+
+	public CategoriaItemService getCategoriaS() {
+		return categoriaS;
+	}
+
+	public ItemService getItemS() {
+		return itemS;
+	}
+
+	public MovimentacaoService getMovimentacaoS() {
+		return movimentacaoS;
+	}
+
+	public UsuarioService getUsuarioService() {
+		return usuarioService;
 	}
 
 	
