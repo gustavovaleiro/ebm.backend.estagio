@@ -3,6 +3,7 @@ package com.ebm.estoque.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,6 +54,13 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 		recuperaProdutosFrom(movimentacao);
 		
 		Utils.audita(movimentacao.getHistorico());
+		if(movimentacao.getId()!=null && movimentacao.getProdutoMovimentacao().stream().anyMatch(p -> p.getMovimentacao()==null) ){
+			Iterator<ProdutoMovimentacao> iterator = movimentacao.getProdutoMovimentacao().stream().iterator();
+			while(iterator.hasNext()) {
+				ProdutoMovimentacao pm = iterator.next();
+				pm.setMovimentacao(movimentacao);
+			}
+		}
 		movimentacao = movimentacaoRepository.save(movimentacao);
 
 		if (!Optional.ofNullable(movimentacao.getDataMovimentacao()).isPresent())
@@ -80,7 +88,6 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 		
 		movimentacao.setProdutoMovimentacao(new HashSet<ProdutoMovimentacao>(
 				pMovimentacaoRepository.saveAll(movimentacao.getProdutoMovimentacao())));
-
 		return movimentacao;
 	}
 

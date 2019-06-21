@@ -73,7 +73,7 @@ public class CategoriaResourceTest extends BaseTest{
 		
 		assertFalse(bd.cat1.getNome().equals(find.getNome()));
 		
-		util.testPutExpectSucess(ENDPOINT_BASE+"/"+bd.cat1.getId(), bd.cat1)	;
+		util.testPutExpectNoContent(ENDPOINT_BASE+"/"+bd.cat1.getId(), bd.cat1)	;
 		find = catServ.findById(bd.cat1.getId());
 		assertTrue(bd.cat1.getNome().equals(find.getNome()));
 	}

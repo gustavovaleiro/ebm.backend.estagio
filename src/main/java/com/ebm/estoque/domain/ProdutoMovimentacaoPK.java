@@ -5,11 +5,12 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Embeddable
 public class ProdutoMovimentacaoPK implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	
 	@ManyToOne
 	private Produto produto;
 	@ManyToOne

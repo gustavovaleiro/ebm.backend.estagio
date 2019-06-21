@@ -23,6 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProdutoMovimentacao implements ItemVendaInfo {
+	@JsonIgnore
 	@EmbeddedId
 	private ProdutoMovimentacaoPK id = new ProdutoMovimentacaoPK();
 
@@ -50,7 +51,7 @@ public class ProdutoMovimentacao implements ItemVendaInfo {
 	public void setProduto(Produto produto) {
 		this.id.setProduto(produto);
 	}
-
+	@JsonIgnore
 	public Movimentacao getMovimentacao() {
 		return this.id.getMovimentacao();
 	}

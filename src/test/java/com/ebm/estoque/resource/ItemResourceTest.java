@@ -15,20 +15,14 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.ebm.BaseTest;
-import com.ebm.TestUtils;
 import com.ebm.estoque.domain.Produto;
 import com.ebm.estoque.domain.enums.TipoItem;
 import com.ebm.estoque.dtos.ItemListDTO;
@@ -104,7 +98,7 @@ public class ItemResourceTest extends BaseTest{
 		util.em().detach(bd.p1);
 		bd.p1.setNome("NOVONOME");
 
-		util.testPutExpectSucess(ENDPOINT_BASE + "/" + bd.p1.getId(), bd.p1);
+		util.testPutExpectNoContent(ENDPOINT_BASE + "/" + bd.p1.getId(), bd.p1);
 
 		bd.p1 = (Produto) itemService.findById(bd.p1.getId());
 

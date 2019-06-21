@@ -6,17 +6,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ebm.BaseTest;
-import com.ebm.TestUtils;
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.geral.service.PopulaBD;
@@ -73,7 +67,7 @@ public class UnidadeResourceTest extends BaseTest{
 		
 		assertFalse(bd.un1.getNome().equals(find.getNome()));
 		
-		util.testPutExpectSucess(ENDPOINT_BASE+"/"+bd.un1.getId(), bd.un1)	;
+		util.testPutExpectNoContent(ENDPOINT_BASE+"/"+bd.un1.getId(), bd.un1)	;
 		find = uniServ.findById(bd.un1.getId());
 		assertTrue(bd.un1.getNome().equals(find.getNome()));
 	}

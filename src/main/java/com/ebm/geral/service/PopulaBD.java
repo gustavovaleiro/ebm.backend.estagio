@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -385,6 +386,21 @@ public class PopulaBD {
 		user5.setFuncionario(funj1);
 		PermissaoE.getPermissaoStream().forEach(p -> user5.addPermissao(p));
 		return this;
+		
+	}
+
+	public void saveUnidade(List<Unidade> units) {
+		units.stream().forEach( u -> unidadeS.save(u));
+		
+	}
+
+	public void saveCategoria(List<CategoriaItem> cats) {
+		categoriaS.saveAll(cats);
+		
+	}
+
+	public void saveProduto(List<Produto> produtos) {
+		itemS.saveAll(produtos);
 		
 	}
 

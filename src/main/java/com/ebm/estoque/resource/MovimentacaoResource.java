@@ -3,6 +3,8 @@ package com.ebm.estoque.resource;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,14 +28,14 @@ import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 
 @RestController
-@RequestMapping(value = "/movimentacaos")
+@RequestMapping(value = "/movimentacoes")
 public class MovimentacaoResource {
 	@Autowired
 	private MovimentacaoService movimentacaoService;
 
 	@PreAuthorize("hasAuthority('MOVIMENTACAO_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody Movimentacao movimentacao) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Movimentacao movimentacao) {
 		Movimentacao obj = movimentacaoService.save(movimentacao);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -42,7 +44,7 @@ public class MovimentacaoResource {
 
 	@PreAuthorize("hasAuthority('MOVIMENTACAO_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Movimentacao movimentacao, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody Movimentacao movimentacao, @PathVariable Integer id) {
 		movimentacao.setId(id);
 		movimentacao = movimentacaoService.save(movimentacao);
 		return ResponseEntity.noContent().build();

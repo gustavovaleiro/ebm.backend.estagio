@@ -162,7 +162,7 @@ public class ItemServiceImpl implements ItemService {
 	
 	@Transactional
 	@Override
-	public Collection<Item> saveAll(Collection<Item> itens){
+	public Collection<? extends Item> saveAll(Collection<? extends Item> itens){
 		return itens.stream().map( i -> this.save(i)).collect(Collectors.toList());
 	}
 	

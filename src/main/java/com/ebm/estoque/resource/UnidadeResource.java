@@ -28,19 +28,19 @@ public class UnidadeResource {
 	private UnidadeService unidadeService;
 	@PreAuthorize("hasAuthority('ITEM_AUX_POST')")
 	@PostMapping
-	public ResponseEntity<Unidade> insert(@Valid @RequestBody Unidade unidade) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Unidade unidade) {
 		Unidade unidadeS = unidadeService.save(unidade);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(unidadeS.getId())
 				.toUri();
-		return ResponseEntity.created(uri).body(unidadeS);
+		return ResponseEntity.created(uri).build();
 	}
 	@PreAuthorize("hasAuthority('ITEM_AUX_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Unidade> update(@Valid @RequestBody Unidade unidade, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody Unidade unidade, @PathVariable Integer id) {
 		unidade.setId(id);
 		unidade = unidadeService.save(unidade);
-		return ResponseEntity.ok(unidade);
+		return ResponseEntity.noContent().build();
 
 	}
 	@PreAuthorize("hasAuthority('ITEM_AUX_DELETE')")

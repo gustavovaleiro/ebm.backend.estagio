@@ -73,4 +73,12 @@ public class Utils {
 	}
 
 
+	public static String getRandomString(int i) {
+		String r =  "a";
+		for(int j = 1; j<i;j++)
+			r = r.concat("a");
+		return r;
+	}
+
+
 }

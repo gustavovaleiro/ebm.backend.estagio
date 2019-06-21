@@ -45,7 +45,7 @@ public class ItemResource {
 	public ResponseEntity<Void> update(@Valid @RequestBody Item item, @PathVariable Integer id) {
 		item.setId(id);
 		item = itemService.save(item);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 
 	}
 

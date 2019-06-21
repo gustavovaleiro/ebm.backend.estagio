@@ -32,20 +32,20 @@ public class CategoriaResource {
 
 	@PreAuthorize("hasAuthority('ITEM_AUX_POST')")
 	@PostMapping
-	public ResponseEntity<CategoriaItem> insert (@Valid @RequestBody CategoriaItem categoria) {
+	public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaItem categoria) {
 		CategoriaItem categoriaS = categoriaService.save(categoria);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoriaS.getId())
 				.toUri();
-		return ResponseEntity.created(uri).body(categoriaS);
+		return ResponseEntity.created(uri).build();
 	}
 
 	@PreAuthorize("hasAuthority('ITEM_AUX_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<CategoriaItem> update(@Valid @RequestBody CategoriaItem categoria, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaItem categoria, @PathVariable Integer id) {
 		categoria.setId(id);
 		categoria = categoriaService.save(categoria);
-		return ResponseEntity.ok(categoria);
+		return ResponseEntity.noContent().build();
 
 	}
 
