@@ -23,7 +23,9 @@ public class CargoService {
 
 	
 	public Cargo save(Cargo c1) {
-		
+		if(c1.getId() != null) {
+			findById(c1.getId());
+		}
 		if(c1.getNomeCargo() == null || c1.getNomeCargo().isEmpty())
 			throw new DataIntegrityException(DATAINTEGRITY_NOTNAME);
 		Utils.audita(c1.getHistorico());
@@ -50,9 +52,14 @@ public class CargoService {
 	}
 
 	public Page<Cargo> findByName(String nomeCargo, PageRequest pageRequest) {
-		Page<Cargo> cargos = cargoRepository.findByNomeCargoContainsIgnoreCase(nomeCargo, pageRequest);
-		if(cargos.isEmpty())
-			throw new ObjectNotFoundException(ONFE_BYNAME);
+		Page<Cargo> cargos;
+		if(nomeCargo!=null) {
+			cargos = cargoRepository.findByNomeCargoContainsIgnoreCase(nomeCargo, pageRequest);
+			if(cargos.isEmpty())
+				throw new ObjectNotFoundException(ONFE_BYNAME);
+		} else
+			cargos = cargoRepository.findAll(pageRequest);
+			
 	 return cargos;
 	}
 

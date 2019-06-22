@@ -192,7 +192,7 @@ public class PopulaBD {
 		pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4",
 				"inscricaoMunicipal4");
 
-		pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30), new RG("34", "ssp", estadoGO),
+		pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30), new RG("33454", "ssp go", estadoGO),
 				"Brasileira", goiania);
 		return this;
 	}
@@ -210,8 +210,9 @@ public class PopulaBD {
 		if (instanciaAssocia) {
 			instanciaPessoa();
 			associaPessoa();
+			instanciaCargos();
 		}
-		instanciaCargos();
+		
 		funf1 = new Funcionario(null, pf1, "dev-432", cDesenvolvedor, LocalDate.now().minusWeeks(1), 0.,
 				cDesenvolvedor.getSalarioBase());
 		funj1 = new Funcionario(null, pj1, "adm-01", cAdministrador, LocalDate.now().minusDays(2), 0.1,
@@ -232,7 +233,7 @@ public class PopulaBD {
 		return this;
 	}
 
-	private PopulaBD instanciaCargos() {
+	public PopulaBD instanciaCargos() {
 		cDesenvolvedor = new Cargo(null, "Desenvolvedor", BigDecimal.valueOf(2000), "rsats");
 		cAdministrador = new Cargo(null, "Administrador", BigDecimal.valueOf(5000), "tes");
 		return this;
