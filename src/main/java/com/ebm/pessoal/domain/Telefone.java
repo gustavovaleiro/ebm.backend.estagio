@@ -8,6 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,9 +32,15 @@ public class Telefone implements Serializable, Principalizar {
 	private Integer id;
 	
 	@Column(length = 3, nullable = false)
+	@NotNull(message = "O campo dDD não pode ser nulo")
+	@NotEmpty(message = "O campo dDD não pode ser vazio")
+	@Length(min=2, max = 3, message = "O campo dDD  deve possuir entre 2 e 3  caracteres")
 	private String dDD;
 	
 	@Column(length = 9, nullable = false)
+	@NotNull(message = "O campo numero não pode ser nulo")
+	@NotEmpty(message = "O campo numero não pode ser vazio")
+	@Length(min=8, max = 9, message = "O campo numero deve possuir entre 8 e 9 caracteres")
 	private String numero;
 	
 	private String tipo;

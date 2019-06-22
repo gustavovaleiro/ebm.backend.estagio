@@ -2,6 +2,8 @@ package com.ebm.pessoal.resource;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +27,7 @@ public class PessoaResource {
 	private PessoaService pessoaService;
 	@PreAuthorize("hasAnyAuthority('FUNCIONARIO_POST','CLIENTE_POST','FORNECEDOR_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert( @RequestBody Pessoa pessoa){
+	public ResponseEntity<Void> insert(@Valid @RequestBody Pessoa pessoa){
 		Pessoa obj = pessoaService.save(pessoa);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -35,7 +37,7 @@ public class PessoaResource {
 	}
 	@PreAuthorize("hasAnyAuthority('FUNCIONARIO_PUT','CLIENTE_PUT','FORNECEDOR_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Pessoa pessoa, @PathVariable Integer id){
+	public ResponseEntity<Void> update(@Valid @RequestBody Pessoa pessoa, @PathVariable Integer id){
 		pessoa.setId(id);
 		pessoa = pessoaService.save(pessoa);
 		return ResponseEntity.noContent().build();

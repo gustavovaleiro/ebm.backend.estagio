@@ -7,6 +7,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -23,15 +28,22 @@ public class PessoaFisica extends Pessoa {
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable = false, length = 11)
+	@NotNull(message = "O campo cpf não pode ser nulo")
+	@NotEmpty(message = "O campo cpf não pode ser vazio")
+	@Length(min =11, max =11, message = "O campo cpf deve possuir 11 caracteres")
 	private String cpf; 
+	@NotNull(message = "O campo dataNascimento não pode ser nulo")
 	private LocalDate dataNascimento;
 	
 	@Embedded
+	@NotNull(message = "O campo rG não pode ser nulo")
+	@Valid
 	private RG rG;
 	private String nacionalidade;
 	@ManyToOne(optional = true)
+	@NotNull(message = "O campo naturalidade não pode ser nulo")
+	@Valid
 	private Cidade naturalidade;
-	
 	public PessoaFisica() {
 		super.setTipo(TipoPessoa.PESSOA_FISICA);
 	}

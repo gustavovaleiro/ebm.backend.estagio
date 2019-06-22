@@ -173,18 +173,18 @@ public class PopulaBD {
 	public PopulaBD instanciaPessoa() {
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
-		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "12345678",
+		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "75840000",
 				true, "Endereco residencial");
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30),
-				new RG("23123", "SSP", estadoGO), "Brasileira", goiania);
+				new RG("23123", "SSP GO", estadoGO), "Brasileira", goiania);
 		pj1 = new PessoaJuridica(null, "Lanches", "99787331000180", "Lanches ME", "inscricaoEstadual1",
 				"inscricaoMunicipal1");
 		pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30),
-				new RG("3234", "SSP", estadoGO), "Brasileira", goiania);
+				new RG("32344", "SSP GO", estadoGO), "Brasileira", goiania);
 		pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30),
-				new RG("54345", "SSP", estadoGO), "Brasileira", goiania);
+				new RG("54345", "SSP GO", estadoGO), "Brasileira", goiania);
 		pf4 = new PessoaFisica(null, "Maria Carvalho", "58522943060", LocalDate.of(1990, 1, 30),
-				new RG("4523", "SSP", estadoGO), "Brasileira", goiania);
+				new RG("45233", "SSP GO", estadoGO), "Brasileira", goiania);
 		pj2 = new PessoaJuridica(null, "Juniscleids ME", "18038642000145", "Juniscleids ME", "inscricaoEstadual2",
 				"inscricaoMunicipal2");
 		pj3 = new PessoaJuridica(null, "Joao Dev", "46530490000139", "Profissionais ME", "inscricaoEstadual3",

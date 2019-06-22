@@ -10,6 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,16 +35,26 @@ public class Endereco implements Serializable, Principalizar {
 	@EqualsAndHashCode.Include
 	private Integer id;
 	@Column(length = 40)
+	@NotNull(message = "O campo rua não pode ser nulo")
+	@NotEmpty(message = "O campo rua não pode ser vazio")
+	@Length(min =5, max = 60, message = "O campo rua deve possuir entre 5 e 60 caracteres")
 	private String rua;
 	@Column(length = 20)
+	@NotNull(message = "O campo bairro não pode ser nulo")
+	@NotEmpty(message = "O campo bairro não pode ser vazio")
+	@Length(min =2, max = 60, message = "O campo bairro deve possuir entre 2 e 60 caracteres")
 	private String bairro;
 	@ManyToOne(optional = false)
 	@JoinColumn(nullable = false, name = "endereco_cidade")
+	@Valid
 	private Cidade cidade;
 	private String numero;
 	@Column(length = 140)
 	private String complemento;
-	@Column(nullable = false, length = 8)
+	@Column(nullable = false, length = 11)
+	@NotNull(message = "O campo CEP não pode ser nulo")
+	@NotEmpty(message = "O campo CEP não pode ser vazio")
+	@Length(min =8, max = 11, message = "O campo CEP deve possuir entre 8 e 11 caracteres")
 	private String CEP;
 	private boolean principal;
 	private String tipo;
