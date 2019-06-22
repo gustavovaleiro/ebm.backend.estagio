@@ -2,6 +2,8 @@ package com.ebm.pessoal.resource;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +34,7 @@ public class FuncionarioResource {
 
 	@PreAuthorize("hasAuthority('FUNCIONARIO_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody Funcionario funcionario) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Funcionario funcionario) {
 		Funcionario obj = funcionarioService.save(funcionario);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -41,7 +43,7 @@ public class FuncionarioResource {
 
 	@PreAuthorize("hasAuthority('FUNCIONARIO_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Funcionario funcionario, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody Funcionario funcionario, @PathVariable Integer id) {
 		funcionario.setId(id);
 		funcionario = funcionarioService.save(funcionario);
 		return ResponseEntity.noContent().build();

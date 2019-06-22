@@ -198,6 +198,7 @@ public class CargoResourceTest extends BaseTest {
 		});
 
 	}
+
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
@@ -215,6 +216,7 @@ public class CargoResourceTest extends BaseTest {
 		});
 
 	}
+
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
@@ -224,7 +226,7 @@ public class CargoResourceTest extends BaseTest {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("nome", "test");
-		this.util.testGetRequestParams(ENDPOINT_BASE + "/page", params , status().isNotFound());
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/page", params, status().isNotFound());
 
 	}
 
