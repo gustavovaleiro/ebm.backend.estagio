@@ -2,15 +2,14 @@ package com.ebm.pessoal.resource;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Arrays;
 
 import javax.transaction.Transactional;
@@ -18,22 +17,24 @@ import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.ebm.BaseTest;
-import com.ebm.geral.exceptions.DataIntegrityException;
-import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.domain.RestResponsePage;
 import com.ebm.geral.resource.exception.ValidationError;
 import com.ebm.geral.service.PopulaBD;
 import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.PessoaFisica;
-import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FuncionarioListDTO;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class FuncionarioResourceTest extends BaseTest {
 	@Autowired
@@ -204,11 +205,11 @@ public class FuncionarioResourceTest extends BaseTest {
 		bd.funj1 = this.bd.getFuncionarioS().save(bd.funj1);
 
 		bd.funf1.setPessoa(bd.funj1.getPessoa());
-		
+
 		this.util.testPost(ENDPOINT_BASE, this.bd.funf1, status().isBadRequest());
 
 	}
-	
+
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
@@ -231,238 +232,244 @@ public class FuncionarioResourceTest extends BaseTest {
 		this.bd.getFuncionarioS().save(bd.funj1);
 		util.testGet(this.ENDPOINT_BASE, bd.funj1.getId(), status().isForbidden());
 	}
-	
+
 	//
-//	@Transactional
-//	@Test
-//	public void testFindCnpj() {
-//		funcionarioService.save(bd.funj1);
-//
-//		Funcionario result = funcionarioService.findByCpfOrCnpj(((PessoaJuridica) bd.funj1.getPessoa()).getCnpj());
-//
-//		assertNotNull(result.getId());
-//		assertThat(((PessoaJuridica) result.getPessoa()).getCnpj(),
-//				equalTo(((PessoaJuridica) bd.funj1.getPessoa()).getCnpj()));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testFindCPF() {
-//		funcionarioService.save(bd.funf1);
-//
-//		Funcionario result = funcionarioService.findByCpfOrCnpj(((PessoaFisica) bd.funf1.getPessoa()).getCpf());
-//
-//		assertNotNull(result.getId());
-//		assertThat(((PessoaFisica) result.getPessoa()).getCpf(), equalTo(((PessoaFisica) result.getPessoa()).getCpf()));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testFindCPFEx() {
-//
-//		try {
-//			funcionarioService.findByCpfOrCnpj("05909561162");
-//			fail();
-//		} catch (ObjectNotFoundException ex) {
-//			assertThat(ex.getMessage(), equalTo(PessoaService.NOT_FOUND_DOCUMENT + "05909561162"));
-//		}
-//	}
-//
-//	private void cenarioParaBuscaParamiterizada() {
-//		pessoaService.saveAll(Arrays.asList(bd.pf2, bd.pf3, bd.pf4, bd.pj2, bd.pj3, bd.pj4));
-//		funcionarioService
-//				.saveAll(Arrays.asList(bd.funf1, bd.funf2, bd.funf3, bd.funf4, bd.funj1, bd.funj2, bd.funj3, bd.funj4));
-//
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaPessoaFisica() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_FISICA, null, null, null,
-//				pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(4));
-//		assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
-//		assertFalse(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaPessoaJuridica() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 5);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_JURIDICA, null, null, null,
-//				pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(4));
-//		assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
-//		assertFalse(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaPFOuPJ() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, null, null, null, pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(8));
-//		assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
-//		assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaNome() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, null, "joao", null, pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(3));
-//		assertTrue(result.get().filter(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())).count() == 2);
-//		assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
-//
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaNomeAndTipo() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_FISICA, null, "joao", null,
-//				pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(2));
-//		assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
-//
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaAllNull() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, null, null, null, pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(8));
-//		assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
-//		assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaCargo() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, bd.cAdministrador.getNomeCargo(), null, null,
-//				pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(4));
-//		assertTrue(result.get().allMatch(f -> f.getCargo().equals(bd.cAdministrador.getNomeCargo())));
-//		assertFalse(result.get().anyMatch(f -> f.getCargo().equals(bd.cDesenvolvedor.getNomeCargo())));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaCargoAndTipoNothing() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_FISICA,
-//				bd.cAdministrador.getNomeCargo(), null, null, pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(0));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaCargoAndTipo() {
-//
-//		cenarioParaBuscaParamiterizada();
-//		PessoaJuridica pj = new PessoaJuridica(null, "Dev Me", "93811961000167", "DevME", null, null);
-//		pj.getEndereco().add(bd.endereco1);
-//		pj.getTelefone().add(Utils.getRandomTelefone(true));
-//		pj.getEmail().add(Utils.getRandomEmail(pj, true));
-//		Funcionario f = new Funcionario(null, pj, "Dev-06", bd.cDesenvolvedor, LocalDate.now(), 0.,
-//				bd.cDesenvolvedor.getSalarioBase());
-//		pessoaService.save(pj);
-//		funcionarioService.save(f);
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(TipoPessoa.PESSOA_JURIDICA,
-//				bd.cDesenvolvedor.getNomeCargo(), null, null, pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(1));
-//		assertTrue(result.get().allMatch(fd -> fd.getCargo().equals(bd.cDesenvolvedor.getNomeCargo())));
-//		assertTrue(result.get().allMatch(fd -> fd.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaCargoAndNome() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, bd.cDesenvolvedor.getNomeCargo(), "MaRiA",
-//				null, pageRequest);
-//
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(2));
-//		assertTrue(result.get().allMatch(f -> f.getCargo().equals(bd.cDesenvolvedor.getNomeCargo())));
-//		assertFalse(result.get().anyMatch(f -> f.getNome().equals("Maria")));
-//	}
-//
-//	@Transactional
-//	@Test
-//	public void testaBuscaParamiterizadaMatricula() {
-//
-//		cenarioParaBuscaParamiterizada();
-//
-//		// executa
-//		PageRequest pageRequest = PageRequest.of(0, 8);
-//		Page<FuncionarioListDTO> result = funcionarioService.findBy(null, null, null, "adm", pageRequest);
-//		// verifica
-//		assertThat(result.getNumberOfElements(), equalTo(4));
-//		assertTrue(result.get().allMatch(f -> f.getMatricula().toLowerCase().contains("adm")));
-//	}
-	
-	
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testFindCnpj() throws Exception {
+		this.bd.getFuncionarioS().save(bd.funj1);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funj1.getPessoa().getDocument());
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isOk()).andDo(result -> {
+			Funcionario func_resut = this.util.objectMapper().readValue(result.getResponse().getContentAsString(),
+					Funcionario.class);
+			assertTrue(func_resut.getId().equals(this.bd.funj1.getPessoa().getId()));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testFindCnpjInvalido() throws Exception {
+		this.bd.getFuncionarioS().save(bd.funj1);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funj1.getPessoa().getDocument() + "1");
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isBadRequest());
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testFindCnpjNaoExiste() throws Exception {
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funj1.getPessoa().getDocument());
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isNotFound());
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testFindCPF() throws Exception {
+		this.bd.getFuncionarioS().save(bd.funf1);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funf1.getPessoa().getDocument());
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isOk()).andDo(result -> {
+			Funcionario func_resut = this.util.objectMapper().readValue(result.getResponse().getContentAsString(),
+					Funcionario.class);
+			assertTrue(func_resut.getId().equals(this.bd.funf1.getPessoa().getId()));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GeET" })
+	public void testFindCPFSemPermissao() throws Exception {
+		this.bd.getFuncionarioS().save(bd.funf1);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funf1.getPessoa().getDocument());
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isForbidden());
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testFindCPFInvalido() throws Exception {
+		this.bd.getFuncionarioS().save(bd.funf1);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funf1.getPessoa().getDocument() + "1");
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isBadRequest());
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testFindCPFNaoExiste() throws Exception {
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("value", this.bd.funf1.getPessoa().getDocument());
+
+		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isNotFound());
+	}
+
+	private RestResponsePage<FuncionarioListDTO> getPage(MvcResult result)
+			throws UnsupportedEncodingException, IOException, JsonParseException, JsonMappingException {
+		String content = result.getResponse().getContentAsString();
+		RestResponsePage<FuncionarioListDTO> responseList = this.util.objectMapper().readValue(content,
+				new TypeReference<RestResponsePage<FuncionarioListDTO>>() {
+				});
+		return responseList;
+	}
+
+	private void cenarioParaBuscaParamiterizada() {
+		this.bd.getPessoaS().saveAll(Arrays.asList(bd.pf2, bd.pf3, bd.pf4, bd.pj2, bd.pj3, bd.pj4));
+		this.bd.getFuncionarioS()
+				.saveAll(Arrays.asList(bd.funf1, bd.funf2, bd.funf3, bd.funf4, bd.funj1, bd.funj2, bd.funj3, bd.funj4));
+
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaPessoaFisica() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
+			assertFalse(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
+		});
+
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaPessoaJuridica() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("tipo", TipoPessoa.PESSOA_JURIDICA.getDescricao());
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
+			assertFalse(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
+		});
+
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaAllNull() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 8, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
+			assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
+		});
+
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaNome() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("nome", "joao");
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 3, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().allMatch(c -> c.getNome().toLowerCase().contains("joao")));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaNomeETipo() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("nome", "joao");
+		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 2, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
+			assertTrue(result.get().allMatch(c -> c.getNome().toLowerCase().contains("joao")));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaCargo() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("cargo", this.bd.cAdministrador.getNomeCargo());
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 5, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().allMatch(f -> f.getCargo().equals(bd.cAdministrador.getNomeCargo())));
+			assertFalse(result.get().anyMatch(f -> f.getCargo().equals(bd.cDesenvolvedor.getNomeCargo())));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaCargoETipo() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("cargo", this.bd.cAdministrador.getNomeCargo());
+		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
+
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaCargoENome() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("cargo", this.bd.cAdministrador.getNomeCargo());
+		params.add("nome", "MaRiA");
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 1, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+			assertTrue(result.get().allMatch(f -> f.getCargo().equals(bd.cAdministrador.getNomeCargo())));
+			assertTrue(result.get().allMatch(f -> f.getNome().toLowerCase().contains("maria")));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testeBuscarMatricula() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("matricula", "adm");
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+			assertTrue(result.get().allMatch(f -> f.getMatricula().toLowerCase().contains("adm")));
+
+		});
+	}
+
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "DELETE" })

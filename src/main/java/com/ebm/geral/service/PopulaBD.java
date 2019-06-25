@@ -179,7 +179,7 @@ public class PopulaBD {
 				new RG("23123", "SSP GO", estadoGO), "Brasileira", goiania);
 		pj1 = new PessoaJuridica(null, "Lanches", "99787331000180", "Lanches ME", "inscricaoEstadual1",
 				"inscricaoMunicipal1");
-		pf2 = new PessoaFisica(null, "Joao Snow", "52935546032", LocalDate.of(1995, 3, 30),
+		pf2 = new PessoaFisica(null, "Joao Snow Maria", "52935546032", LocalDate.of(1995, 3, 30),
 				new RG("32344", "SSP GO", estadoGO), "Brasileira", goiania);
 		pf3 = new PessoaFisica(null, "Maria Silva", "07952632019", LocalDate.of(1980, 4, 30),
 				new RG("54345", "SSP GO", estadoGO), "Brasileira", goiania);
@@ -219,7 +219,7 @@ public class PopulaBD {
 				cAdministrador.getSalarioBase());
 		funf2 = new Funcionario(null, pf2, "dev-02", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
-		funf3 = new Funcionario(null, pf3, "dev-03", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
+		funf3 = new Funcionario(null, pf3, "dev-03", cAdministrador, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());
 		funf4 = new Funcionario(null, pf4, "dev-04", cDesenvolvedor, LocalDate.now().minusYears(1), 0.,
 				cDesenvolvedor.getSalarioBase());

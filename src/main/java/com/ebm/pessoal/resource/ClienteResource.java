@@ -2,6 +2,8 @@ package com.ebm.pessoal.resource;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +34,7 @@ public class ClienteResource {
 
 	@PreAuthorize("hasAuthority('CLIENTE_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody Cliente cliente) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Cliente cliente) {
 		Cliente obj = clienteService.save(cliente);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -41,7 +43,7 @@ public class ClienteResource {
 
 	@PreAuthorize("hasAuthority('CLIENTE_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Cliente cliente, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody Cliente cliente, @PathVariable Integer id) {
 		cliente.setId(id);
 		cliente = clienteService.save(cliente);
 		return ResponseEntity.noContent().build();

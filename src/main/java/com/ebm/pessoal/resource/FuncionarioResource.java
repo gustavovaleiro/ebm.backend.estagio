@@ -65,7 +65,7 @@ public class FuncionarioResource {
 	}
 
 	@PreAuthorize("hasAuthority('FUNCIONARIO_GET')")
-	@GetMapping(value = "/documents")
+	@GetMapping(value = "/document")
 	public ResponseEntity<Funcionario> findBy(@RequestParam(value = "value", required = true) final String document) {
 
 		return ResponseEntity.ok(funcionarioService.findByCpfOrCnpj(document));
@@ -80,7 +80,7 @@ public class FuncionarioResource {
 			@RequestParam(value = "matricula", required = false) String matricula,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
-			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);

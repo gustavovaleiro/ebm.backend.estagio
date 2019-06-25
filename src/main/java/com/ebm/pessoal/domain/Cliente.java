@@ -12,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,11 +39,15 @@ public class Cliente implements Serializable{
 	@MapsId
 	@OneToOne
 	@JoinColumn(nullable = false)
+	@NotNull(message = "O campo pessoa não pode ser nulo")
 	private Pessoa pessoa;
 	@Column(nullable = false)
+	@NotNull(message = "O campo limite de compra não pode ser nulo")
+	@Min(value = 0, message = "O campo limite de compra não pode ser negativo")
 	private BigDecimal limite_compra;
 
-	@Column(length = 240)
+	@Column(length = 480)
+	@Length(min = 0, max = 481, message = "O campo descricao pode ter no maximo 480 caracteres")
 	private String descricao;
 	@Embedded
 	private HistoricoCadastral historico= new HistoricoCadastral();

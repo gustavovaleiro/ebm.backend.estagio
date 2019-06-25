@@ -45,10 +45,10 @@ public class PessoaService {
 	public static final String NEED_PHONE = DataIntegrityException.DEFAULT
 			+ ": É necessario pelo menos um telefone para cadastrar uma pessoa.";
 	public static final String NOT_FOUND_DOCUMENT = "Não foi possivel encontrar uma pessoa com o documento nº: ";
-	public static final String NEED_EMAIL =  DataIntegrityException.DEFAULT
+	public static final String NEED_EMAIL = DataIntegrityException.DEFAULT
 			+ ": É necessario pelo menos um email para cadastrar uma pessoa.";
 	public static final String MOREONEPRINCIPAL = DataIntegrityException.DEFAULT
-	+ ": Uma pessoa só pode possuir um atributo principal do tipo ";
+			+ ": Uma pessoa só pode possuir um atributo principal do tipo ";
 
 	@Autowired
 	private PessoaFisicaRepository pessoaFisicaRepository;
@@ -64,51 +64,51 @@ public class PessoaService {
 	private CidadeService cidadeService;
 	@Autowired
 	private EstadoService estadoService;
-	
+
 	// insert
 	// --------------------------------------------------------------------------------------------------------
 	@Transactional
 	private PessoaFisica save(PessoaFisica pf) {
-		validateCPF(pf.getCpf());
-		try {
-			PessoaFisica result = findbyCPF(pf.getCpf());
-			if (!result.getId().equals(pf.getId()))
-				throw new DataIntegrityException(DUPLICATE_CPF);
-		} catch (ObjectNotFoundException e) {}
-		
+		if (!validateCPF(pf.getCpf()))
+			throw new DataIntegrityException(INVALID_CPF);
+
+		PessoaFisica result = findbyCPF(pf.getCpf());
+		if (result != null && !result.getId().equals(pf.getId()))
+			throw new DataIntegrityException(DUPLICATE_CPF);
+
 		saveAssociations(pf);
 
 		pf.setNaturalidade(cidadeService.save(pf.getNaturalidade()));
-		if(pf.getRG()!=null)
+		if (pf.getRG() != null)
 			pf.getRG().setUF(estadoService.save(pf.getRG().getUF()));
 		Utils.audita(pf.getHistorico());
 		return pessoaFisicaRepository.save(pf);
-
 	}
 
 	@Transactional
 	private PessoaJuridica save(PessoaJuridica pj) {
-		validateCNPJ(pj.getCnpj());
-		try {
-			PessoaJuridica result= findByCPNJ(pj.getCnpj());
-			if(!result.getId().equals(pj.getId()))
-				throw new DataIntegrityException(DUPLICATE_CNPJ);
-		} catch (ObjectNotFoundException e) {}
+		if (!validateCNPJ(pj.getCnpj()))
+			throw new DataIntegrityException(INVALID_CPF);
+
+		PessoaJuridica result = findByCPNJ(pj.getCnpj());
+		if (result != null && !result.getId().equals(pj.getId()))
+			throw new DataIntegrityException(DUPLICATE_CNPJ);
+
 		saveAssociations(pj);
 		Utils.audita(pj.getHistorico());
 		return pessoaJuridicaRepository.save(pj);
-		
+
 	}
 
 	public Pessoa save(Pessoa pessoa) {
-		return pessoa instanceof PessoaFisica ? save((PessoaFisica) pessoa)
-				: save((PessoaJuridica) pessoa);
+		return pessoa instanceof PessoaFisica ? save((PessoaFisica) pessoa) : save((PessoaJuridica) pessoa);
 	}
-	
+
 	@Transactional
 	public List<Pessoa> saveAll(List<Pessoa> pessoas) {
-		return	pessoas.stream().map( p -> save(p)).collect(Collectors.toList());
+		return pessoas.stream().map(p -> save(p)).collect(Collectors.toList());
 	}
+
 	// delete
 	// --------------------------------------------------------------------------------------------------------
 	public void delete(PessoaFisica pf) {
@@ -117,16 +117,18 @@ public class PessoaService {
 		pessoaFisicaRepository.delete(pf);
 
 	}
+
 	public void delete(Pessoa p) {
-		if(p instanceof PessoaFisica)
+		if (p instanceof PessoaFisica)
 			delete((PessoaFisica) p);
 		else
 			delete((PessoaJuridica) p);
 
 	}
+
 	private void deleteAssociations(Pessoa p) {
 		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
-		Optional<List<Telefone>> telefones= Optional.ofNullable(p.getTelefone());
+		Optional<List<Telefone>> telefones = Optional.ofNullable(p.getTelefone());
 		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
 		enderecos.ifPresent(o -> enderecoService.deleteAll(o));
 		emails.ifPresent(o -> emailService.deleteAll(o));
@@ -174,8 +176,7 @@ public class PessoaService {
 	}
 
 	private PessoaFisica findbyCPF(String cpf) {
-		return pessoaFisicaRepository.findOneByCpf(cpf)
-				.orElseThrow(() -> new ObjectNotFoundException(NOT_FIND_CPF + cpf));
+		return pessoaFisicaRepository.findOneByCpf(cpf).orElse(null);
 	}
 
 	public List<PessoaFisica> findPFByEmail(String email) {
@@ -192,75 +193,71 @@ public class PessoaService {
 	}
 
 	private PessoaJuridica findByCPNJ(String cnpj) {
-		return pessoaJuridicaRepository.findOneByCnpj(cnpj)
-				.orElseThrow(() -> new ObjectNotFoundException());
+		return pessoaJuridicaRepository.findOneByCnpj(cnpj).orElse(null);
 	}
 
 	public Pessoa findByCpfOrCnpj(String document) {
-		try {
-			return findbyCPF(document);
-		} catch (ObjectNotFoundException e) {
-			try {
-				return findByCPNJ(document);
-			}catch (ObjectNotFoundException ex) {
-				throw new ObjectNotFoundException(NOT_FOUND_DOCUMENT + document);
-			}
-			
-		}
-	}
+		if (!this.validateCPF(document))
+			if (!this.validateCNPJ(document))
+				throw new DataIntegrityException(" O cpf ou CNPJ passado é invalido");
 
+		Pessoa p = findbyCPF(document);
+		if (p == null)
+			p = findByCPNJ(document);
+		if (p == null)
+			throw new ObjectNotFoundException(NOT_FOUND_DOCUMENT + document);
+		return p;
+	}
 
 	// aux
 	// --------------------------------------------------------------------------------------------------------
-	
 
 	private void saveAssociations(Pessoa p) {
 		Optional<List<Endereco>> enderecos = Optional.ofNullable(p.getEndereco());
 		Optional<List<Telefone>> telefones = Optional.ofNullable(p.getTelefone());
 		Optional<List<Email>> emails = Optional.ofNullable(p.getEmail());
-		
+
 		if (!enderecos.isPresent() || enderecos.get().size() == 0)
 			throw new DataIntegrityException(NEED_ADDRESS);
 		if (!telefones.isPresent() || telefones.get().size() == 0)
 			throw new DataIntegrityException(NEED_PHONE);
 		if (!emails.isPresent() || emails.get().size() == 0)
 			throw new DataIntegrityException(NEED_EMAIL);
-		
+
 		integridadeAssociacaoEPrincipal(enderecos.get());
 		integridadeAssociacaoEPrincipal(telefones.get());
 		integridadeAssociacaoEPrincipal(emails.get());
-		
-		
-		
+
 		p.setEndereco(enderecoService.salveAll(p.getEndereco()));
 		p.setEmail(emailService.saveAll(p.getEmail()));
 		p.setTelefone(telefoneService.saveAll(p.getTelefone()));
 
 	}
-	
+
 	private void integridadeAssociacaoEPrincipal(List<? extends Principalizar> entidade) {
-		if(entidade.size() == 1)
+		if (entidade.size() == 1)
 			entidade.iterator().next().setPrincipal(true);
-		else
-			if(entidade.stream().filter(e -> e.isPrincipal()).count() > 1)
-				throw new DataIntegrityException(MOREONEPRINCIPAL + entidade.get(0).getClass().getSimpleName());
+		else if (entidade.stream().filter(e -> e.isPrincipal()).count() > 1)
+			throw new DataIntegrityException(MOREONEPRINCIPAL + entidade.get(0).getClass().getSimpleName());
 	}
 
-	public void validateCPF(String cpf) {
+	public boolean validateCPF(String cpf) {
 		try {
 			CPFValidator cpfValidator = new CPFValidator();
 			cpfValidator.assertValid(cpf);
+			return true;
 		} catch (InvalidStateException e) {
-			throw new DataIntegrityException(INVALID_CPF);
+			return false;
 		}
 	}
 
-	public void validateCNPJ(String cnpj) {
+	public boolean validateCNPJ(String cnpj) {
 		try {
 			CNPJValidator cnpjValidator = new CNPJValidator();
 			cnpjValidator.assertValid(cnpj);
+			return true;
 		} catch (InvalidStateException e) {
-			throw new DataIntegrityException(INVALID_CNPJ);
+			return false;
 		}
 	}
 
@@ -268,7 +265,7 @@ public class PessoaService {
 		pessoaFisicaRepository.deleteAll();
 		pessoaJuridicaRepository.deleteAll();
 		if (b) {
-			
+
 			enderecoService.deleteAll();
 			telefoneService.deleteAll();
 			emailService.deleteAll();
@@ -284,10 +281,9 @@ public class PessoaService {
 	}
 
 	public static Pessoa getPessoa(TipoPessoa tipo, String nome) {
-		if(tipo == null || tipo.equals(TipoPessoa.PESSOA_FISICA))
+		if (tipo == null || tipo.equals(TipoPessoa.PESSOA_FISICA))
 			return new PessoaFisica().withNome(nome);
 		return new PessoaJuridica().withNome(nome);
 	}
-
 
 }

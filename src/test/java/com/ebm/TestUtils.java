@@ -105,6 +105,7 @@ public class TestUtils {
 	public ResultActions testGet(String endpoint, Integer id, ResultMatcher status) throws Exception {
 		return this.mockMvc.perform(get(endpoint + "/" + id).accept(MediaType.APPLICATION_JSON)).andExpect(status);
 	}
+
 	public ResultActions testDelete(String endpoint, ResultMatcher status) throws Exception {
 		return this.mockMvc.perform(delete(endpoint))
 				.andExpect(status);

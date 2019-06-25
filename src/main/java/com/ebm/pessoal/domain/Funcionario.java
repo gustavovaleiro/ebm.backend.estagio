@@ -69,7 +69,10 @@ public class Funcionario implements Serializable {
 		this.matricula = matricula;
 		this.cargo = cargo;
 		this.dataDeAdmissao = dataDeAdmissao;
-		this.comissao = BigDecimal.valueOf(comissao);
+		if(comissao == null)
+			this.comissao = null;
+		else
+			this.comissao = BigDecimal.valueOf(comissao);
 		this.adicionalPessoal = adicionalPessoal;
 	}
 	
