@@ -65,7 +65,7 @@ public class ClienteResource {
 	}
 
 	@PreAuthorize("hasAuthority('CLIENTE_GET')")
-	@GetMapping(value = "/documents")
+	@GetMapping(value = "/document")
 	public ResponseEntity<Cliente> findBy(@RequestParam(value = "value", required = true) final String document) {
 
 		return ResponseEntity.ok(clienteService.findByCpfOrCnpj(document));
@@ -77,7 +77,7 @@ public class ClienteResource {
 			@RequestParam(value = "tipo", required = false) String tipo,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
-			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);

@@ -47,7 +47,7 @@ public class Cliente implements Serializable{
 	private BigDecimal limite_compra;
 
 	@Column(length = 480)
-	@Length(min = 0, max = 481, message = "O campo descricao pode ter no maximo 480 caracteres")
+	@Length(min = 0, max = 480, message = "O campo descricao pode ter no maximo 480 caracteres")
 	private String descricao;
 	@Embedded
 	private HistoricoCadastral historico= new HistoricoCadastral();
