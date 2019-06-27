@@ -346,7 +346,6 @@ public class FornecedorResourceTest extends BaseTest {
 			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj1.getId()));
 			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj4.getId()));
 			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj3.getId()));
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forf5.getId()));
 		});
 
 	}
