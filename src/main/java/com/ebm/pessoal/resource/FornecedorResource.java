@@ -3,6 +3,8 @@ package com.ebm.pessoal.resource;
 import java.net.URI;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,14 +28,14 @@ import com.ebm.pessoal.dtos.FornecedorListDTO;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 @RestController
-@RequestMapping(value = "/fornecedors")
+@RequestMapping(value = "/fornecedores")
 public class FornecedorResource {
 	@Autowired
 	private FornecedorService fornecedorService;
 
 	@PreAuthorize("hasAuthority('FORNECEDOR_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody Fornecedor fornecedor) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Fornecedor fornecedor) {
 		Fornecedor obj = fornecedorService.save(fornecedor);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -42,7 +44,7 @@ public class FornecedorResource {
 
 	@PreAuthorize("hasAuthority('FORNECEDOR_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody Fornecedor fornecedor, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody Fornecedor fornecedor, @PathVariable Integer id) {
 		fornecedor.setId(id);
 		fornecedor = fornecedorService.save(fornecedor);
 		return ResponseEntity.noContent().build();
@@ -64,7 +66,7 @@ public class FornecedorResource {
 	}
 
 	@PreAuthorize("hasAuthority('FORNECEDOR_GET')")
-	@GetMapping(value = "/documents")
+	@GetMapping(value = "/document")
 	public ResponseEntity<Fornecedor> findBy(@RequestParam(value = "value", required = true) final String document) {
 
 		return ResponseEntity.ok(fornecedorService.findByCpfOrCnpj(document));
@@ -78,7 +80,7 @@ public class FornecedorResource {
 			@RequestParam(value = "categorias", required = false) Set<Integer> categorias,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
-			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);

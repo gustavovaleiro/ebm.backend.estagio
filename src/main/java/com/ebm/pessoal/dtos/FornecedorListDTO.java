@@ -31,9 +31,9 @@ public class FornecedorListDTO implements Serializable{
 				fornecedor.getPessoa().getTipo().getDescricao(),
 				fornecedor.getPessoa().getDocument(),
 				fornecedor.getPessoa().getNome(),
-				fornecedor.getPessoa().getTelefone().iterator().next().toString(),
-				fornecedor.getPessoa().getEmail().iterator().next().toString(),
-				fornecedor.getPessoa().getEndereco().iterator().next().getCidade().getNome());
+				fornecedor.getPessoa().getTelefonePrincipal().toString(),
+				fornecedor.getPessoa().getEmailPrincipal().getEmail(),
+				fornecedor.getPessoa().getEnderecoPrincipal().getCidade().getNome());
 	}
 
 }

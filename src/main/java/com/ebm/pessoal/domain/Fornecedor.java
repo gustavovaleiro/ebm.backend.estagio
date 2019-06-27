@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import com.ebm.estoque.domain.CategoriaItem;
 
@@ -36,6 +37,7 @@ public class Fornecedor implements Serializable {
 
 	@MapsId
 	@OneToOne
+	@NotNull
 	private Pessoa pessoa;
 
 	@ManyToMany

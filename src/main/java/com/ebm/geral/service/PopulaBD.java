@@ -135,9 +135,6 @@ public class PopulaBD {
 	private UsuarioService usuarioService;
 	public Usuario user5;
 
-
-
-
 	public PopulaBD populaBD() {
 		instanciaPessoa();
 		associaPessoa();
@@ -153,7 +150,7 @@ public class PopulaBD {
 		cargoS.save(cAdministrador);
 		cargoS.save(cDesenvolvedor);
 		funcionarioS.saveAll(Arrays.asList(funf1, funf2, funf3, funf4, funj1, funj2, funj3, funj4));
-		
+
 		instanciaItem(false);
 		instanciaMovimentacao(false);
 		unidadeS.save(un1);
@@ -161,20 +158,19 @@ public class PopulaBD {
 
 		itemS.saveAll(Arrays.asList(s1, s2, s3, s4, p1, p2, p3, p4, p5, p6, p7));
 		movimentacaoS.saveAll(Arrays.asList(ent1, ent2, ent3, sai1, sai2, sai3));
-		
+
 		instanciaUsuarios();
 
-		usuarioService.saveAll(Arrays.asList(user1,user2,user3,user4,user5));
+		usuarioService.saveAll(Arrays.asList(user1, user2, user3, user4, user5));
 		return this;
-		
-		
+
 	}
 
 	public PopulaBD instanciaPessoa() {
 		estadoGO = new Estado(null, "GO", "Goias");
 		goiania = new Cidade(null, "Goiania", estadoGO);
-		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "75840000",
-				true, "Endereco residencial");
+		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "75840000", true,
+				"Endereco residencial");
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30),
 				new RG("23123", "SSP GO", estadoGO), "Brasileira", goiania);
 		pj1 = new PessoaJuridica(null, "Lanches", "99787331000180", "Lanches ME", "inscricaoEstadual1",
@@ -192,8 +188,8 @@ public class PopulaBD {
 		pj4 = new PessoaJuridica(null, "Mercado ME", "84912087000163", "Mercado ME", "inscricaoEstadual4",
 				"inscricaoMunicipal4");
 
-		pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30), new RG("33454", "ssp go", estadoGO),
-				"Brasileira", goiania);
+		pf5 = new PessoaFisica(null, "HEY", "05909561162", LocalDate.of(1994, 3, 30),
+				new RG("33454", "ssp go", estadoGO), "Brasileira", goiania);
 		return this;
 	}
 
@@ -212,7 +208,7 @@ public class PopulaBD {
 			associaPessoa();
 			instanciaCargos();
 		}
-		
+
 		funf1 = new Funcionario(null, pf1, "dev-432", cDesenvolvedor, LocalDate.now().minusWeeks(1), 0.,
 				cDesenvolvedor.getSalarioBase());
 		funj1 = new Funcionario(null, pj1, "adm-01", cAdministrador, LocalDate.now().minusDays(2), 0.1,
@@ -271,9 +267,12 @@ public class PopulaBD {
 		}
 
 		forf1 = new Fornecedor(null, pf1);
-		forf1.getCategorias().addAll(new HashSet<>(Arrays.asList(cat3, cat4)));
+		forf1.getCategorias().add(cat3);
+		forf1.getCategorias().add(cat4);
 		forj1 = new Fornecedor(null, pj1);
-		forj1.getCategorias().addAll(new HashSet<>(Arrays.asList(cat1, cat2)));
+		forj1.getCategorias().add(cat1);
+		forj1.getCategorias().add(cat2);
+
 		forf2 = new Fornecedor(null, pf2);
 		forf3 = new Fornecedor(null, pf3);
 		forf4 = new Fornecedor(null, pf4);
@@ -299,24 +298,24 @@ public class PopulaBD {
 				BigDecimal.valueOf(20), 0.5, 0.02);
 
 		p2 = Produto.of("Teclado Mecanico RGB", un1, cat3);
-		
+
 		p3 = Produto.of("Teclado membrana", un1, cat3);
 		p4 = Produto.of("Computador i3  4gbram", un1, cat3);
 		p5 = Produto.of("Mouse", un1, cat1);
 		p6 = Produto.of("Teclado", un1, cat1);
 		p7 = Produto.of("Processador i5", un1, cat1);
-		Arrays.asList(p2,p3,p4,p5,p6,p7).stream().forEach( p ->{
+		Arrays.asList(p2, p3, p4, p5, p6, p7).stream().forEach(p -> {
 			p.setEstoque(2, 4, 10);
 			p.setComissaoVenda(1d);
 			p.setValorCompraMedio(BigDecimal.valueOf(100));
 			p.setMargemLucro(0.4d);
 		});
-			
+
 		s2 = Servico.of("Troca de fonte", un1, cat2);
 		s3 = Servico.of("Montagem Computador", un2, cat1);
 		s4 = Servico.of("Formatacao", un1, cat2);
-		
-		Arrays.asList(s2,s3,s4).stream().forEach( s -> {
+
+		Arrays.asList(s2, s3, s4).stream().forEach(s -> {
 			s.setComissaoVenda(1d);
 			s.setValorCompraMedio(BigDecimal.valueOf(100));
 			s.setMargemLucro(0.4d);
@@ -367,53 +366,55 @@ public class PopulaBD {
 	}
 
 	public PopulaBD instanciaUsuarios() {
-		 
+
 		user1 = new Usuario(null, "gustavo", "123456");
 		user1.setFuncionario(funf1);
-		PermissaoE.getPermissaoStream().filter(p -> p.getMod().equals(Modulo.PESSOAL)).forEach( p-> user1.addPermissao(p));
-		
-		
+		PermissaoE.getPermissaoStream().filter(p -> p.getMod().equals(Modulo.PESSOAL))
+				.forEach(p -> user1.addPermissao(p));
+
 		user2 = new Usuario(null, "login2", "senha2");
 		user2.setFuncionario(funf2);
-		PermissaoE.getPermissaoStream().filter(p -> p.getNome().toLowerCase().contains("get")).forEach(p -> user2.addPermissao(p));
-		
+		PermissaoE.getPermissaoStream().filter(p -> p.getNome().toLowerCase().contains("get"))
+				.forEach(p -> user2.addPermissao(p));
+
 		user3 = new Usuario(null, "login3", "senha3");
 		user3.setFuncionario(funf3);
-		PermissaoE.getPermissaoStream().filter(p -> p.getMod().equals(Modulo.ESTOQUE)).forEach(p -> user3.addPermissao(p));
-		
+		PermissaoE.getPermissaoStream().filter(p -> p.getMod().equals(Modulo.ESTOQUE))
+				.forEach(p -> user3.addPermissao(p));
+
 		user4 = new Usuario(null, "login4", "senha4");
 		user4.setFuncionario(funf4);
-		
+
 		user5 = new Usuario(null, "adm", "adm");
 		user5.setFuncionario(funj1);
 		PermissaoE.getPermissaoStream().forEach(p -> user5.addPermissao(p));
 		return this;
-		
+
 	}
 
 	public void saveUnidade(List<Unidade> units) {
-		units.stream().forEach( u -> unidadeS.save(u));
-		
+		units.stream().forEach(u -> unidadeS.save(u));
+
 	}
 
 	public void saveCategoria(List<CategoriaItem> cats) {
 		categoriaS.saveAll(cats);
-		
+
 	}
 
 	public void saveProduto(List<Produto> produtos) {
 		itemS.saveAll(produtos);
-		
+
 	}
 
 	public void savePessoa(List<Pessoa> pessoas) {
 		pessoaS.saveAll(pessoas);
-		
+
 	}
 
 	public void saveFornecedores(List<Fornecedor> fornecedores) {
 		fornecedorS.saveAll(fornecedores);
-		
+
 	}
 
 	public PessoaService getPessoaS() {
@@ -455,7 +456,5 @@ public class PopulaBD {
 	public UsuarioService getUsuarioService() {
 		return usuarioService;
 	}
-
-	
 
 }
