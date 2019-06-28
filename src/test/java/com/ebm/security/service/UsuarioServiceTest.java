@@ -57,7 +57,7 @@ public class UsuarioServiceTest  extends BaseTest{
 	@Test
 	public void testSave() {
 		bd.user1.setFuncionario(new Funcionario(bd.funf1.getId(), null, null, null, null, null, null));
-		bd.user1 = userService.save(UsuarioNewDTO.fromUsuario(bd.user1));
+		bd.user1 = userService.save(UsuarioNewDTO.from(bd.user1));
 
 		assertNotNull(bd.user1.getId());
 		assertThat(bd.user1.getId(), equalTo(bd.user1.getFuncionario().getId()));
@@ -67,8 +67,8 @@ public class UsuarioServiceTest  extends BaseTest{
 	@Transactional
 	@Test
 	public void testUpdate() {
-		bd.user1 = userService.save(UsuarioNewDTO.fromUsuario(bd.user1));
-		UsuarioUpdateDTO userDTO = UsuarioUpdateDTO.fromUsuario(bd.user1);
+		bd.user1 = userService.save(UsuarioNewDTO.from(bd.user1));
+		UsuarioUpdateDTO userDTO = UsuarioUpdateDTO.from(bd.user1);
 		userDTO.setLogin("novologin");
 		userDTO.setPermissoes(null);
 		userDTO.setPermissoes(new HashSet<>(Arrays.asList(PermissaoE.CARGO_POST)));

@@ -56,7 +56,7 @@ public class Usuario implements UserDetails {
 	@OneToOne
 	private Funcionario funcionario;
 	@Embedded
-	private HistoricoCadastral historico= new HistoricoCadastral();
+	private HistoricoCadastral historico = new HistoricoCadastral();
 
 	public Usuario() {
 	}
@@ -65,7 +65,7 @@ public class Usuario implements UserDetails {
 		this.id = id;
 		this.login = login;
 		this.senha = senha;
-	
+
 	}
 
 	public String getEmail() {
@@ -87,7 +87,7 @@ public class Usuario implements UserDetails {
 	public Integer getId() {
 		return id;
 	}
-	
+
 	@JsonIgnore
 	@Transient
 	@Override
@@ -95,12 +95,14 @@ public class Usuario implements UserDetails {
 		return permissoes.stream().map(x -> new SimpleGrantedAuthority(PermissaoE.toEnum(x).getNome()))
 				.collect(Collectors.toSet());
 	}
+
 	@JsonIgnore
 	@Transient
 	@Override
 	public String getPassword() {
 		return senha;
 	}
+
 	@JsonIgnore
 	@Transient
 	@Override
@@ -131,8 +133,7 @@ public class Usuario implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-	
-	
+
 	public void addPermissao(PermissaoE permissao) {
 		this.permissoes.add(permissao.getId());
 	}
@@ -140,6 +141,7 @@ public class Usuario implements UserDetails {
 	public void removePermissao(PermissaoE permissao) {
 		this.permissoes.remove(permissao.getId());
 	}
+
 	public Set<PermissaoE> getPermissoes() {
 		return permissoes.stream().map(p -> PermissaoE.toEnum(p)).collect(Collectors.toSet());
 	}
@@ -147,5 +149,5 @@ public class Usuario implements UserDetails {
 	public void setPermissoes(Set<PermissaoE> permissao) {
 		this.permissoes = permissao.stream().map(p -> p.getId()).collect(Collectors.toSet());
 	}
-	
+
 }

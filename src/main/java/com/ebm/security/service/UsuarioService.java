@@ -34,6 +34,8 @@ public class UsuarioService implements UserDetailsService {
 	public static final String DATAINTEGRITY_FUNCASSO = "Um usuario precisa de um funcionario associado";
 	public static final String DATAINTEGRITY_CHANGEFUNC = "Você nao pode trocar o funcionario de um usuario";
 	public static final String ONFE_BYUSERNAME = ObjectNotFoundException.DEFAULT + " um usuario com o login passado.";
+	public static final String DATAINTEGRITY_DUPLICATEFUNC = "Já existe um usuário para o funcionario passado";
+
 	@Autowired
 	private UsuarioRepository userRepository;
 	@Autowired
@@ -66,12 +68,17 @@ public class UsuarioService implements UserDetailsService {
 		Utils.audita(user.getHistorico());
 		return userRepository.save(user);
 	}
+	 
 	private void findFuncionario(Usuario user, Integer id) {
-
 		if(id == null)
 			throw new DataIntegrityException(DATAINTEGRITY_FUNCASSO);
-		user.setFuncionario(funcionarioService.findById(id));
+		if(userRepository.findById(id).isPresent()) {
+			Usuario user_ = userRepository.findById(id).get();
+			if(user.getId() == null || user_.getId() != user.getId())
+			throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEFUNC);
+		}
 		
+		user.setFuncionario(funcionarioService.findById(id));
 	}
 
 
@@ -109,7 +116,7 @@ public class UsuarioService implements UserDetailsService {
 	
 
 	public List<Usuario> saveAll(List<Usuario> usuarios) {
-		return usuarios.stream().map(u -> UsuarioNewDTO.fromUsuario(u)).map( u -> this.save(u)).collect(Collectors.toList());
+		return usuarios.stream().map(u -> UsuarioNewDTO.from(u)).map( u -> this.save(u)).collect(Collectors.toList());
 	}
 
 	// DELETE

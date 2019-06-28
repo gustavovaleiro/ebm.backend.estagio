@@ -2,6 +2,8 @@ package com.ebm.security.resource;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +35,7 @@ public class UsuarioResource {
 
 	@PreAuthorize("hasAuthority('USUARIO_POST')")
 	@PostMapping
-	public ResponseEntity<Void> insert(@RequestBody UsuarioNewDTO usuario) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody UsuarioNewDTO usuario) {
 		Usuario obj = usuarioService.save(usuario);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -42,9 +44,9 @@ public class UsuarioResource {
 
 	@PreAuthorize("hasAuthority('USUARIO_PUT')")
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Void> update(@RequestBody UsuarioUpdateDTO usuario, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody UsuarioUpdateDTO usuario, @PathVariable Integer id) {
 		usuario.setId(id);
-		Usuario n = usuarioService.update(usuario);
+	    usuarioService.update(usuario);
 		return ResponseEntity.noContent().build();
 
 	}
@@ -77,10 +79,10 @@ public class UsuarioResource {
 	public ResponseEntity<Page<UsuarioListDTO>> findAllBy(@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "login", required = false) String login,
 			@RequestParam(value = "email", required = false) String email,
-			@RequestParam(value = "page", required = false) Integer page,
-			@RequestParam(value = "linesPerPage", required = false) Integer linesPerPage,
-			@RequestParam(value = "orderBy", required = false) String orderBy,
-			@RequestParam(value = "direction", required = false) String direction) {
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,
+			@RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		Page<UsuarioListDTO> rs = usuarioService.findBy(nome, login, email, pageRequest);
