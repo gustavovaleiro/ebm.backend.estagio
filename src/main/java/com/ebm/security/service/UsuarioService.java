@@ -91,6 +91,7 @@ public class UsuarioService implements UserDetailsService {
 	}
 
 	public Usuario fromDTO(UsuarioUpdateDTO userUp) {
+	
 		Usuario old = this.findById(userUp.getId());
 		
 		if(userUp.getLogin()!= null && !userUp.getLogin().equals(old.getLogin()))
