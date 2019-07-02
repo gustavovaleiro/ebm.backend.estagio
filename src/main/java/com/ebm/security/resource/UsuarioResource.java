@@ -66,8 +66,8 @@ public class UsuarioResource {
 	}
 
 	@PreAuthorize("hasAuthority('USUARIO_GET')")
-	@GetMapping
-	public ResponseEntity<Usuario> findBy(@RequestParam(value = "document", required = true) final String document) {
+	@GetMapping(value ="/document")
+	public ResponseEntity<Usuario> findBy(@RequestParam(value = "value", required = true) final String document) {
 
 		Usuario cli = usuarioService.findByCpfOrCnpj(document);
 
