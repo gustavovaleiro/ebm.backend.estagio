@@ -46,7 +46,7 @@ public class ClienteResource {
 	public ResponseEntity<Void> update(@Valid @RequestBody Cliente cliente, @PathVariable Integer id) {
 		cliente.setId(id);
 		cliente = clienteService.save(cliente);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.noContent().build(); 
 
 	}
 
@@ -73,7 +73,8 @@ public class ClienteResource {
 
 	@PreAuthorize("hasAuthority('CLIENTE_GET')")
 	@GetMapping(value = "/page")
-	public ResponseEntity<Page<ClienteListDTO>> findAllBy(@RequestParam(value = "nome", required = false) String nome,
+	public ResponseEntity<Page<ClienteListDTO>> findAllBy(
+			@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "tipo", required = false) String tipo,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,

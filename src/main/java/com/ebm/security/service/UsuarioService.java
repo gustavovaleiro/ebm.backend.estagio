@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +23,7 @@ import com.ebm.geral.exceptions.ObjectNotFoundException;
 import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.service.FuncionarioService;
+import com.ebm.security.PermissaoE;
 import com.ebm.security.Usuario;
 import com.ebm.security.dto.UsuarioListDTO;
 import com.ebm.security.dto.UsuarioNewDTO;
@@ -175,7 +177,22 @@ public class UsuarioService implements UserDetailsService {
 		return new PageImpl<>(usuarios, pageRequest, usuarios.size());
 	}
 
+	public Set<PermissaoE> getPermissoes() {
+		if(this.authenticated() != null)
+			return this.authenticated().getPermissoes();
+		else
+			return null;
+	}
 
+	
+	public static Usuario authenticated() {
+		try {
+			return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		}catch( Exception e ) {
+			return null;
+		}
+		
+	}
 
 	
 

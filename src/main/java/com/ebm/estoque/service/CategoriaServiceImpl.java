@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.CategoriaItem;
@@ -97,8 +98,11 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 	}
 
 	@Override
-	public Page<CategoriaItem> findByNome(String nome, PageRequest page) {
-		return categoriaRepository.findByNomeIgnoreCaseLike(nome,page);
+	public Page<CategoriaItem> findByNome(String nome, Pageable _page) {
+		System.out.println(nome);
+		Page<CategoriaItem> page = categoriaRepository.findByNomeIgnoreCaseLike("%"+nome+"%",_page);
+		System.out.println(page.getNumberOfElements());
+		return page;
 	}
 
 	

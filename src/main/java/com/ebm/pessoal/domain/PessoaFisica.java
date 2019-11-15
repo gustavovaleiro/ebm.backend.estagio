@@ -22,12 +22,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name ="pessoa_id")
-@JsonTypeName("PessoaFisica")
+@JsonTypeName("PESSOA_FISICA")
 public class PessoaFisica extends Pessoa {
 	
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false, length = 11)
+	@Column(nullable = false, length = 11, unique=true)	
 	@NotNull(message = "O campo cpf não pode ser nulo")
 	@NotEmpty(message = "O campo cpf não pode ser vazio")
 	@Length(min =11, max =11, message = "O campo cpf deve possuir 11 caracteres")

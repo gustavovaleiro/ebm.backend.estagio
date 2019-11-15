@@ -1,9 +1,7 @@
-package com.ebm.pessoal.resource;
+package com.ebm.todosteste;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -29,26 +27,27 @@ import com.ebm.geral.domain.RestResponsePage;
 import com.ebm.geral.resource.exception.ValidationError;
 import com.ebm.geral.service.PopulaBD;
 import com.ebm.geral.utils.Utils;
-import com.ebm.pessoal.domain.Cliente;
+import com.ebm.pessoal.domain.Cargo;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.PessoaFisica;
-import com.ebm.pessoal.domain.PessoaJuridica;
 import com.ebm.pessoal.domain.TipoPessoa;
-import com.ebm.pessoal.dtos.ClienteListDTO;
+import com.ebm.pessoal.dtos.FuncionarioListDTO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class ClienteResourceTest extends BaseTest {
+public class FuncionarioResourceTest extends BaseTest {
 	@Autowired
 	private PopulaBD bd;
 
-	private final String ENDPOINT_BASE = "/clientes";
-	private final String BASE_AUTHORITY = "CLIENTE_";
+	private final String ENDPOINT_BASE = "/funcionarios";
+	private final String BASE_AUTHORITY = "FUNCIONARIO_";
 
 	@Before
 	public void setUp() {
-		this.bd.instanciaCliente(true);
+		this.bd.instanciaFuncionario(true);
+		this.bd.getCargoS().save(this.bd.cAdministrador);
+		this.bd.getCargoS().save(this.bd.cDesenvolvedor);
 		this.bd.getPessoaS().save(this.bd.pf1);
 		this.bd.getPessoaS().save(this.bd.pj1);
 	}
@@ -57,28 +56,35 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
 	public void testInsercaoAllNulo() throws Exception {
-		this.bd.cf1.setPessoa(null);
-		this.bd.cf1.setLimiteCompra(null);
+		this.bd.funf1.setPessoa(null);
+		this.bd.funf1.setCargo(null);
+		this.bd.funf1.setDataDeAdmissao(null);
+		this.bd.funf1.setComissao(null);
+		this.bd.funf1.setAdicionalPessoal(null);
 
-		this.util.testPost(ENDPOINT_BASE, this.bd.cf1, status().isUnprocessableEntity()).andDo(print())
+		this.util.testPost(ENDPOINT_BASE, this.bd.funf1, status().isUnprocessableEntity()).andDo(print())
 				.andDo(resultRequest -> {
 					ValidationError error = util.getValidationErrorOf(resultRequest);
-					assertTrue(error.getErrors().size() == 2);
-					error.getErrors().stream().allMatch(err -> Arrays.asList("pessoa", "limite_compra").stream()
-							.anyMatch(fi -> err.getFieldName().equals(fi)));
+					assertTrue(error.getErrors().size() == 5);
+					error.getErrors().stream()
+							.allMatch(err -> Arrays
+									.asList("pessoa", "cargo", "dataDeAdmissao", "comissao", "adicionalPessoal")
+									.stream().anyMatch(fi -> err.getFieldName().equals(fi)));
 				});
 	}
 
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
-	public void testValidacaoCleintMinLengths() throws Exception {
-		bd.cf1.setLimiteCompra(BigDecimal.valueOf(-0.1));
+	public void testValidacaoFuncionarioMinLengths() throws Exception {
+		bd.funf1.setMatricula(Utils.getRandomString(2));
+		bd.funf1.setComissao(-0.1);
+		bd.funf1.setAdicionalPessoal(BigDecimal.valueOf(-0.1));
 
-		util.testPost(ENDPOINT_BASE, bd.cf1, status().isUnprocessableEntity()).andDo(requestResult -> {
+		util.testPost(ENDPOINT_BASE, bd.funf1, status().isUnprocessableEntity()).andDo(requestResult -> {
 			ValidationError errors = util.getValidationErrorOf(requestResult);
-			assertTrue(errors.getErrors().size() == 1);
-			errors.getErrors().stream().allMatch(err -> Arrays.asList("limite_compra")
+			assertTrue(errors.getErrors().size() == 3);
+			errors.getErrors().stream().allMatch(err -> Arrays.asList("matricula", "adicionalPessoal", "comissao")
 					.stream().anyMatch(fi -> err.getFieldName().equals(fi)));
 		});
 
@@ -88,50 +94,71 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
 	public void testValidacaoInsercao() throws Exception {
-		bd.cf1.setDescricao("");
-		bd.cf1.setLimiteCompra(BigDecimal.valueOf(0));
-		this.util.em().detach(this.bd.pf1);
-		bd.cf1.getPessoa().setNome(null);
-		util.testPostExpectCreated(ENDPOINT_BASE, bd.cf1);
-		
-		assertNull(bd.cf1.getPessoa().getNome());
-		bd.cf1 = this.bd.getClientS().findById(bd.cf1.getPessoa().getId());
-		assertNotNull(bd.cf1.getPessoa().getNome());
+		bd.funf1.setMatricula(Utils.getRandomString(3));
+		bd.funf1.setComissao(0d);
+		bd.funf1.setAdicionalPessoal(BigDecimal.valueOf(0));
+
+		util.testPostExpectCreated(ENDPOINT_BASE, bd.funf1);
+
+		bd.funf1 = this.bd.getFuncionarioS().findById(this.bd.pf1.getId());
+
+		assertTrue(bd.funf1.getCargo().getNomeCargo() != null);
+
 	}
 
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
-	public void testValidacaoClienteMaxLengths() throws Exception {
-		bd.cf1.setDescricao(Utils.getRandomString(481));
-	
+	public void testValidacaoInsercaoAssociacoesTendoApenasId() throws Exception {
+		Cargo c = new Cargo(bd.funf1.getCargo().getId(), null, null, null);
+		PessoaFisica pf = new PessoaFisica(this.bd.pf1.getId(), null, null, null, null, null, null);
+		this.bd.funf1.setCargo(c);
+		this.bd.funf1.setPessoa(pf);
 
-		util.testPost(ENDPOINT_BASE, bd.cf1, status().isUnprocessableEntity()).andDo(requestResult -> {
+		util.testPostExpectCreated(ENDPOINT_BASE, bd.funf1);
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	public void testValidacaoFuncionarioMaxLengths() throws Exception {
+		bd.funf1.setMatricula(Utils.getRandomString(61));
+		bd.funf1.setComissao(1.1);
+
+		util.testPost(ENDPOINT_BASE, bd.funf1, status().isUnprocessableEntity()).andDo(requestResult -> {
 			ValidationError errors = util.getValidationErrorOf(requestResult);
-			assertTrue(errors.getErrors().size() == 1);
-			errors.getErrors().stream().allMatch(err -> Arrays.asList("descricao").stream()
+			assertTrue(errors.getErrors().size() == 2);
+			errors.getErrors().stream().allMatch(err -> Arrays.asList("matricula", "comissao").stream()
 					.anyMatch(fi -> err.getFieldName().equals(fi)));
 		});
 
 	}
 
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	public void testInsersaoComMatriculaReptida() throws Exception {
+		this.bd.getFuncionarioS().save(bd.funf1);
+		bd.funj1.setMatricula(bd.funf1.getMatricula());
 
+		this.util.testPost(ENDPOINT_BASE, this.bd.funj1, status().isBadRequest());
+	}
 
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POSsT" })
 	public void testInsersaoSemAthority() throws Exception {
 
-		this.util.testPostExpectForbidden(ENDPOINT_BASE, this.bd.cj1);
+		this.util.testPostExpectForbidden(ENDPOINT_BASE, this.bd.funj1);
 	}
 
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
 	public void testInsercaoClienteComPessoaQueJaPertenceAOutroCliente() throws Exception {
-		bd.cf1.setPessoa(bd.cj1.getPessoa());
-		bd.cf1 = this.bd.getClientS().save(bd.cf1);
-		this.util.testPost(ENDPOINT_BASE, this.bd.cj1, status().isBadRequest());
+		bd.funf1.setPessoa(bd.funj1.getPessoa());
+		bd.funf1 = this.bd.getFuncionarioS().save(bd.funf1);
+		this.util.testPost(ENDPOINT_BASE, this.bd.funj1, status().isBadRequest());
 	}
 
 	@Transactional
@@ -140,16 +167,16 @@ public class ClienteResourceTest extends BaseTest {
 			BASE_AUTHORITY + "POST" })
 	public void testUpdateSemMudarPessoa() throws Exception {
 
-		this.util.testPostExpectCreated(ENDPOINT_BASE, this.bd.cf1).andDo(result -> {
+		this.util.testPostExpectCreated(ENDPOINT_BASE, this.bd.funf1).andDo(result -> {
 			Integer id = this.util.getIdRedirect(result, ENDPOINT_BASE);
-			this.bd.cf1.setId(id);
-			bd.cf1.setDescricao("nova");
-			bd.cf1.getPessoa().setNome("novonome");
-			this.util.testPutExpectNoContent(ENDPOINT_BASE + "/" + id, this.bd.cf1);
+			this.bd.funf1.setId(id);
+			bd.funf1.setCargo(bd.cAdministrador);
+			bd.funf1.getPessoa().setNome("novonome");
+			this.util.testPutExpectNoContent(ENDPOINT_BASE + "/" + id, this.bd.funf1);
 
-			bd.cf1 = this.bd.getClientS().findById(this.bd.cf1.getId());
-			assertThat(bd.cf1.getDescricao(), equalTo("nova"));
-			assertThat(bd.cf1.getPessoa().getNome(), equalTo("novonome"));
+			bd.funf1 = this.bd.getFuncionarioS().findById(this.bd.funf1.getId());
+			assertThat(bd.funf1.getCargo(), equalTo(bd.cAdministrador));
+			assertThat(bd.funf1.getPessoa().getNome(), equalTo("novonome"));
 
 		});
 	}
@@ -160,54 +187,26 @@ public class ClienteResourceTest extends BaseTest {
 			BASE_AUTHORITY + "POST" })
 	public void testUpdateMudarPessoa() throws Exception {
 
-		this.util.testPostExpectCreated(ENDPOINT_BASE, this.bd.cf1).andDo(result -> {
+		this.util.testPostExpectCreated(ENDPOINT_BASE, this.bd.funf1).andDo(result -> {
 			Integer id = this.util.getIdRedirect(result, ENDPOINT_BASE);
-			this.bd.cf1.setId(id);
-			bd.cf1.setPessoa(bd.pj1);
+			this.bd.funf1.setId(id);
+			bd.funf1.setPessoa(bd.pj1);
 
-			this.util.testPut(ENDPOINT_BASE + "/" + id, this.bd.cf1, status().isBadRequest());
+			this.util.testPut(ENDPOINT_BASE + "/" + id, this.bd.funf1, status().isBadRequest());
 
 		});
 	}
-	@Transactional
-	@Test
-	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "PUT",
-			BASE_AUTHORITY + "POST" })
-	public void testUpdateCpfJaExistente() throws Exception {
-		this.util.testPostExpectCreated("/pessoas/", this.bd.pf2).andDo(handler -> this.bd.pf2.setId(this.util.getIdRedirect(handler, "/pessoas")));
-		this.util.testPostExpectCreated(ENDPOINT_BASE, this.bd.cf2);
-		
-		((PessoaFisica) this.bd.cf2.getPessoa()).setCpf(this.bd.pf1.getCpf());
-		this.util.testPut("/pessoas/"+this.bd.pf2.getId(), this.bd.pf2, status().isBadRequest());
-		this.util.testPut(ENDPOINT_BASE + "/" + 2, this.bd.cf2, status().isBadRequest());
-
-	}
-	
 
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "PUT",
 			BASE_AUTHORITY + "POST" })
 	public void testUpdateClienteComPessoaPertenceOutroCliente() throws Exception {
-		bd.cj1 = this.bd.getClientS().save(bd.cj1);
+		bd.funj1 = this.bd.getFuncionarioS().save(bd.funj1);
 
-		bd.cf1.setPessoa(bd.cj1.getPessoa());
+		bd.funf1.setPessoa(bd.funj1.getPessoa());
 
-		this.util.testPost(ENDPOINT_BASE, this.bd.cf1, status().isBadRequest());
-
-	}
-	
-	@Transactional
-	@Test
-	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "PUT",
-			BASE_AUTHORITY + "POST" })
-	public void testCreateClienteOnlyPessoaId() throws Exception {
-		PessoaJuridica pj = new PessoaJuridica();
-		pj.setId(this.bd.pj1.getId());
-		Cliente cliente = new Cliente(null, pj, BigDecimal.valueOf(123.), "asdf");
-
-
-		this.util.testPostExpectCreated(ENDPOINT_BASE, cliente);
+		this.util.testPost(ENDPOINT_BASE, this.bd.funf1, status().isBadRequest());
 
 	}
 
@@ -215,8 +214,8 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testaFindById() throws Exception {
-		this.bd.getClientS().save(bd.cj1);
-		util.testGetExpectedSucess(this.ENDPOINT_BASE, bd.cj1.getId());
+		this.bd.getFuncionarioS().save(bd.funj1);
+		util.testGetExpectedSucess(this.ENDPOINT_BASE, bd.funj1.getId());
 	}
 
 	@Transactional
@@ -230,8 +229,8 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GETT" })
 	public void testaFindByIdNoAuthority() throws Exception {
-		this.bd.getClientS().save(bd.cj1);
-		util.testGet(this.ENDPOINT_BASE, bd.cj1.getId(), status().isForbidden());
+		this.bd.getFuncionarioS().save(bd.funj1);
+		util.testGet(this.ENDPOINT_BASE, bd.funj1.getId(), status().isForbidden());
 	}
 
 	//
@@ -239,14 +238,14 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testFindCnpj() throws Exception {
-		this.bd.getClientS().save(bd.cj1);
+		this.bd.getFuncionarioS().save(bd.funj1);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cj1.getPessoa().getDocument());
+		params.add("value", this.bd.funj1.getPessoa().getDocument());
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isOk()).andDo(result -> {
 			Funcionario func_resut = this.util.objectMapper().readValue(result.getResponse().getContentAsString(),
 					Funcionario.class);
-			assertTrue(func_resut.getId().equals(this.bd.cj1.getPessoa().getId()));
+			assertTrue(func_resut.getId().equals(this.bd.funj1.getPessoa().getId()));
 		});
 	}
 
@@ -254,9 +253,9 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testFindCnpjInvalido() throws Exception {
-		this.bd.getClientS().save(bd.cj1);
+		this.bd.getFuncionarioS().save(bd.funj1);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cj1.getPessoa().getDocument() + "1");
+		params.add("value", this.bd.funj1.getPessoa().getDocument() + "1");
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isBadRequest());
 	}
@@ -266,7 +265,7 @@ public class ClienteResourceTest extends BaseTest {
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testFindCnpjNaoExiste() throws Exception {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cj1.getPessoa().getDocument());
+		params.add("value", this.bd.funj1.getPessoa().getDocument());
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isNotFound());
 	}
@@ -275,14 +274,14 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testFindCPF() throws Exception {
-		this.bd.getClientS().save(bd.cf1);
+		this.bd.getFuncionarioS().save(bd.funf1);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cf1.getPessoa().getDocument());
+		params.add("value", this.bd.funf1.getPessoa().getDocument());
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isOk()).andDo(result -> {
 			Funcionario func_resut = this.util.objectMapper().readValue(result.getResponse().getContentAsString(),
 					Funcionario.class);
-			assertTrue(func_resut.getId().equals(this.bd.cf1.getPessoa().getId()));
+			assertTrue(func_resut.getId().equals(this.bd.funf1.getPessoa().getId()));
 		});
 	}
 
@@ -290,9 +289,9 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GeET" })
 	public void testFindCPFSemPermissao() throws Exception {
-		this.bd.getClientS().save(bd.cf1);
+		this.bd.getFuncionarioS().save(bd.funf1);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cf1.getPessoa().getDocument());
+		params.add("value", this.bd.funf1.getPessoa().getDocument());
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isForbidden());
 	}
@@ -301,9 +300,9 @@ public class ClienteResourceTest extends BaseTest {
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testFindCPFInvalido() throws Exception {
-		this.bd.getClientS().save(bd.cf1);
+		this.bd.getFuncionarioS().save(bd.funf1);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cf1.getPessoa().getDocument() + "1");
+		params.add("value", this.bd.funf1.getPessoa().getDocument() + "1");
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isBadRequest());
 	}
@@ -313,27 +312,27 @@ public class ClienteResourceTest extends BaseTest {
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
 	public void testFindCPFNaoExiste() throws Exception {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("value", this.bd.cf1.getPessoa().getDocument());
+		params.add("value", this.bd.funf1.getPessoa().getDocument());
 
 		this.util.testGetRequestParams(ENDPOINT_BASE + "/document", params, status().isNotFound());
 	}
-//
-	private RestResponsePage<ClienteListDTO> getPage(MvcResult result)
+
+	private RestResponsePage<FuncionarioListDTO> getPage(MvcResult result)
 			throws UnsupportedEncodingException, IOException, JsonParseException, JsonMappingException {
 		String content = result.getResponse().getContentAsString();
-		RestResponsePage<ClienteListDTO> responseList = this.util.objectMapper().readValue(content,
-				new TypeReference<RestResponsePage<ClienteListDTO>>() {
+		RestResponsePage<FuncionarioListDTO> responseList = this.util.objectMapper().readValue(content,
+				new TypeReference<RestResponsePage<FuncionarioListDTO>>() {
 				});
 		return responseList;
 	}
-//
+
 	private void cenarioParaBuscaParamiterizada() {
 		this.bd.getPessoaS().saveAll(Arrays.asList(bd.pf2, bd.pf3, bd.pf4, bd.pj2, bd.pj3, bd.pj4));
-		this.bd.getClientS()
-				.saveAll(Arrays.asList(bd.cf1, bd.cf2, bd.cf3, bd.cf4, bd.cj1, bd.cj2, bd.cj3, bd.cj4));
+		this.bd.getFuncionarioS()
+				.saveAll(Arrays.asList(bd.funf1, bd.funf2, bd.funf3, bd.funf4, bd.funj1, bd.funj2, bd.funj3, bd.funj4));
 
 	}
-//
+
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
@@ -343,7 +342,7 @@ public class ClienteResourceTest extends BaseTest {
 		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
 
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
-			RestResponsePage<ClienteListDTO> result = this.getPage(result_);
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
 
 			assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
 			assertFalse(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
@@ -360,14 +359,14 @@ public class ClienteResourceTest extends BaseTest {
 		params.add("tipo", TipoPessoa.PESSOA_JURIDICA.getDescricao());
 
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
-			RestResponsePage<ClienteListDTO> result = this.getPage(result_);
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
 
 			assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
 			assertFalse(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
 		});
 
 	}
-//
+
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
@@ -376,7 +375,7 @@ public class ClienteResourceTest extends BaseTest {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 8, 1).andDo(result_ -> {
-			RestResponsePage<ClienteListDTO> result = this.getPage(result_);
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
 
 			assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_JURIDICA.getDescricao())));
 			assertTrue(result.get().anyMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
@@ -392,7 +391,7 @@ public class ClienteResourceTest extends BaseTest {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("nome", "joao");
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 3, 1).andDo(result_ -> {
-			RestResponsePage<ClienteListDTO> result = this.getPage(result_);
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
 
 			assertTrue(result.get().allMatch(c -> c.getNome().toLowerCase().contains("joao")));
 		});
@@ -407,21 +406,77 @@ public class ClienteResourceTest extends BaseTest {
 		params.add("nome", "joao");
 		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 2, 1).andDo(result_ -> {
-			RestResponsePage<ClienteListDTO> result = this.getPage(result_);
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
 
 			assertTrue(result.get().allMatch(c -> c.getTipo().equals(TipoPessoa.PESSOA_FISICA.getDescricao())));
 			assertTrue(result.get().allMatch(c -> c.getNome().toLowerCase().contains("joao")));
 		});
 	}
 
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaCargo() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("cargo", this.bd.cAdministrador.getNomeCargo());
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 5, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+
+			assertTrue(result.get().allMatch(f -> f.getCargo().equals(bd.cAdministrador.getNomeCargo())));
+			assertFalse(result.get().anyMatch(f -> f.getCargo().equals(bd.cDesenvolvedor.getNomeCargo())));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaCargoETipo() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("cargo", this.bd.cAdministrador.getNomeCargo());
+		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
+
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testaBuscaParamiterizadaCargoENome() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("cargo", this.bd.cAdministrador.getNomeCargo());
+		params.add("nome", "MaRiA");
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 1, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+			assertTrue(result.get().allMatch(f -> f.getCargo().equals(bd.cAdministrador.getNomeCargo())));
+			assertTrue(result.get().allMatch(f -> f.getNome().toLowerCase().contains("maria")));
+		});
+	}
+
+	@Transactional
+	@Test
+	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	public void testeBuscarMatricula() throws Exception {
+		cenarioParaBuscaParamiterizada();
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("matricula", "adm");
+
+		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
+			RestResponsePage<FuncionarioListDTO> result = this.getPage(result_);
+			assertTrue(result.get().allMatch(f -> f.getMatricula().toLowerCase().contains("adm")));
+
+		});
+	}
 
 	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "DELETE" })
 	public void testDeleteSucesso() throws Exception {
-		this.bd.getClientS().save(bd.cj1);
+		this.bd.getFuncionarioS().save(bd.funj1);
 
-		util.testDelete(ENDPOINT_BASE + "/" + bd.cj1.getId(), status().isNoContent());
+		util.testDelete(ENDPOINT_BASE + "/" + bd.funj1.getId(), status().isNoContent());
 	}
 
 	@Transactional

@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.ebm.pessoal.domain.Cliente;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.service.PessoaService;
 
@@ -40,13 +42,14 @@ public class PessoaResource {
 	public ResponseEntity<Void> update(@Valid @RequestBody Pessoa pessoa, @PathVariable Integer id){
 		pessoa.setId(id);
 		pessoa = pessoaService.save(pessoa);
-		return ResponseEntity.noContent().build();
-		
+		return ResponseEntity.noContent().build(); 
+		 
 	}
 	@PreAuthorize("hasAnyAuthority('FUNCIONARIO_GET','CLIENTE_GET','FORNECEDOR_GET')")
 	@GetMapping(value="/{id}")
 	public ResponseEntity<Pessoa> find(@PathVariable Integer id) {
 		Pessoa obj = pessoaService.findById(id);
+		
 		return ResponseEntity.ok(obj);
 	}
 	@PreAuthorize("hasAnyAuthority('FUNCIONARIO_DELETE','CLIENTE_DELETE','FORNECEDOR_DELETE')")
@@ -55,5 +58,12 @@ public class PessoaResource {
 		pessoaService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+	@PreAuthorize("hasAuthority('CLIENTE_GET')")
+	@GetMapping(value = "/findBy")
+	public ResponseEntity<Pessoa> findBy(@RequestParam(value = "document", required = true) final String document) {
+
+		return ResponseEntity.ok(pessoaService.findByCpfOrCnpj(document));
+	}
+
 	
 }

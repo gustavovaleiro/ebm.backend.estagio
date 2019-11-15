@@ -141,10 +141,11 @@ public class PopulaBD {
 		instanciaCliente(false);
 		instanciaCategorias();
 		instanciaFornecedores(false);
+		instanciaCargos();
 		instanciaFuncionario(false);
-
+		
 		pessoaS.saveAll(Arrays.asList(pf1, pf2, pf3, pf4, pj1, pj2, pj3, pj4));
-		clientS.saveAll(Arrays.asList(cf1, cf2, cf3, cf4, cj1, cj2, cj3, cj4));
+		clientS.saveAll(Arrays.asList(cf1, cf3, cf4, cj1, cj2, cj3, cj4));
 		categoriaS.saveAll(Arrays.asList(cat1, cat2, cat3, cat4));
 		fornecedorS.saveAll(Arrays.asList(forf1, forf2, forf3, forf4, forj1, forj2, forj3, forj4));
 		cargoS.save(cAdministrador);
@@ -167,8 +168,8 @@ public class PopulaBD {
 	}
 
 	public PopulaBD instanciaPessoa() {
-		estadoGO = new Estado(null, "GO", "Goias");
-		goiania = new Cidade(null, "Goiania", estadoGO);
+		estadoGO = new Estado(null, "GO", "Goiás");
+		goiania = new Cidade(null, "Goiânia", estadoGO);
 		endereco1 = new Endereco(null, "Test rua tal", "Centro", goiania, "123", "prox ao carai", "75840000", true,
 				"Endereco residencial");
 		pf1 = new PessoaFisica(null, "Joao Da Silva", "56661050004", LocalDate.of(1990, 4, 30),
@@ -195,7 +196,7 @@ public class PopulaBD {
 
 	public PopulaBD associaPessoa() {
 		Arrays.asList(pf1, pj1, pf2, pf3, pf4, pf5, pj2, pj3, pj4).forEach(p -> {
-			p.getEndereco().add(endereco1);
+			p.getEndereco().add(Utils.getRandomEndereco(true));
 			p.getTelefone().add(Utils.getRandomTelefone(true));
 			p.getEmail().add(Utils.getRandomEmail(p, true));
 		});

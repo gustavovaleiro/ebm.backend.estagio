@@ -8,7 +8,10 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.ebm.estoque.domain.enums.TipoItem;
+import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Email;
+import com.ebm.pessoal.domain.Endereco;
+import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.HistoricoCadastral;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.Telefone;
@@ -78,6 +81,14 @@ public class Utils {
 		for(int j = 1; j<i;j++)
 			r = r.concat("a");
 		return r;
+	}
+
+
+	public static Endereco getRandomEndereco(boolean b) {
+		
+		return new Endereco(null, "abcd" + Utils.gerador.nextInt(1000) + 1000, "bairro" + Utils.gerador.nextInt(100),
+				new Cidade(null, "Goiânia", new Estado(null, "GO", "Goiás")), String.valueOf(Utils.gerador.nextInt(1000)+10),
+				"asdf", String.valueOf(Utils.gerador.nextInt(100)+10000000), b, "Gerado Randomicamente");
 	}
 
 

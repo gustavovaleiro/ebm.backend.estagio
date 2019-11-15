@@ -1,4 +1,4 @@
-package com.ebm.pessoal.resource;
+package com.ebm.todosteste;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;

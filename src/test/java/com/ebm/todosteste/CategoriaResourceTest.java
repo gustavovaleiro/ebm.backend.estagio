@@ -1,4 +1,4 @@
-package com.ebm.estoque.resource;
+package com.ebm.todosteste;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

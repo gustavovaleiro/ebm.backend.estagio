@@ -44,17 +44,17 @@ public class Cliente implements Serializable{
 	@Column(nullable = false)
 	@NotNull(message = "O campo limite de compra não pode ser nulo")
 	@Min(value = 0, message = "O campo limite de compra não pode ser negativo")
-	private BigDecimal limite_compra;
+	private BigDecimal limiteCompra;
 
 	@Column(length = 480)
 	@Length(min = 0, max = 480, message = "O campo descricao pode ter no maximo 480 caracteres")
 	private String descricao;
 	@Embedded
 	private HistoricoCadastral historico= new HistoricoCadastral();
-	public Cliente(Integer id, Pessoa pessoa, BigDecimal limite_compra, String descricao) {
+	public Cliente(Integer id, Pessoa pessoa, BigDecimal limiteCompra, String descricao) {
 		this.id = id;
 		this.pessoa = pessoa;
-		this.limite_compra = limite_compra;
+		this.limiteCompra = limiteCompra;
 		this.descricao = descricao;
 	}
 	

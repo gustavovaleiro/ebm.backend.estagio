@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "pessoa_id")
-@JsonTypeName("PessoaJuridica")
+@JsonTypeName("PESSOA_JURIDICA")
 public class PessoaJuridica extends Pessoa {
 	private static final long serialVersionUID = 1L;
 

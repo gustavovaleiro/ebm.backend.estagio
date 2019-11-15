@@ -1,6 +1,7 @@
 package com.ebm.security.resource;
 
 import java.net.URI;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.ebm.security.PermissaoE;
 import com.ebm.security.Usuario;
 import com.ebm.security.dto.UsuarioListDTO;
 import com.ebm.security.dto.UsuarioNewDTO;
@@ -64,7 +66,9 @@ public class UsuarioResource {
 		Usuario obj = usuarioService.find(id);
 		return ResponseEntity.ok(obj);
 	}
+	
 
+	
 	@PreAuthorize("hasAuthority('USUARIO_GET')")
 	@GetMapping(value ="/document")
 	public ResponseEntity<Usuario> findBy(@RequestParam(value = "value", required = true) final String document) {
@@ -73,10 +77,20 @@ public class UsuarioResource {
 
 		return ResponseEntity.ok(cli);
 	}
+	
+	
+	@GetMapping(value ="/authorities")
+	public ResponseEntity<Set<PermissaoE>> permissoes() {
+
+		Set<PermissaoE> perm = usuarioService.getPermissoes();
+
+		return ResponseEntity.ok(perm);
+	}
 
 	@PreAuthorize("hasAuthority('USUARIO_GET')")
 	@GetMapping(value = "/page")
-	public ResponseEntity<Page<UsuarioListDTO>> findAllBy(@RequestParam(value = "nome", required = false) String nome,
+	public ResponseEntity<Page<UsuarioListDTO>> findAllBy(
+			@RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "login", required = false) String login,
 			@RequestParam(value = "email", required = false) String email,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,

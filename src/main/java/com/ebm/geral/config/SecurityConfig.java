@@ -22,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.ebm.security.JWTUtil;
 import com.ebm.security.filter.JWTAuthenticationFilter;
 import com.ebm.security.filter.JWTAuthorizationFilter;
+import com.ebm.security.filter.LocationFilter;
 @EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled= true)
@@ -39,12 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			"/h2/**"
 	};
 	private static final String[] PUBLIC_MATCHERS_GET = {
-			
+			"/usuarios/authorities"
 	};
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		if(Arrays.asList(env.getActiveProfiles()).contains("test")) {
+		if(Arrays.asList(env.getActiveProfiles()).contains("test") || Arrays.asList(env.getActiveProfiles()).contains("testauto")) {
 			http.headers().frameOptions().disable();
 		}
 		http.cors().and().csrf().disable();
@@ -55,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
 		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailService));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.addFilterAfter(new LocationFilter(),JWTAuthorizationFilter.class);
 	}
 	
 	@Override
@@ -67,7 +69,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+		configuration.setAllowedMethods(Arrays.asList("POST","GET","DELETE", "PUT"));
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
 	

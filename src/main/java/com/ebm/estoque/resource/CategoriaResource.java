@@ -64,7 +64,7 @@ public class CategoriaResource {
 	}
 
 	@PreAuthorize("hasAuthority('ITEM_AUX_GET')")
-	@GetMapping(value = "/find")
+	@GetMapping(value = "/page")
 	public ResponseEntity<Page<CategoriaItem>> findAllBy( @RequestParam(value = "nome", required = false) String nome,
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "10") Integer linesPerPage,

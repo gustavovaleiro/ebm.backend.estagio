@@ -39,7 +39,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "tipo")
 public abstract class Pessoa implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -71,6 +71,7 @@ public abstract class Pessoa implements Serializable {
 	@Valid
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Telefone> telefone = new ArrayList<Telefone>();
+	
 	@OneToMany
 	@JoinColumn(name = "pessoa_id")
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -107,6 +108,7 @@ public abstract class Pessoa implements Serializable {
 		return endereco.stream().filter(e -> e.isPrincipal()).findAny().get();
 	}
 
+	@JsonIgnore
 	public abstract String getDocument();
 
 }

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -75,7 +76,9 @@ public class PessoaService {
 		PessoaFisica result = findbyCPF(pf.getCpf());
 		if (result != null && !result.getId().equals(pf.getId()))
 			throw new DataIntegrityException(DUPLICATE_CPF);
-
+		
+		
+		
 		saveAssociations(pf);
 
 		pf.setNaturalidade(cidadeService.save(pf.getNaturalidade()));
@@ -94,6 +97,8 @@ public class PessoaService {
 		if (result != null && !result.getId().equals(pj.getId()))
 			throw new DataIntegrityException(DUPLICATE_CNPJ);
 
+		
+		
 		saveAssociations(pj);
 		Utils.audita(pj.getHistorico());
 		return pessoaJuridicaRepository.save(pj);
@@ -101,7 +106,12 @@ public class PessoaService {
 	}
 
 	public Pessoa save(Pessoa pessoa) {
-		return pessoa instanceof PessoaFisica ? save((PessoaFisica) pessoa) : save((PessoaJuridica) pessoa);
+		try{
+			return pessoa instanceof PessoaFisica ? save((PessoaFisica) pessoa) : save((PessoaJuridica) pessoa);
+		}catch ( DataIntegrityViolationException ex)  {
+			throw new DataIntegrityException(ex.getMessage());
+		}
+		
 	}
 
 	@Transactional

@@ -43,8 +43,8 @@ public class ClienteService {
 	@Transactional
 	public Cliente save(Cliente cliente) {
 		
-		garantaIntegridade(cliente);
 		saveAssociations(cliente);
+		garantaIntegridade(cliente);
 		Utils.audita(cliente.getHistorico());
 		return clienteRepository.save(cliente);
 	}
@@ -56,12 +56,19 @@ public class ClienteService {
 	private void garantaIntegridade(Cliente cliente) {
 		if (cliente.getPessoa() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_CLIENTWITHOUTPERSON);
-
+		try {
+			  Cliente pessoaWithDocument = this.findByCpfOrCnpj(cliente.getPessoa().getDocument());
+			if (!pessoaWithDocument.getId().equals(cliente.getId()))
+				throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
+		}catch( ObjectNotFoundException ex) {
+			
+		}
 		if (cliente.getPessoa().getId() != null) {// garantir que nao exista outra cliente salvado com a mesma pessoa
 			try {
 				Cliente result = findById(cliente.getPessoa().getId());
-				if (!result.getId().equals(cliente.getId()) )
+				if (cliente.getId() == null || !result.getId().equals(cliente.getId()   ) )
 					throw new DataIntegrityException(DATAINTEGRITY_DUPLICATEPERSON);
+				
 			} catch (ObjectNotFoundException ex) {
 			}
 		}

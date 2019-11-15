@@ -22,6 +22,7 @@ import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.exceptions.ObjectNotFoundException;
 import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Fornecedor;
+import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.Pessoa;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FornecedorListDTO;
@@ -63,7 +64,13 @@ public class FornecedorServiceImpl implements FornecedorService {
 	private void garantaIntegridade(Fornecedor fornecedor) {
 		if (fornecedor.getPessoa() == null)
 			throw new DataIntegrityException(DATAINTEGRITY_FORNECEDORWITHOUTPERSON);
-
+		try {
+			Fornecedor pessoaWithDocument = this.findByCpfOrCnpj(fornecedor.getPessoa().getDocument());
+			if (!pessoaWithDocument.getId().equals(fornecedor.getId()))
+				throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON );
+		}catch( ObjectNotFoundException ex) {
+			
+		}
 		if (fornecedor.getPessoa().getId() != null) {
 			try {
 				Fornecedor result = findById(fornecedor.getPessoa().getId());
@@ -73,7 +80,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 		}
 
 		if (fornecedor.getId() != null && !fornecedor.getId().equals(fornecedor.getPessoa().getId()))
-			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON);
+			throw new DataIntegrityException(DATAINTEGRITY_CHANCEPERSON );
 	}
 
 	public Fornecedor findById(Integer id) {

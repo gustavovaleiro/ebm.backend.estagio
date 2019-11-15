@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.CategoriaItem;
@@ -26,7 +27,7 @@ public interface CategoriaItemService {
 	CategoriaItem save(CategoriaItem categoria);
 
 	CategoriaItem findByNome(String categoria);
-	Page<CategoriaItem> findByNome(String categoria, PageRequest page);
+	Page<CategoriaItem> findByNome(String categoria, Pageable page);
 
 	Set<CategoriaItem> findAllById(Set<Integer> ids);
 
