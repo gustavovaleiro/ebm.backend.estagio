@@ -113,8 +113,10 @@ public class ItemServiceImpl implements ItemService {
 	private void preparaItens(String codigoInterno, String nome, String unidade, String categoria,
 			ExampleMatcher matcher, List<Item> itens, Item item) {
 		item.setCodInterno(codigoInterno);
-		if(Optional.ofNullable(categoria).isPresent())
+		if(Optional.ofNullable(categoria).isPresent()) {			
 			item.setCategoria(categoriaService.findByNome(categoria));
+			item.getCategoria().setHistorico(null);
+		}
 		if(Optional.ofNullable(unidade).isPresent())
 			item.setUnidade(unidadeService.findByAbrev(unidade));
 		item.setNome(nome);

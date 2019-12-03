@@ -8,12 +8,15 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.CategoriaItem;
+import com.ebm.estoque.dtos.ItemListDTO;
 import com.ebm.estoque.repository.CategoriaItemRepository;
 import com.ebm.estoque.service.interfaces.CategoriaItemService;
 import com.ebm.estoque.service.interfaces.ItemService;
@@ -59,6 +62,14 @@ public class CategoriaServiceImpl implements CategoriaItemService{
 			throw new DataIntegrityException(DATAINTEGRITY_NOMENULL);
 		return categoriaRepository.findByNomeIgnoreCaseLike(nome).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYNOME));
 		
+		
+	}
+	public Page<CategoriaItem> findPageBy(String nome, PageRequest request) {
+		
+		CategoriaItem cat = new CategoriaItem(null,nome);
+		ExampleMatcher matcher = Utils.getExampleMatcherForDinamicFilter(true);
+		
+		return this.categoriaRepository.findAll(Example.of(cat,matcher), request);
 	}
 
 	public CategoriaItem findById(Integer id) {
