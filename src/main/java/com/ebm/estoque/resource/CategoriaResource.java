@@ -71,7 +71,7 @@ public class CategoriaResource {
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		Page<CategoriaItem> rs = categoriaService.findByNome(nome, pageRequest);
+		Page<CategoriaItem> rs = categoriaService.findPageBy(nome, pageRequest);
 		return ResponseEntity.ok().body(rs);
 	}
 

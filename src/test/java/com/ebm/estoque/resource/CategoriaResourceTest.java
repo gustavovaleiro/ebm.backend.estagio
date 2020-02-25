@@ -184,7 +184,6 @@ public class CategoriaResourceTest extends BaseTest{
 	public void testFindByINomeAll() throws Exception {
 		save();
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("nome", "");
 		util.testGetPage(ENDPOINT_BASE+"/page", params, status().isOk(), 4, 1);
 		
 	}

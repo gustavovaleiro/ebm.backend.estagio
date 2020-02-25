@@ -34,5 +34,5 @@ public interface CategoriaItemService {
 	CategoriaItem findById(Integer id);
 
 	List<CategoriaItem> saveAll(List<CategoriaItem> categorias);
-
+	 Page<CategoriaItem> findPageBy(String nome, PageRequest request);
 }
