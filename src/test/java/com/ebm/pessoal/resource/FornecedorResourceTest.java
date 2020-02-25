@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,19 +20,15 @@ import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.ebm.BaseTest;
-import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.geral.domain.RestResponsePage;
 import com.ebm.geral.resource.exception.ValidationError;
 import com.ebm.geral.service.PopulaBD;
-import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Funcionario;
 import com.ebm.pessoal.domain.TipoPessoa;
 import com.ebm.pessoal.dtos.FornecedorListDTO;

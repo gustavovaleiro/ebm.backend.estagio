@@ -25,13 +25,13 @@ public class EstadoService {
 	// insert & update
 
 	public Estado save(Estado estado) {
-			Optional<Estado> estadoR = estadoRepository.findOneByUF(estado.getUF());
+			Optional<Estado> estadoR = estadoRepository.findOneByUf(estado.getUf());
 			
 			if(estadoR.isPresent()) {
 				estado.setId(estadoR.get().getId());
 			}
 				
-			if(estado.getUF().length() != 2)
+			if(estado.getUf().length() != 2)
 				throw new DataIntegrityException(UF_INVALIDO);
 			return estadoRepository.save(estado);
 	
@@ -39,7 +39,7 @@ public class EstadoService {
 	
 	//finds
 	public Estado findByUf(String uf) {
-		return estadoRepository.findOneByUF(uf).
+		return estadoRepository.findOneByUf(uf).
 				orElseThrow(() -> new ObjectNotFoundException(NOTFOUND_UF + uf));
 	}
 	

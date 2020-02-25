@@ -32,10 +32,10 @@ public class Telefone implements Serializable, Principalizar {
 	private Integer id;
 	
 	@Column(length = 3, nullable = false)
-	@NotNull(message = "O campo dDD não pode ser nulo")
-	@NotEmpty(message = "O campo dDD não pode ser vazio")
-	@Length(min=2, max = 3, message = "O campo dDD  deve possuir entre 2 e 3  caracteres")
-	private String dDD;
+	@NotNull(message = "O campo ddd não pode ser nulo")
+	@NotEmpty(message = "O campo ddd não pode ser vazio")
+	@Length(min=2, max = 3, message = "O campo ddd  deve possuir entre 2 e 3  caracteres")
+	private String ddd;
 	
 	@Column(length = 9, nullable = false)
 	@NotNull(message = "O campo numero não pode ser nulo")
@@ -51,13 +51,13 @@ public class Telefone implements Serializable, Principalizar {
 	
 	@Override
 	public String toString() {
-		return this.tipo + ": ("+dDD+")"+ numero;
+		return this.tipo + ": ("+ddd+")"+ numero;
 	}
 
-	public Telefone(Integer id, String dDD, String numero, String tipo, boolean principal) {
+	public Telefone(Integer id, String ddd, String numero, String tipo, boolean principal) {
 		super();
 		this.id = id;
-		this.dDD = dDD;
+		this.ddd = ddd;
 		this.numero = numero;
 		this.tipo = tipo;
 		this.principal = principal;

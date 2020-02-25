@@ -38,7 +38,7 @@ public class PessoaFisica extends Pessoa {
 	@Embedded
 	@NotNull(message = "O campo rG não pode ser nulo")
 	@Valid
-	private RG rG;
+	private RG RG;
 	private String nacionalidade;
 	@ManyToOne(optional = true)
 	@NotNull(message = "O campo naturalidade não pode ser nulo")
@@ -52,13 +52,14 @@ public class PessoaFisica extends Pessoa {
 		super(id, nome, TipoPessoa.PESSOA_FISICA);
 		this.cpf = cpf;
 		this.dataNascimento = dataNascimento;
-		this.rG = rG;
+		this.RG = rG;
 		this.nacionalidade = nacionalidade;
 		this.naturalidade = naturalidade;
 	}
 	
 	public String getDocument() {
 		return this.getCpf();
+		
 	}
 	public Pessoa withNome(String nome) {
 		// TODO Auto-generated method stub

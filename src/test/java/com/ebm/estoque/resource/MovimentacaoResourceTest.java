@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -43,16 +44,15 @@ public class MovimentacaoResourceTest extends BaseTest {
 	public void setUp() {
 		bd.instanciaMovimentacao(true);
 		Arrays.asList(bd.p1, bd.p2, bd.p3).forEach(p -> ((Produto) p).setEstoque(5, 0, 10));
-
 		bd.saveUnidade(Arrays.asList(bd.un1, bd.un2));
 		bd.saveCategoria(Arrays.asList(bd.cat1, bd.cat2, bd.cat3, bd.cat4));
 		bd.saveProduto(Arrays.asList(bd.p1, bd.p2, bd.p3));
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testInserNormalEntraComFornecedor() throws Exception {
 		fornecedor();
 		bd.ent1.getFornecedores().add(bd.forf1);
@@ -71,9 +71,10 @@ public class MovimentacaoResourceTest extends BaseTest {
 		bd.saveFornecedores(Arrays.asList(bd.forf1));
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
+	@Rollback
 	public void testInserNormalEntSemFornecedor() throws Exception {
 		util.testPostExpectCreated(ENDPOINT_BASE, bd.sai1).andDo(result -> {
 			Movimentacao mov = bd.getMovimentacaoS()
@@ -83,9 +84,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testInserNormalSaida() throws Exception {
 		util.testPostExpectCreated(ENDPOINT_BASE, bd.sai1).andDo(result -> {
 			Movimentacao mov = bd.getMovimentacaoS()
@@ -95,26 +96,26 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testInserNormalSaidaComFornecedor() throws Exception {
 		fornecedor();
 		bd.sai1.getFornecedores().add(bd.forf1);
 		util.testPost(ENDPOINT_BASE, bd.sai1, status().isBadRequest());
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POdST" })
+	@Transactional
 	public void testaInsercaoSemAuth() throws Exception {
 
 		util.testPostExpectForbidden(ENDPOINT_BASE, bd.sai1);
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testaInsercaoErrosObjectNullEmptyGiveErrors() throws Exception {
 		bd.ent1.setTipoMovimentacao(null);
 		bd.ent1.setProdutoMovimentacao(null);
@@ -122,9 +123,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 				.andExpect(jsonPath("$.errors.*", hasSize(3)));
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testaInsercaoErrosObjectOnlyEmptyGiveErrors() throws Exception {
 
 		bd.ent1.setProdutoMovimentacao(new HashSet<>());
@@ -138,9 +139,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 				});
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testaInsercaoErrosLength() throws Exception {
 
 		bd.ent1.setDescricao(Utils.getRandomString(602));
@@ -154,9 +155,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 		});
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testaInsercaoErrosLengthTwo() throws Exception {
 
 		bd.ent1.setDescricao(Utils.getRandomString(444));
@@ -171,9 +172,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "PUT" })
+	@Transactional
 	public void testaUpdate() throws Exception {
 		bd.getMovimentacaoS().save(bd.ent1);
 
@@ -186,17 +187,17 @@ public class MovimentacaoResourceTest extends BaseTest {
 		assertTrue(bd.ent1.getDescricao().equals("NOVONOME"));
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testaUpdateNoAuthority() throws Exception {
 
 		util.testPutExpectedForbidden(ENDPOINT_BASE + "/1", bd.ent1);
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "POST" })
+	@Transactional
 	public void testaAlteracoesEstoquePorMovimentacao() throws Exception {
 		// Preparação do cenario
 		Integer estqAtual = this.bd.p1.getEstoqueAtual();
@@ -217,24 +218,24 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testaFindById() throws Exception {
 		bd.getMovimentacaoS().save(bd.ent1);
 		util.testGetExpectedSucess(this.ENDPOINT_BASE, bd.ent1.getId());
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testaFindByIdExpectNotFound() throws Exception {
 		util.testGet(this.ENDPOINT_BASE, 1, status().isNotFound());
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GETT" })
+	@Transactional
 	public void testaFindByIdNoAuthority() throws Exception {
 		bd.getMovimentacaoS().save(bd.ent1);
 		util.testGet(this.ENDPOINT_BASE, bd.p1.getId(), status().isForbidden());
@@ -263,9 +264,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 		return responseList;
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoTipoEntrada() throws Exception {
 		preparaTestParameterizado();
 
@@ -282,9 +283,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoTipoSaida() throws Exception {
 		preparaTestParameterizado();
 
@@ -301,9 +302,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoDocumento() throws Exception {
 		preparaTestParameterizado();
 
@@ -319,9 +320,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 		});
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoFornecedor() throws Exception {
 		preparaTestParameterizado();
 
@@ -336,9 +337,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoProdutos() throws Exception {
 		preparaTestParameterizado();
 
@@ -355,9 +356,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoProdutoAndTipo() throws Exception {
 		preparaTestParameterizado();
 
@@ -375,9 +376,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GET" })
+	@Transactional
 	public void testFindParamiterizadoAllNull() throws Exception {
 		preparaTestParameterizado();
 
@@ -393,9 +394,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "GETd" })
+	@Transactional
 	public void testFindParamiterizadoSemPermissao() throws Exception {
 		preparaTestParameterizado();
 
@@ -404,9 +405,9 @@ public class MovimentacaoResourceTest extends BaseTest {
 		util.testGetRequestParams(ENDPOINT_BASE + "/page", params, status().isForbidden());
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "DELETE" })
+	@Transactional
 	public void testDeleteSucesso() throws Exception {
 		bd.getMovimentacaoS().save(bd.ent1);
 		util.testDelete(ENDPOINT_BASE + "/" + bd.ent1.getId(), status().isNoContent());
@@ -420,17 +421,17 @@ public class MovimentacaoResourceTest extends BaseTest {
 		util.testDelete(ENDPOINT_BASE + "/1", status().isNotFound());
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "DELETe" })
+	@Transactional
 	public void testDeleteSemPermissao() throws Exception {
 
 		util.testDelete(ENDPOINT_BASE + "/1", status().isForbidden());
 	}
 
-	@Transactional
 	@Test
 	@WithMockUser(username = "test", password = "test", authorities = { BASE_AUTHORITY + "DELETe" })
+	@Transactional
 	public void testDeleteDataIntegrition() throws Exception {
 
 		util.testDelete(ENDPOINT_BASE + "/null", status().isBadRequest());

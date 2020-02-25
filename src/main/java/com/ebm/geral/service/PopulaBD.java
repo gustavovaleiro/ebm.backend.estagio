@@ -399,7 +399,7 @@ public class PopulaBD {
 	}
 
 	public void saveCategoria(List<CategoriaItem> cats) {
-		categoriaS.saveAll(cats);
+		List<CategoriaItem> ret = categoriaS.saveAll(cats);
 
 	}
 

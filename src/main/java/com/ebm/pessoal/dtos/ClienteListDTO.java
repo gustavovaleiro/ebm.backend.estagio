@@ -28,7 +28,7 @@ public class ClienteListDTO implements Serializable {
 		this(c.getId(), c.getPessoa().getNome(), c.getPessoa().getTipo().getDescricao(),
 				c.getLimiteCompra().doubleValue(), c.getPessoa().getTelefonePrincipal().toString(),
 				c.getPessoa().getEmailPrincipal().getEmail(),
-				c.getPessoa().getEnderecoPrincipal().getCidade().getEstado().getUF() + " - " + c.getPessoa().getEnderecoPrincipal().getCidade().getNome());
+				c.getPessoa().getEnderecoPrincipal().getCidade().getEstado().getUf() + " - " + c.getPessoa().getEnderecoPrincipal().getCidade().getNome());
 	}
 
 }

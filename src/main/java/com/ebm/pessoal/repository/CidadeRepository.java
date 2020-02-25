@@ -20,7 +20,7 @@ public interface CidadeRepository extends JpaRepository<Cidade, Integer> {
 	
 	
 	@Transactional(readOnly=true)
-	@Query("SELECT c FROM Cidade c WHERE LOWER(c.nome) LIKE LOWER(?1) AND LOWER(c.estado.uF) = LOWER(?2)")
+	@Query("SELECT c FROM Cidade c WHERE LOWER(c.nome) LIKE LOWER(?1) AND LOWER(c.estado.uf) = LOWER(?2)")
 	Optional<Cidade>  findOneByNomeAndEstado(String nome, String uf);
 	@Transactional(readOnly=true)
 	boolean existsByEstado(Estado estado);

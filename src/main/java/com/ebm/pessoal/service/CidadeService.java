@@ -34,7 +34,7 @@ public class CidadeService {
 		if (cidade.getEstado() == null) {
 			throw new DataIntegrityException(CIDADE_ESTADO_INVALIDO);
 		}
-		Optional<Cidade> result = cidadeRepository.findOneByNomeAndEstado(cidade.getNome(), cidade.getEstado().getUF());
+		Optional<Cidade> result = cidadeRepository.findOneByNomeAndEstado(cidade.getNome(), cidade.getEstado().getUf());
 
 		if (result.isPresent())
 			cidade.setId(result.get().getId());

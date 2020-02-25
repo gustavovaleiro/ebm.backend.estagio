@@ -36,12 +36,13 @@ public class Estado implements Serializable {
 	@NotNull(message = "O campo estado uf não pode ser nulo")
 	@NotEmpty(message = "O campo estado uf não pode ser vazio")
 	@Length(min =2, max = 2, message = "O campo estado deve possuir 2caracteres")
-	private String uF;
+	private String uf;
 
 	@Column(length = 20, name = "estado_nome")
 	@NotNull(message = "O campo estado nome não pode ser nulo")
 	@NotEmpty(message = "O campo estado nome não pode ser vazio")
 	@Length(min =3, max = 20, message = "O campo estado deve possuir 3 ou 20 caracteres")
 	private String nome;
+	
 
 }

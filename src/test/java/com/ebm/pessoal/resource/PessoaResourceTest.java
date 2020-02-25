@@ -1,11 +1,9 @@
 package com.ebm.pessoal.resource;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -22,7 +20,6 @@ import com.ebm.pessoal.domain.Cidade;
 import com.ebm.pessoal.domain.Estado;
 import com.ebm.pessoal.domain.PessoaFisica;
 import com.ebm.pessoal.domain.PessoaJuridica;
-import com.ebm.pessoal.domain.RG;
 
 public class PessoaResourceTest extends BaseTest {
 
@@ -127,9 +124,9 @@ public class PessoaResourceTest extends BaseTest {
 		bd.pf1.getEndereco().get(0).setRua(getS(4));
 		bd.pf1.getEndereco().get(0).setBairro(getS(1));
 		bd.pf1.getEndereco().get(0).setCEP(getS(7));
-		bd.pf1.getEndereco().get(0).getCidade().getEstado().setUF(getS(2));
+		bd.pf1.getEndereco().get(0).getCidade().getEstado().setUf(getS(2));
 		bd.pf1.getEmail().get(0).setEmail(getS(5));
-		bd.pf1.getTelefone().get(0).setDDD(getS(1));
+		bd.pf1.getTelefone().get(0).setDdd(getS(1));
 		bd.pf1.getTelefone().get(0).setNumero(getS(7));
 		bd.pf1.setCpf(getS(7));
 		bd.pf1.getRG().setRG(getS(4));
@@ -174,9 +171,9 @@ public class PessoaResourceTest extends BaseTest {
 		bd.pf1.getEndereco().get(0).setRua(getS(61));
 		bd.pf1.getEndereco().get(0).setBairro(getS(61));
 		bd.pf1.getEndereco().get(0).setCEP(getS(12));
-		bd.pf1.getEndereco().get(0).getCidade().getEstado().setUF(getS(4));
+		bd.pf1.getEndereco().get(0).getCidade().getEstado().setUf(getS(4));
 		bd.pf1.getEmail().get(0).setEmail(getS(61));
-		bd.pf1.getTelefone().get(0).setDDD(getS(4));
+		bd.pf1.getTelefone().get(0).setDdd(getS(4));
 		bd.pf1.getTelefone().get(0).setNumero(getS(10));
 		bd.pf1.getRG().setRG(getS(16));
 		bd.pf1.setCpf(getS(12));

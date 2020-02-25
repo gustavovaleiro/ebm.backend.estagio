@@ -10,11 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ebm.BaseTest;
 import com.ebm.geral.exceptions.DataIntegrityException;
@@ -62,14 +58,14 @@ public class CidadeServiceTest  extends BaseTest{
 	public void salvaCidadeNovaComEstadoEditado() {
 		
 		estadoService.save(estado);
-		estado.setUF("MT");
+		estado.setUf("MT");
 		estado.setNome("Mato Grosso");
 	
 	    cidadeService.save(cidade);
 		
 		assertNotNull(cidade.getId());
 		assertNotNull(estado.getId());
-		assertThat(cidade.getEstado().getUF(), equalTo("MT"));
+		assertThat(cidade.getEstado().getUf(), equalTo("MT"));
 	}
 	
 	@Test
@@ -84,7 +80,7 @@ public class CidadeServiceTest  extends BaseTest{
 		cidadeService.save(cidade);
 		
 		assertNotNull(cidade.getEstado().getId());
-		assertThat(cidade.getEstado().getUF(), equalTo(cidade.getEstado().getUF()));
+		assertThat(cidade.getEstado().getUf(), equalTo(cidade.getEstado().getUf()));
 		assertThat(cidade.getNome(), equalTo("Belem"));
 		
 	}
@@ -117,7 +113,7 @@ public class CidadeServiceTest  extends BaseTest{
 		
 		cidadeService.saveAll(Arrays.asList(cidade, cidade2,cidade3,cidade4));
 		
-		List<Cidade> cidadeGO = cidadeService.findByEstado(estado.getUF());
+		List<Cidade> cidadeGO = cidadeService.findByEstado(estado.getUf());
 		List<Cidade> cidadeMT = cidadeService.findByEstado("MT");
 		
 		assertThat(cidadeGO.size(), equalTo(3));

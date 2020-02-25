@@ -16,8 +16,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.ebm.BaseTest;
-import com.ebm.estoque.domain.enums.TipoMovimentacao;
-import com.ebm.estoque.dtos.MovimentacaoListDTO;
 import com.ebm.geral.domain.RestResponsePage;
 import com.ebm.geral.resource.exception.ValidationError;
 import com.ebm.geral.service.PopulaBD;

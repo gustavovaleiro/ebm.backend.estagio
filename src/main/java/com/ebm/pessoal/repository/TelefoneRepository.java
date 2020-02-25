@@ -16,13 +16,12 @@ public interface TelefoneRepository extends JpaRepository<Telefone, Integer> {
 	@Query(value = "SELECT * FROM TELEFONE WHERE PESSOA_ID = ?1 ", nativeQuery = true)
 	List<Telefone> findByPessoa(Integer id);
 	
-	@Transactional(readOnly=true)
-	Long countByDDDAndNumero(String ddd, String telefone);
+
 	
 	@Transactional(readOnly=true)
 	@Query(value = "SELECT distinct TIPO FROM TELEFONE GROUP BY TIPO", nativeQuery = true)
 	List<String> findAllTipoTelefone();
 
-	Optional<Telefone> findByDDDAndNumero(String ddd, String numero);
+	Optional<Telefone> findByDddAndNumero(String ddd, String numero);
 	
 }

@@ -19,7 +19,7 @@ public class TestConfig {
 	@Transactional
 	@Bean
 	public boolean intantiateDatabase() throws ParseException {
-		dbService.populaBD();
+		//dbService.populaBD();
 		return true;
 	}
 	

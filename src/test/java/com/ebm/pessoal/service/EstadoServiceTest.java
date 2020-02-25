@@ -37,7 +37,7 @@ public class EstadoServiceTest  extends BaseTest{
 	//Test Insercao de Estado com uf invalida
 	@Test
 	public void testInsercaoUfInvalida() {
-		eGO.setUF("ASD");
+		eGO.setUf("ASD");
 		
 		try {
 			estadoService.save(eGO);
@@ -53,7 +53,7 @@ public class EstadoServiceTest  extends BaseTest{
 		Estado result = estadoService.save(eGO);
 		
 		assertTrue(estadoService.existe(eGO));
-		assertThat(result.getUF(), equalTo( eGO.getUF()));
+		assertThat(result.getUf(), equalTo( eGO.getUf()));
 	}
 	
 	//test update alterando uf e nome
@@ -64,18 +64,18 @@ public class EstadoServiceTest  extends BaseTest{
 		eNew = estadoService.save(eNew);
 		
 		assertThat(eNew.getId(), equalTo(eGO.getId()));
-		assertThat(eNew.getUF(), equalTo("MT"));
+		assertThat(eNew.getUf(), equalTo("MT"));
 		assertThat(eNew.getNome(), equalTo("Mato Grosso"));
 	}
 	//test update alterando  nome e id passandocomo null
 	@Test
 	public void testUpdateNome() {
 		eGO = estadoService.save(eGO);
-		Estado eNew = new Estado(null, eGO.getUF(),"Mato Grosso");
+		Estado eNew = new Estado(null, eGO.getUf(),"Mato Grosso");
 		eNew = estadoService.save(eNew);
 		
 		assertThat(eNew.getId(), equalTo(eGO.getId()));
-		assertThat(eNew.getUF(), equalTo(eGO.getUF()));
+		assertThat(eNew.getUf(), equalTo(eGO.getUf()));
 		assertThat(eNew.getNome(), equalTo("Mato Grosso"));
 		assertThat(estadoService.count(), equalTo(1L));
 	}
@@ -84,9 +84,9 @@ public class EstadoServiceTest  extends BaseTest{
 	public void testBuscaUf() {
 		estadoService.save(eGO);
 		
-		Estado result = estadoService.findByUf(eGO.getUF());
+		Estado result = estadoService.findByUf(eGO.getUf());
 		
-		assertThat(result.getUF(), equalTo(eGO.getUF()));
+		assertThat(result.getUf(), equalTo(eGO.getUf()));
 		assertThat(result.getNome(), equalTo(eGO.getNome()));	
 	}
 	
@@ -111,7 +111,7 @@ public class EstadoServiceTest  extends BaseTest{
 		Estado result = estadoService.find(eGO.getId());
 		
 		assertThat(result.getId(), equalTo(eGO.getId()));
-		assertThat(result.getUF(), equalTo(eGO.getUF()));
+		assertThat(result.getUf(), equalTo(eGO.getUf()));
 		assertThat(result.getNome(), equalTo(eGO.getNome()));	
 	}
 	
@@ -147,13 +147,13 @@ public class EstadoServiceTest  extends BaseTest{
 	public void testDeleteUF() {
 		Estado result = estadoService.save(eGO);
 		
-		estadoService.deleteByUf(result.getUF());
+		estadoService.deleteByUf(result.getUf());
 		
 		try {
-			estadoService.findByUf(result.getUF());
+			estadoService.findByUf(result.getUf());
 			fail();
 		} catch (ObjectNotFoundException ex) {
-			assertThat(ex.getMessage(), equalTo((EstadoService.NOTFOUND_UF + result.getUF())));
+			assertThat(ex.getMessage(), equalTo((EstadoService.NOTFOUND_UF + result.getUf())));
 		}
 		
 	}

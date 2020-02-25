@@ -20,7 +20,7 @@ public class TelefoneService {
 public Telefone save(Telefone telefone) {
 		
 		try {
-			Telefone result = findByDDDAndNumero(telefone.getDDD(), telefone.getNumero());
+			Telefone result = findByDddAndNumero(telefone.getDdd(), telefone.getNumero());
 			if(!result.getId().equals(telefone.getId()))
 				throw new DataIntegrityException("O telefone: " + telefone.toString() + " ja existe.");		
 		}catch(ObjectNotFoundException e) {}
@@ -29,10 +29,10 @@ public Telefone save(Telefone telefone) {
 	}
 
 
-	public Telefone findByDDDAndNumero(String ddd, String numero) {
+	public Telefone findByDddAndNumero(String Ddd, String numero) {
 	// TODO Auto-generated method stub
-	return telefoneRepository.findByDDDAndNumero(ddd,numero).orElseThrow(
-			() -> new ObjectNotFoundException  (ObjectNotFoundException.DEFAULT + "telefone "+ (new Telefone(null, ddd, numero, null, false)).toString() )    );
+	return telefoneRepository.findByDddAndNumero(Ddd,numero).orElseThrow(
+			() -> new ObjectNotFoundException  (ObjectNotFoundException.DEFAULT + "telefone "+ (new Telefone(null, Ddd, numero, null, false)).toString() )    );
 }
 
 
