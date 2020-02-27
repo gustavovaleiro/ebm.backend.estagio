@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.ebm.geral.domain.AbstractEntity;
 import com.ebm.pessoal.domain.HistoricoCadastral;
 
 import lombok.EqualsAndHashCode;
@@ -22,8 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Unidade implements Serializable {
+@EqualsAndHashCode(callSuper = false,onlyExplicitlyIncluded = true)
+public class Unidade extends AbstractEntity<Integer> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

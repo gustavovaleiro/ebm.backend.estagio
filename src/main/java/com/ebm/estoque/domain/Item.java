@@ -2,7 +2,6 @@ package com.ebm.estoque.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -18,11 +17,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.ebm.geral.domain.AbstractEntity;
 import com.ebm.geral.utils.UtilNumeric;
 import com.ebm.pessoal.domain.HistoricoCadastral;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -38,11 +37,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(callSuper=false,onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "_tipo", discriminatorType = DiscriminatorType.STRING, length = 1)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "tipo")
-public abstract class Item implements Serializable {
+public abstract class Item extends AbstractEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

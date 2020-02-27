@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.ebm.geral.domain.AbstractEntity;
 import com.ebm.pessoal.domain.HistoricoCadastral;
 
 import lombok.EqualsAndHashCode;
@@ -24,8 +25,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CategoriaItem implements Serializable{
+@EqualsAndHashCode(callSuper=false,onlyExplicitlyIncluded = true)
+public class CategoriaItem extends AbstractEntity<Integer> implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id

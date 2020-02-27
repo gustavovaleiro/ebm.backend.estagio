@@ -3,8 +3,8 @@ package com.ebm.pessoal.domain;
 import com.ebm.geral.exceptions.DataIntegrityException;
 
 public enum TipoPessoa {
-	PESSOA_FISICA(0,"Pessoa Física"),
-	PESSOA_JURIDICA(1, "Pessoa Jurídica" );
+	PESSOA_FISICA(0,"Pessoa Fisica"),
+	PESSOA_JURIDICA(1, "Pessoa Juridica" );
 	
 	private int cod;
 	private String desc;
@@ -24,9 +24,9 @@ public enum TipoPessoa {
 	public static TipoPessoa fromString(String tipo) {
 		if(tipo == null)
 			return null;
-		if(tipo.toLowerCase().contains("física") || tipo.toLowerCase().contains("fisica"))
+		if(tipo.toLowerCase().contains("fisica") || tipo.toLowerCase().contains("fisica"))
 			return TipoPessoa.PESSOA_FISICA;
-		if(tipo.toLowerCase().contains("jurídica") || tipo.toLowerCase().contains("juridica"))
+		if(tipo.toLowerCase().contains("juridica") || tipo.toLowerCase().contains("juridica"))
 			return TipoPessoa.PESSOA_JURIDICA;
 		else
 			throw new DataIntegrityException(DataIntegrityException.DEFAULT + ": tipo fornecido: " + tipo + "é invalido" );

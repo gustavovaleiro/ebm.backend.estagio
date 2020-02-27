@@ -14,6 +14,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +28,13 @@ import com.ebm.estoque.repository.ProdutoMovimentacaoRepository;
 import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.MovimentacaoService;
 import com.ebm.geral.exceptions.DataIntegrityException;
-import com.ebm.geral.exceptions.ObjectNotFoundException;
+import com.ebm.geral.service.AbstractRestService;
 import com.ebm.geral.utils.Utils;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.service.interfaces.FornecedorService;
 
 @Service
-public class MovimentacaoServiceImpl implements MovimentacaoService {
+public class MovimentacaoServiceImpl extends AbstractRestService<Integer, Movimentacao> implements MovimentacaoService {
 
 	@Autowired
 	private MovimentacaoRepository movimentacaoRepository;
@@ -45,51 +46,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 	@Autowired
 	private ItemService itemService;
 
-	@Transactional
-	@Override
-	public Movimentacao save(Movimentacao movimentacao) {
-		garanteIntegridade(movimentacao);
-		
-		recuperaFornecedorFrom(movimentacao);
-		recuperaProdutosFrom(movimentacao);
-		
-		Utils.audita(movimentacao.getHistorico());
-		if(movimentacao.getId()!=null && movimentacao.getProdutoMovimentacao().stream().anyMatch(p -> p.getMovimentacao()==null) ){
-			Iterator<ProdutoMovimentacao> iterator = movimentacao.getProdutoMovimentacao().stream().iterator();
-			while(iterator.hasNext()) {
-				ProdutoMovimentacao pm = iterator.next();
-				pm.setMovimentacao(movimentacao);
-			}
-		}
-		movimentacao = movimentacaoRepository.save(movimentacao);
-
-		if (!Optional.ofNullable(movimentacao.getDataMovimentacao()).isPresent())
-			movimentacao.setDataMovimentacao(LocalDateTime.now());
-		for (ProdutoMovimentacao pM : movimentacao.getProdutoMovimentacao()) {
-			pM.setMovimentacao(movimentacao);
-			
-
-			if (movimentacao.getTipoMovimentacao() == TipoMovimentacao.ENTRADA) {
-				// Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade
-				// maxima de estoque
-				pM.getProduto().setEstoqueAtual(
-						valueOrZero(pM.getProduto().getEstoqueAtual()) + valueOrZero(pM.getQuantidade()));
-			} else {
-				// Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade
-				// minima de estoque
-				pM.getProduto().setEstoqueAtual(
-						valueOrZero(pM.getProduto().getEstoqueAtual()) - valueOrZero(pM.getQuantidade()));
-			}
-
-			pM.setProduto((Produto) itemService.save(pM.getProduto()));
-
-		}
-
-		
-		movimentacao.setProdutoMovimentacao(new HashSet<ProdutoMovimentacao>(
-				pMovimentacaoRepository.saveAll(movimentacao.getProdutoMovimentacao())));
-		return movimentacao;
-	}
+	
 
 	private void recuperaProdutosFrom(Movimentacao movimentacao) {
 		movimentacao.getProdutoMovimentacao().stream().forEach(pM ->{
@@ -124,14 +81,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 		return movimentacoes.stream().map(m -> this.save(m)).collect(Collectors.toList());
 	}
 
-	@Override
-	public Movimentacao findById(Integer id) {
-		if (!Optional.ofNullable(id).isPresent())
-			throw new DataIntegrityException(DATAINTEGRITY_IDNULL);
-		return movimentacaoRepository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID + id));
-	}
-
+	
 	@Transactional
 	@Override
 	public Page<MovimentacaoListDTO> findBy(TipoMovimentacao tipo, String documento, List<Integer> fornecedoresId,
@@ -173,9 +123,51 @@ public class MovimentacaoServiceImpl implements MovimentacaoService {
 	}
 
 	@Override
-	public void deleteById(Integer id) {
-		findById(id);
-		movimentacaoRepository.deleteById(id);
+	public boolean validateEntityForSave(Movimentacao movimentacao) {
+		garanteIntegridade(movimentacao);
 		
+	//	recuperaFornecedorFrom(movimentacao);
+	//	recuperaProdutosFrom(movimentacao);
+		
+		if(movimentacao.getId()!=null && movimentacao.getProdutoMovimentacao().stream().anyMatch(p -> p.getMovimentacao()==null) ){
+			Iterator<ProdutoMovimentacao> iterator = movimentacao.getProdutoMovimentacao().stream().iterator();
+			while(iterator.hasNext()) {
+				ProdutoMovimentacao pm = iterator.next();
+				pm.setMovimentacao(movimentacao);
+			}
+		}
+		movimentacao = movimentacaoRepository.save(movimentacao);
+
+		if (!Optional.ofNullable(movimentacao.getDataMovimentacao()).isPresent())
+			movimentacao.setDataMovimentacao(LocalDateTime.now());
+		for (ProdutoMovimentacao pM : movimentacao.getProdutoMovimentacao()) {
+			pM.setMovimentacao(movimentacao);
+			
+
+			if (movimentacao.getTipoMovimentacao() == TipoMovimentacao.ENTRADA) {
+				// Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade
+				// maxima de estoque
+				pM.getProduto().setEstoqueAtual(
+						valueOrZero(pM.getProduto().getEstoqueAtual()) + valueOrZero(pM.getQuantidade()));
+			} else {
+				// Aqui algo pra retornar uma mensagem de alerta caso extrapole a quantidade
+				// minima de estoque
+				pM.getProduto().setEstoqueAtual(
+						valueOrZero(pM.getProduto().getEstoqueAtual()) - valueOrZero(pM.getQuantidade()));
+			}
+
+			pM.setProduto((Produto) itemService.save(pM.getProduto()));
+
+		}
+
+		
+		movimentacao.setProdutoMovimentacao(new HashSet<ProdutoMovimentacao>(
+				pMovimentacaoRepository.saveAll(movimentacao.getProdutoMovimentacao())));
+		return true;
+	}
+
+	@Override
+	public JpaRepository<Movimentacao, Integer> getRepository() {
+			return this.movimentacaoRepository;
 	}
 }

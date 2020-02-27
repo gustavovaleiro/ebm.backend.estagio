@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import com.ebm.estoque.domain.interfaces.ItemVendaInfo;
+import com.ebm.geral.domain.AbstractEntity;
 import com.ebm.geral.utils.CalculosItemVenda;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -22,7 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProdutoMovimentacao implements ItemVendaInfo {
+public class ProdutoMovimentacao extends AbstractEntity<ProdutoMovimentacaoPK> implements ItemVendaInfo {
 	@JsonIgnore
 	@EmbeddedId
 	private ProdutoMovimentacaoPK id = new ProdutoMovimentacaoPK();

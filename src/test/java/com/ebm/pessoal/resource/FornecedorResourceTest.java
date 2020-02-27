@@ -338,9 +338,9 @@ public class FornecedorResourceTest extends BaseTest {
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 3, 1).andDo(result_ -> {
 			RestResponsePage<FornecedorListDTO> result = getPage(result_);
 
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj1.getId()));
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj4.getId()));
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj3.getId()));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forj1.getId())));
+			assertTrue(result.get().anyMatch(f -> f.getId() .equals(bd.forj4.getId())));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forj3.getId())));
 		});
 
 	}
@@ -359,10 +359,10 @@ public class FornecedorResourceTest extends BaseTest {
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 4, 1).andDo(result_ -> {
 			RestResponsePage<FornecedorListDTO> result = getPage(result_);
 
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forf1.getId()));
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj1.getId()));
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forf3.getId()));
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forf4.getId()));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forf1.getId())));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forj1.getId())));
+			assertTrue(result.get().anyMatch(f -> f.getId() .equals(bd.forf3.getId())));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forf4.getId())));
 		});
 	}
 
@@ -378,7 +378,7 @@ public class FornecedorResourceTest extends BaseTest {
 		// executa
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 1, 1).andDo(result_ -> {
 			RestResponsePage<FornecedorListDTO> result = getPage(result_);
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forj3.getId()));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forj3.getId())));
 
 		});
 
@@ -397,7 +397,7 @@ public class FornecedorResourceTest extends BaseTest {
 		params.add("tipo", TipoPessoa.PESSOA_FISICA.getDescricao());
 		util.testGetPage(ENDPOINT_BASE + "/page", params, status().isOk(), 1, 1).andDo(result_ -> {
 			RestResponsePage<FornecedorListDTO> result = getPage(result_);
-			assertTrue(result.get().anyMatch(f -> f.getId() == bd.forf5.getId()));
+			assertTrue(result.get().anyMatch(f -> f.getId().equals(bd.forf5.getId())));
 
 		});
 

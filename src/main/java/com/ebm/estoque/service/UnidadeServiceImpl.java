@@ -1,36 +1,22 @@
 package com.ebm.estoque.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.ebm.estoque.domain.Unidade;
 import com.ebm.estoque.repository.UnidadeRepository;
-import com.ebm.estoque.service.interfaces.ItemService;
 import com.ebm.estoque.service.interfaces.UnidadeService;
 import com.ebm.geral.exceptions.DataIntegrityException;
 import com.ebm.geral.exceptions.ObjectNotFoundException;
-import com.ebm.geral.utils.Utils;
+import com.ebm.geral.service.AbstractRestService;
 
 @Service
-public class UnidadeServiceImpl implements UnidadeService{
+public class UnidadeServiceImpl extends AbstractRestService<Integer, Unidade>implements UnidadeService{
 
 	@Autowired
 	private UnidadeRepository unidadeRepository;
-	@Autowired
-	private ItemService itens;
-	
-	@Override
-	public Unidade save(Unidade unidade) {
-		garantaIntegridade(unidade);
-		saveAssociacoes(unidade);
-		Utils.audita(unidade.getHistorico());
-		return unidadeRepository.save(unidade);
-	}
-	
-	private void saveAssociacoes(Unidade unidade) {
-	}
+
 
 	private void garantaIntegridade(Unidade unidade) {
 		if(unidade.getAbrev() == null || unidade.getAbrev().isEmpty())
@@ -53,12 +39,6 @@ public class UnidadeServiceImpl implements UnidadeService{
 		
 	}
 
-	public Unidade findById(Integer id) {
-		if(!Optional.ofNullable(id).isPresent())
-			throw new DataIntegrityException(DATAINTEGRITY_IDNULL);
-		return unidadeRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(ONFE_NOTFOUNDBYID + id));
-		
-	}
 
 	@Override
 	public void deleteAll() {
@@ -66,14 +46,17 @@ public class UnidadeServiceImpl implements UnidadeService{
 		
 	}
 
+
+
 	@Override
-	public void deleteById(Integer id) {
-		Unidade un = findById(id);
-		if(!itens.findBy(null, null, null, un.getAbrev(), null).isEmpty()){
-			throw new DataIntegrityException(DATAINTEGRITY_UNITHASITEM);
-		}
-		unidadeRepository.deleteById(id);
-		
+	public boolean validateEntityForSave(Unidade unidade) {
+		this.garantaIntegridade(unidade);
+		return true;
+	}
+
+	@Override
+	public JpaRepository<Unidade, Integer> getRepository() {
+		return this.unidadeRepository;
 	}
 
 	

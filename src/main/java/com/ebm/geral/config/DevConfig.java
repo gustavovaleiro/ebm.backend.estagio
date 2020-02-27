@@ -30,4 +30,4 @@ public class DevConfig {
 	public boolean isCreateStrategy() {
 		return this.strategy.toLowerCase().equals("create");
 	}
-}
+} 

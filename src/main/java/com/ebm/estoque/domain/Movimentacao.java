@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.ebm.estoque.domain.enums.TipoMovimentacao;
+import com.ebm.geral.domain.AbstractEntity;
 import com.ebm.pessoal.domain.Fornecedor;
 import com.ebm.pessoal.domain.HistoricoCadastral;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,8 +40,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public  class Movimentacao implements Serializable{
+@EqualsAndHashCode(callSuper=false,onlyExplicitlyIncluded = true)
+public  class Movimentacao extends AbstractEntity<Integer> implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
